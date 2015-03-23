@@ -97,8 +97,9 @@ trait SearchTicketsMethodTrait
         //Parse recomendations
         foreach ($data->recommendation as $recommendation) {
             //Get prices
+            $priceTotal = Money::fromString((string)$recommendation->paxFareProduct->paxFareDetail->totalFareAmount, new Currency($currency));
             $priceTax = Money::fromString((string)$recommendation->paxFareProduct->paxFareDetail->totalTaxAmount, new Currency($currency));
-            $priceFare = Money::fromString((string)$recommendation->paxFareProduct->paxFareDetail->totalFareAmount, new Currency($currency));
+            $priceFare = $priceTotal->subtract($priceTax);
 
             $blankCount = 1;//count($recommendation->xpath(".//traveller"));//TODO
 
