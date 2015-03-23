@@ -18,6 +18,10 @@ class SimpleSearchRequest
 
     private $_dateReturn = null;
 
+    private $_currency = 'USD';
+
+    private $_cabin = 'Y';
+
     /**
      * Create request
      * @param DateTime $date Flight date
@@ -27,9 +31,11 @@ class SimpleSearchRequest
      * @param int $children Number of children
      * @param int $infants Number of infants
      * @param DateTime $dateReturn Date of return flight
+     * @param string $currency Currency of prices
+     * @param string $cabin Type of cabin
      * @throws \ValidationException
      */
-    function __construct(DateTime $date, $origin, $destination, $adults, $children = 0, $infants = 0, DateTime $dateReturn = null)
+    function __construct(DateTime $date, $origin, $destination, $adults, $children = 0, $infants = 0, DateTime $dateReturn = null, $currency = 'USD', $cabin = "Y")
     {
         //Create validators
         $iataValidator = v::alnum()->noWhitespace()->length(3, 4);
@@ -56,6 +62,8 @@ class SimpleSearchRequest
         $this->_origin = $origin;
         $this->_destination = $destination;
         $this->_dateReturn = $dateReturn;
+        $this->_cabin = $cabin;
+        $this->_currency = $currency;
     }
 
     /**
@@ -128,6 +136,24 @@ class SimpleSearchRequest
     public function isOneWay()
     {
         return $this->getDateReturn() == null;
+    }
+
+    /**
+     * Currency of price request
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->_currency;
+    }
+
+    /**
+     * Type of cabin, Y-economy, C-business
+     * @return string
+     */
+    public function getCabin()
+    {
+        return $this->_cabin;
     }
 
 }
