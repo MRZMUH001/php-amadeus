@@ -23,7 +23,7 @@ trait BasicMethodsTrait
     function __construct()
     {
         // Instantiate the Amadeus class (Debug enabled)
-        $this->_ws = new InnerClient('wsdl\AmadeusWebServices.wsdl', true);
+        $this->_ws = new InnerClient(realpath(dirname(__FILE__)) . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl', true);
     }
 
     /**
