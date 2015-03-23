@@ -194,14 +194,17 @@ class InnerClient
      * @param string $arrive_loc Arrival location
      * @param array $travellers Travellers array
      * @param string $return_date Return date
+     * @param int $limit_tickets Number of tickets to return
+     * @param string $currency Currency code for prices
+     * @param string $cabin Cabin
      */
-    public function fareMasterPricerTravelBoardSearch($deprt_date, $deprt_loc, $arrive_loc, $travellers, $return_date = null)
+    public function fareMasterPricerTravelBoardSearch($deprt_date, $deprt_loc, $arrive_loc, $travellers, $return_date = null, $limitTickets = 100, $currency = 'USD', $cabin = 'Y')
     {
         $params = [];
         $j = 0;
         $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j]['numberOfUnits'] = $travellers['A'] + $travellers['C'];
         $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j]['typeOfUnit'] = 'PX';
-        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j + 1]['numberOfUnits'] = 200;
+        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j + 1]['numberOfUnits'] = $limitTickets;
         $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j + 1]['typeOfUnit'] = 'RC';
         $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['ptc'] = 'ADT';
 
@@ -228,10 +231,26 @@ class InnerClient
             }
         }
 
-        $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = 'ADI';
-        $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = 'TAC';
-        $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = 'RU';
-        $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = 'RP';
+        $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = [
+            -# currency conversion override. is it still needed?
+            'CUC',
+            # (only?) etickets
+            'ET',
+            # public fares
+            'RP',
+            # unifare
+            'RU',
+            # no slice and dice (we don't know how to book it yet)
+            'NSD',
+            # ticket-ability check
+            'TAC'
+        ];
+
+        $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['feeIdDescription']['feeId'] = ['feeType' => 'SORT', 'feeIdNumber' => 'FEE'];
+
+        $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['conversionRate']['conversionRateDetail'] = ['currency' => $currency];
+        $params['Fare_MasterPricerTravelBoardSearch']['travelFlightInfo']['cabinId'] = ['cabinQualifier' => 'MC', 'cabin' => $cabin];
+
 
         $params['Fare_MasterPricerTravelBoardSearch']['itinerary'][0]['requestedSegmentRef']['segRef'] = 1;
         $params['Fare_MasterPricerTravelBoardSearch']['itinerary'][0]['departureLocalization']['depMultiCity']['locationId'] = $deprt_loc;
