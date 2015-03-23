@@ -201,6 +201,12 @@ class TicketPrice
         return $this->_isPublishedFare;
     }
 
-
+    /**
+     * @return Money
+     */
+    public function getTotalPrice()
+    {
+        return $this->_priceFare->add($this->_priceTax);
+    }
 
 }
