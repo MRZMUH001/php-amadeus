@@ -56,7 +56,7 @@ class TicketPrice
      * @var DateTime|null
      */
     private $_lastTktDate;
-    private $_fareBases;
+    private $_fareBasis;
 
     /**
      * Published fare?
@@ -77,10 +77,10 @@ class TicketPrice
      * @param $bookingClasses
      * @param $availabilities
      * @param DateTime|null $lastTktDate
-     * @param $fareBases
+     * @param $fareBasis
      * @param boolean $isPublishedFare
      */
-    function __construct($blankCount, Money $priceFare, Money $priceTax, $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBases, $isPublishedFare)
+    function __construct($blankCount, Money $priceFare, Money $priceTax, $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
     {
         $this->_blankCount = $blankCount;
         $this->_priceFare = $priceFare;
@@ -93,9 +93,114 @@ class TicketPrice
         $this->_bookingClasses = $bookingClasses;
         $this->_availabilities = $availabilities;
         $this->_lastTktDate = $lastTktDate;
-        $this->_fareBases = $fareBases;
+        $this->_fareBasis = $fareBasis;
         $this->_isPublishedFare = $isPublishedFare;
     }
+
+    /**
+     * @return int
+     */
+    public function getBlankCount()
+    {
+        return $this->_blankCount;
+    }
+
+    /**
+     * @return Money
+     */
+    public function getPriceFare()
+    {
+        return $this->_priceFare;
+    }
+
+    /**
+     * @return Money
+     */
+    public function getPriceTax()
+    {
+        return $this->_priceTax;
+    }
+
+    /**
+     * @return FlightSegment[]
+     */
+    public function getSegments()
+    {
+        return $this->_segments;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidatingCarrierIata()
+    {
+        return $this->_validatingCarrierIata;
+    }
+
+    /**
+     * @return \string[]
+     */
+    public function getSuggestedMarketingCarrierIatas()
+    {
+        return $this->_suggestedMarketingCarrierIatas;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdditionalInfo()
+    {
+        return $this->_additionalInfo;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCabins()
+    {
+        return $this->_cabins;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBookingClasses()
+    {
+        return $this->_bookingClasses;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAvailabilities()
+    {
+        return $this->_availabilities;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getLastTktDate()
+    {
+        return $this->_lastTktDate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFareBasis()
+    {
+        return $this->_fareBasis;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isIsPublishedFare()
+    {
+        return $this->_isPublishedFare;
+    }
+
 
 
 }
