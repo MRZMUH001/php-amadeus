@@ -160,4 +160,13 @@ class SimpleSearchRequest
         return $this->_cabin;
     }
 
+    /**
+     * Number of tickets to get
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->_limit;
+    }
+
 }
