@@ -26,7 +26,7 @@ class TicketPrice
 
     /**
      * Flight segments
-     * @var FlightSegment[]
+     * @var FlightSegmentCollection
      */
     private $_segments;
 
@@ -80,7 +80,7 @@ class TicketPrice
      * @param $fareBasis
      * @param boolean $isPublishedFare
      */
-    function __construct($blankCount, Money $priceFare, Money $priceTax, $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
+    function __construct($blankCount, Money $priceFare, Money $priceTax, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
     {
         $this->_blankCount = $blankCount;
         $this->_priceFare = $priceFare;
@@ -122,7 +122,7 @@ class TicketPrice
     }
 
     /**
-     * @return FlightSegment[]
+     * @return FlightSegmentCollection
      */
     public function getSegments()
     {
