@@ -232,7 +232,7 @@ class InnerClient
         }
 
         $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = [
-            -# currency conversion override. is it still needed?
+            # currency conversion override. is it still needed?
             'CUC',
             # (only?) etickets
             'ET',
