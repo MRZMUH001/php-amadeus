@@ -22,6 +22,8 @@ class SimpleSearchRequest
 
     private $_cabin = 'Y';
 
+    private $_limit = 20;
+
     /**
      * Create request
      * @param DateTime $date Flight date
@@ -33,9 +35,10 @@ class SimpleSearchRequest
      * @param DateTime $dateReturn Date of return flight
      * @param string $currency Currency of prices
      * @param string $cabin Type of cabin
+     * @param int $limit Number of tickets
      * @throws \ValidationException
      */
-    function __construct(DateTime $date, $origin, $destination, $adults, $children = 0, $infants = 0, DateTime $dateReturn = null, $currency = 'USD', $cabin = "Y")
+    function __construct(DateTime $date, $origin, $destination, $adults, $children = 0, $infants = 0, DateTime $dateReturn = null, $currency = 'USD', $cabin = "Y", $limit = 20)
     {
         //Create validators
         $iataValidator = v::alnum()->noWhitespace()->length(3, 4);
@@ -64,6 +67,7 @@ class SimpleSearchRequest
         $this->_dateReturn = $dateReturn;
         $this->_cabin = $cabin;
         $this->_currency = $currency;
+        $this->_limit = $limit;
     }
 
     /**

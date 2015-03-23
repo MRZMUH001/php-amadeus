@@ -34,7 +34,10 @@ trait SearchTicketsMethodTrait
             $searchRequest->getOrigin(),
             $searchRequest->getDestination(),
             $travellers,
-            $searchRequest->getDateReturn() == null ? null : $searchRequest->getDateReturn()->format('dmy')
+            $searchRequest->getDateReturn() == null ? null : $searchRequest->getDateReturn()->format('dmy'),
+            $searchRequest->getLimit(),
+            $searchRequest->getCurrency(),
+            $searchRequest->getCabin()
         );
 
         $currency = (string)$data->conversionRate->conversionRateDetail->currency;
