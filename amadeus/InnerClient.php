@@ -98,6 +98,9 @@ class InnerClient
         $this->_data = $this->_client->__soapCall('Security_Authenticate', $params, null,
             new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', null), $this->_headers);
 
+        //if (isset($this->_headers['Session']))
+        //    $this->_headers = $this->_headers['Session'];
+
         return $this->debugDump($params, $this->_data);
     }
 
@@ -506,10 +509,10 @@ class InnerClient
             //$this->dumpVariable('data', $data);
 
             // Trace output
-            //print "Request Trace:\n";
-            //print_r($this->_client->__getLastRequest());
-            //echo "\n\nResponse Trace:\n";
-            //print_r($this->_client->__getLastResponse());
+            print "Request Trace:\n";
+            print_r($this->_client->__getLastRequest());
+            echo "\n\nResponse Trace:\n";
+            print_r($this->_client->__getLastResponse());
             //echo "\n---\n";
         }
 
