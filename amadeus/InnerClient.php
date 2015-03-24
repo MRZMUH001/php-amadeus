@@ -98,9 +98,6 @@ class InnerClient
         $this->_data = $this->_client->__soapCall('Security_Authenticate', $params, null,
             new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', null), $this->_headers);
 
-        //if (isset($this->_headers['Session']))
-        //    $this->_headers = $this->_headers['Session'];
-
         return $this->debugDump($params, $this->_data);
     }
 
@@ -271,8 +268,17 @@ class InnerClient
             $params['Fare_MasterPricerTravelBoardSearch']['itinerary'][1]['timeDetails']['firstDateTimeDetail']['date'] = $return_date;
         }
 
-        $this->_data = $this->_client->__soapCall('Fare_MasterPricerTravelBoardSearch', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+        $soapHeader = null;
+        if (isset($this->_headers['Session']))
+            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'Session', $this->_headers['Session']); else
+            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']);
+
+        $this->_data = $this->_client->__soapCall(
+            'Fare_MasterPricerTravelBoardSearch',
+            $params,
+            null,
+            $soapHeader,
+            $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -509,11 +515,13 @@ class InnerClient
             //$this->dumpVariable('data', $data);
 
             // Trace output
-            print "Request Trace:\n";
-            print_r($this->_client->__getLastRequest());
-            echo "\n\nResponse Trace:\n";
-            print_r($this->_client->__getLastResponse());
-            //echo "\n---\n";
+//            print "Request Headers:\n";
+//            print_r($this->_client->__getLastRequestHeaders());
+//            print "Request Trace:\n";
+//            print_r($this->_client->__getLastRequest());
+//            echo "\n\nResponse Trace:\n";
+//            print_r($this->_client->__getLastResponse());
+//            echo "\n---\n";
         }
 
         //$data = $this->_client->__getLastResponse();
