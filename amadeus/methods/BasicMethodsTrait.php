@@ -19,11 +19,11 @@ trait BasicMethodsTrait
      */
     private $_ws = null;
 
-
-    function __construct()
+    function __construct($env = 'prod')
     {
+        $path = realpath(dirname(__FILE__)) . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . $env . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl';
         // Instantiate the Amadeus class (Debug enabled)
-        $this->_ws = new InnerClient(realpath(dirname(__FILE__)) . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl', true);
+        $this->_ws = new InnerClient($path, $env, true);
     }
 
     /**

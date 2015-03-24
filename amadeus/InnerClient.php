@@ -20,7 +20,7 @@ class InnerClient
      *
      * @var string
      */
-    const AMD_HEAD_NAMESPACE = 'https://production.webservices.amadeus.com/definitions';
+    const AMD_HEAD_NAMESPACE = 'http://webservices.amadeus.com/definitions';
 
     /**
      * Response data
@@ -44,12 +44,16 @@ class InnerClient
 
     /**
      * @param $wsdl  string   Path to the WSDL file
+     * @param $env   string   prod/test
      * @param $debug boolean  Enable/disable debug mode
      */
-    public function __construct($wsdl, $debug = false)
+    public function __construct($wsdl, $env = 'prod', $debug = false)
     {
         $this->_debug = $debug;
-        $this->_client = new \SoapClient($wsdl, array('trace' => $debug));
+        $endpoint = 'https://test.webservices.amadeus.com';
+        if ($env == 'prod')
+            $endpoint = 'https://production.webservices.amadeus.com';
+        $this->_client = new \SoapClient($wsdl, ['trace' => $debug, 'location' => $endpoint]);
     }
 
     /**
