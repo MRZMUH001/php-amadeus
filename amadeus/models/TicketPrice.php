@@ -196,7 +196,7 @@ class TicketPrice
     /**
      * @return boolean
      */
-    public function isIsPublishedFare()
+    public function isPublishedFare()
     {
         return $this->_isPublishedFare;
     }
@@ -207,6 +207,33 @@ class TicketPrice
     public function getTotalPrice()
     {
         return $this->_priceFare->add($this->_priceTax);
+    }
+
+    /**
+     * Return provider name
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'amadeus';
+    }
+
+    /**
+     * Departure IATA
+     * @return string
+     */
+    public function getDepartureIata()
+    {
+        return $this->getSegments()->getSegements()[0]->getDepartureIata();
+    }
+
+    /**
+     * Arrival IATA
+     * @return string
+     */
+    public function getArrivalIata()
+    {
+        return end($this->getSegments()->getSegements())->getArrivalIata();
     }
 
 }

@@ -111,7 +111,7 @@ class InnerClient
         $params['Security_SignOut']['SessionId'] = $this->_headers['SessionId'];
 
         $this->_data = $this->_client->__soapCall('Security_SignOut', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -128,7 +128,44 @@ class InnerClient
         $params['Command_Cryptic']['messageAction']['messageFunctionDetails']['messageFunction'] = 'M';
 
         $this->_data = $this->_client->__soapCall('Command_Cryptic', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
+
+        return $this->debugDump($params, $this->_data);
+    }
+
+    public function checkRules()
+    {
+        /**
+         * <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wbs="http://xml.amadeus.com/ws/2009/01/WBS_Session-2.0.xsd">
+         * <soapenv:Header>
+         * <wbs:Session>
+         * <wbs:SessionId>08GDV739PK</wbs:SessionId>
+         * <wbs:SequenceNumber>5</wbs:SequenceNumber>
+         * <wbs:SecurityToken>S1IDJSAA8AZ091855U94D55Y</wbs:SecurityToken>
+         * </wbs:Session>
+         * </soapenv:Header>
+         * <soapenv:Body>
+         * <Fare_CheckRules>
+         * <msgType>
+         * <messageFunctionDetails>
+         * <messageFunction>712</messageFunction>
+         * </messageFunctionDetails>
+         * </msgType>
+         * <itemNumber>
+         * <itemNumberDetails>
+         * <number>1</number>
+         * </itemNumberDetails>
+         * </itemNumber>
+         * <fareRule>
+         * <tarifFareRule>
+         * <ruleSectionId>PE</ruleSectionId>
+         * </tarifFareRule>
+         * </fareRule>
+         * </Fare_CheckRules>
+         */
+        $params = [];
+
+        $this->_data = $this->_client->__soapCall('Fare_CheckRules', $params, null, $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -157,7 +194,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['availabilityOptions']['productTypeDetails']['typeOfRequest'] = 'TN';
 
         $this->_data = $this->_client->__soapCall('Air_MultiAvailability', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -184,7 +221,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['cabinOption']['cabinDesignation']['cabinClassOfServiceList'] = $service;
 
         $this->_data = $this->_client->__soapCall('Air_MultiAvailability', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -268,16 +305,11 @@ class InnerClient
             $params['Fare_MasterPricerTravelBoardSearch']['itinerary'][1]['timeDetails']['firstDateTimeDetail']['date'] = $return_date;
         }
 
-        $soapHeader = null;
-        if (isset($this->_headers['Session']))
-            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'Session', $this->_headers['Session']); else
-            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']);
-
         $this->_data = $this->_client->__soapCall(
             'Fare_MasterPricerTravelBoardSearch',
             $params,
             null,
-            $soapHeader,
+            $this->getHeader(),
             $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -370,7 +402,7 @@ class InnerClient
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['longFreetext'] = '012345 678910';
 
         $this->_data = $this->_client->__soapCall('PNR_AddMultiElements', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -406,7 +438,7 @@ class InnerClient
         }
 
         $this->_data = $this->_client->__soapCall('Air_SellFromRecommendation', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -416,16 +448,17 @@ class InnerClient
      *
      * @param string $code Carrier code
      */
-    public function farePricePNRWithBookingClass($code = null)
+    public function farePricePNRWithBookingClass($currency)
     {
+        //TODO: Currency
         $params = [];
-        $params['Fare_PricePNRWithBookingClass']['overrideInformation']['attributeDetails'][0]['attributeType'] = 'RLO';
+        $params['Fare_PricePNRWithBookingClass']['overrideInformation']['attributeDetails'][0]['attributeType'] = 'FCO';
         $params['Fare_PricePNRWithBookingClass']['overrideInformation']['attributeDetails'][1]['attributeType'] = 'RP';
         $params['Fare_PricePNRWithBookingClass']['overrideInformation']['attributeDetails'][2]['attributeType'] = 'RU';
         //$params['Fare_PricePNRWithBookingClass']['overrideInformation']['validatingCarrier']['carrierInformation']['carrierCode'] = $code;
 
         $this->_data = $this->_client->__soapCall('Fare_PricePNRWithBookingClass', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -445,7 +478,7 @@ class InnerClient
         }
 
         $this->_data = $this->_client->__soapCall('Ticket_CreateTSTFromPricing', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -460,7 +493,7 @@ class InnerClient
         $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
 
         $this->_data = $this->_client->__soapCall('PNR_AddMultiElements', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -478,7 +511,7 @@ class InnerClient
         $params['PNR_Retrieve']['retrievalFacts']['reservationOrProfileIdentifier']['reservation']['controlNumber'] = $pnr_id;
 
         $this->_data = $this->_client->__soapCall('PNR_Retrieve', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']), $this->_headers);
+            $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -528,5 +561,17 @@ class InnerClient
         //$xml = simplexml_load_string($data, NULL, false, "http://schemas.xmlsoap.org/soap/envelope/");
 
         return $data;
+    }
+
+    /**
+     * @return \SoapHeader
+     */
+    private function getHeader()
+    {
+        if (isset($this->_headers['Session']))
+            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'Session', $this->_headers['Session']); else
+            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']);
+
+        return $soapHeader;
     }
 }

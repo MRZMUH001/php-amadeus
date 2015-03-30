@@ -91,7 +91,7 @@ class FlightSegment
      * @param DateTime $departureDate
      * @param string $departureTime
      */
-    function __construct($operatingCarrierIata, $marketingCarrierIata, $departureIata, $arrivalIata, $flightNumber, $arrivalDate, $arrivalTime, $departureDate, $departureTime)
+    function __construct($operatingCarrierIata, $marketingCarrierIata, $departureIata, $arrivalIata, $flightNumber, $arrivalDate = null, $arrivalTime = null, $departureDate = null, $departureTime = null)
     {
         $this->_operatingCarrierIata = $operatingCarrierIata;
         $this->_marketingCarrierIata = $marketingCarrierIata;
@@ -224,5 +224,60 @@ class FlightSegment
         return $this->_equipmentTypeIata;
     }
 
+    /**
+     * "4U:LH" in case 4U operates, just "LH" in case it's not codeshare
+     * @return string
+     */
+    public function getCarrierPair()
+    {
+        return join(':', array_unique([$this->getOperatingCarrierIata(), $this->getMarketingCarrierIata()]));
+    }
 
+    /**
+     * Return flight number: SU712
+     * @return string
+     */
+    public function getFullFlightNumber()
+    {
+        return $this->getCarrierPair() . $this->getFlightNumber();
+    }
+
+    /**
+     * Serialized flight hash
+     * @return string
+     */
+    public function serialize()
+    {
+        $params = [
+            $this->getFullFlightNumber(),
+            $this->getDepartureIata(),
+            $this->getArrivalIata(),
+            $this->getDepartureDate()->format('dmy')
+        ];
+
+        return join('_', $params);
+    }
+
+    /**
+     * Deserialize flight segment
+     * @param string $code
+     * @return FlightSegment
+     */
+    public static function deserialize($code)
+    {
+        list($flightCode, $departureIata, $arrivalIata, $departureDate) = explode('_', $code);
+
+        $departureDate = DateTime::createFromFormat('dmy', $departureDate);
+
+        $flightNumber = substr($flightCode, -3);
+        $carriers = substr($flightCode, 0, strlen($flightNumber) - 3);
+
+        if (strpos($carriers, '-') !== false) {
+            $operatingCarrier = $marketingCarrier = $carriers;
+        } else {
+            list($operatingCarrier, $marketingCarrier) = explode(':', $carriers);
+        }
+
+        return new FlightSegment($operatingCarrier, $marketingCarrier, $departureIata, $arrivalIata, $flightNumber, null, null, $departureDate);
+    }
 }
