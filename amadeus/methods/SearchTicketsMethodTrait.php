@@ -67,12 +67,13 @@ trait SearchTicketsMethodTrait
                 //Parse flight details
                 foreach ($this->iterateStd($group->flightDetails) as $flightDetails) {
                     $fi = $flightDetails->flightInformation;
+
                     $segment = new FlightSegment(
                         isset($fi->companyId->operatingCarrier) ? (string)$fi->companyId->operatingCarrier : "",
                         (string)$fi->companyId->marketingCarrier,
                         (string)$fi->location[0]->locationId,
                         (string)$fi->location[1]->locationId,
-                        (string)$fi->flightNumber,
+                        isset($fi->flightNumber) ? (string)$fi->flightNumber : (string)$fi->flightOrtrainNumber,
                         $this->convertAmadeusDate((string)$fi->productDateTime->dateOfArrival),
                         $this->convertAmadeusTime((string)$fi->productDateTime->timeOfArrival),
                         $this->convertAmadeusDate((string)$fi->productDateTime->dateOfDeparture),

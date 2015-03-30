@@ -233,7 +233,7 @@ class TicketPrice
      */
     public function getArrivalIata()
     {
-        return end($this->getSegments()->getSegements())->getArrivalIata();
+        return array_reverse($this->getSegments()->getSegements())[0]->getArrivalIata();
     }
 
 }

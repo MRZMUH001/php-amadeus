@@ -272,7 +272,7 @@ class FlightSegment
         $flightNumber = substr($flightCode, -3);
         $carriers = substr($flightCode, 0, strlen($flightNumber) - 3);
 
-        if (strpos($carriers, '-') !== false) {
+        if (strpos($carriers, ':') === false) {
             $operatingCarrier = $marketingCarrier = $carriers;
         } else {
             list($operatingCarrier, $marketingCarrier) = explode(':', $carriers);
