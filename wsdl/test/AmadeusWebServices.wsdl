@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:aws="http://xml.amadeus.com" xmlns:air_multiavailability_7_1="http://xml.amadeus.com/SATRQT_07_1_1A" xmlns:air_multiavailabilityreply_7_1="http://xml.amadeus.com/SATRSP_07_1_1A" xmlns:command_cryptic_7_3="http://xml.amadeus.com/HSFREQ_07_3_1A" xmlns:command_crypticreply_7_3="http://xml.amadeus.com/HSFRES_07_3_1A" xmlns:air_sellfromrecommendation_5_2="http://xml.amadeus.com/ITAREQ_05_2_IA" xmlns:air_sellfromrecommendationreply_5_2="http://xml.amadeus.com/ITARES_05_2_IA" xmlns:pnr_addmultielements_9_1="http://xml.amadeus.com/PNRADD_09_1_1A" xmlns:pnr_reply_9_1="http://xml.amadeus.com/PNRACC_09_1_1A" xmlns:queue_moveitem_3_1="http://xml.amadeus.com/QUQMUQ_03_1_1A" xmlns:queue_moveitemreply_3_1="http://xml.amadeus.com/QUQMUR_03_1_1A" xmlns:security_authenticate_6_1="http://xml.amadeus.com/VLSSLQ_06_1_1A" xmlns:security_authenticatereply_6_1="http://xml.amadeus.com/VLSSLR_06_1_1A" xmlns:security_signout_4_1="http://xml.amadeus.com/VLSSOQ_04_1_1A" xmlns:security_signoutreply_4_1="http://xml.amadeus.com/VLSSOR_04_1_1A" xmlns:queue_list_3_1="http://xml.amadeus.com/QDQLRQ_03_1_1A" xmlns:queue_listreply_3_1="http://xml.amadeus.com/QDQLRR_03_1_1A" xmlns:pnr_retrieve_9_1="http://xml.amadeus.com/PNRRET_09_1_1A" xmlns:queue_placepnr_3_1="http://xml.amadeus.com/QUQPCQ_03_1_1A" xmlns:queue_placepnrreply_3_1="http://xml.amadeus.com/QUQPCR_03_1_1A" xmlns:fare_checkrules_7_1="http://xml.amadeus.com/FARQNQ_07_1_1A" xmlns:fare_checkrulesreply_7_1="http://xml.amadeus.com/FARQNR_07_1_1A" xmlns:fare_sellbyfaresearch_10_2="http://xml.amadeus.com/FSOTBQ_10_2_1A" xmlns:fare_sellbyfaresearchreply_10_2="http://xml.amadeus.com/FSOTBR_10_2_1A" xmlns:fare_masterpricertravelboardsearch_9_1="http://xml.amadeus.com/FMPTBQ_09_1_1A" xmlns:fare_masterpricertravelboardsearchreply_9_1="http://xml.amadeus.com/FMPTBR_09_1_1A" xmlns:fare_sellbyfarecalendar_10_2="http://xml.amadeus.com/FSOCAQ_10_2_1A" xmlns:fare_sellbyfarecalendarreply_10_2="http://xml.amadeus.com/FSOCAR_10_2_1A" xmlns:fare_pricepnrwithbookingclass_7_3="http://xml.amadeus.com/TPCBRQ_07_3_1A" xmlns:fare_pricepnrwithbookingclassreply_7_3="http://xml.amadeus.com/TPCBRR_07_3_1A" xmlns:ticket_createtstfrompricing_4_1="http://xml.amadeus.com/TAUTCQ_04_1_1A" xmlns:ticket_createtstfrompricingreply_4_1="http://xml.amadeus.com/TAUTCR_04_1_1A" xmlns:fare_masterpricercalendar_10_2="http://xml.amadeus.com/FMPCAQ_10_2_1A" xmlns:fare_masterpricercalendarreply_10_2="http://xml.amadeus.com/FMPCAR_10_2_1A" targetNamespace="http://xml.amadeus.com">  
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:aws="http://xml.amadeus.com" xmlns:air_multiavailability_7_1="http://xml.amadeus.com/SATRQT_07_1_1A" xmlns:air_multiavailabilityreply_7_1="http://xml.amadeus.com/SATRSP_07_1_1A" xmlns:command_cryptic_7_3="http://xml.amadeus.com/HSFREQ_07_3_1A" xmlns:command_crypticreply_7_3="http://xml.amadeus.com/HSFRES_07_3_1A" xmlns:air_sellfromrecommendation_5_2="http://xml.amadeus.com/ITAREQ_05_2_IA" xmlns:air_sellfromrecommendationreply_5_2="http://xml.amadeus.com/ITARES_05_2_IA" xmlns:pnr_addmultielements_9_1="http://xml.amadeus.com/PNRADD_09_1_1A" xmlns:pnr_reply_9_1="http://xml.amadeus.com/PNRACC_09_1_1A" xmlns:queue_moveitem_3_1="http://xml.amadeus.com/QUQMUQ_03_1_1A" xmlns:queue_moveitemreply_3_1="http://xml.amadeus.com/QUQMUR_03_1_1A" xmlns:security_authenticate_6_1="http://xml.amadeus.com/VLSSLQ_06_1_1A" xmlns:security_authenticatereply_6_1="http://xml.amadeus.com/VLSSLR_06_1_1A" xmlns:security_signout_4_1="http://xml.amadeus.com/VLSSOQ_04_1_1A" xmlns:security_signoutreply_4_1="http://xml.amadeus.com/VLSSOR_04_1_1A" xmlns:queue_list_3_1="http://xml.amadeus.com/QDQLRQ_03_1_1A" xmlns:queue_listreply_3_1="http://xml.amadeus.com/QDQLRR_03_1_1A" xmlns:pnr_retrieve_9_1="http://xml.amadeus.com/PNRRET_09_1_1A" xmlns:queue_placepnr_3_1="http://xml.amadeus.com/QUQPCQ_03_1_1A" xmlns:queue_placepnrreply_3_1="http://xml.amadeus.com/QUQPCR_03_1_1A" xmlns:fare_checkrules_7_1="http://xml.amadeus.com/FARQNQ_07_1_1A" xmlns:fare_checkrulesreply_7_1="http://xml.amadeus.com/FARQNR_07_1_1A" xmlns:fare_sellbyfaresearch_10_2="http://xml.amadeus.com/FSOTBQ_10_2_1A" xmlns:fare_sellbyfaresearchreply_10_2="http://xml.amadeus.com/FSOTBR_10_2_1A" xmlns:fare_masterpricertravelboardsearch_9_1="http://xml.amadeus.com/FMPTBQ_09_1_1A" xmlns:fare_masterpricertravelboardsearchreply_9_1="http://xml.amadeus.com/FMPTBR_09_1_1A" xmlns:fare_sellbyfarecalendar_10_2="http://xml.amadeus.com/FSOCAQ_10_2_1A" xmlns:fare_sellbyfarecalendarreply_10_2="http://xml.amadeus.com/FSOCAR_10_2_1A" xmlns:fare_pricepnrwithbookingclass_13_2="http://xml.amadeus.com/TPCBRQ_13_2_1A" xmlns:fare_pricepnrwithbookingclassreply_13_2="http://xml.amadeus.com/TPCBRR_13_2_1A" xmlns:ticket_createtstfrompricing_4_1="http://xml.amadeus.com/TAUTCQ_04_1_1A" xmlns:ticket_createtstfrompricingreply_4_1="http://xml.amadeus.com/TAUTCR_04_1_1A" xmlns:fare_masterpricercalendar_10_2="http://xml.amadeus.com/FMPCAQ_10_2_1A" xmlns:fare_masterpricercalendarreply_10_2="http://xml.amadeus.com/FMPCAR_10_2_1A" targetNamespace="http://xml.amadeus.com">
   <wsdl:types>
     <xsd:schema targetNamespace="http://xml.amadeus.com">
       <xsd:import namespace="http://xml.amadeus.com/ws/2009/01/WBS_Session-2.0.xsd" schemaLocation="WBS_Session-2.0.xsd"/>
@@ -32,8 +32,8 @@
       <xsd:import namespace="http://xml.amadeus.com/FMPTBR_09_1_1A" schemaLocation="Fare_MasterPricerTravelBoardSearchReply_09_1_1A.xsd"/>
       <xsd:import namespace="http://xml.amadeus.com/FSOCAQ_10_2_1A" schemaLocation="Fare_SellByFareCalendar_10_2_1A.xsd"/>
       <xsd:import namespace="http://xml.amadeus.com/FSOCAR_10_2_1A" schemaLocation="Fare_SellByFareCalendarReply_10_2_1A.xsd"/>
-      <xsd:import namespace="http://xml.amadeus.com/TPCBRQ_07_3_1A" schemaLocation="Fare_PricePNRWithBookingClass_07_3_1A.xsd"/>
-      <xsd:import namespace="http://xml.amadeus.com/TPCBRR_07_3_1A" schemaLocation="Fare_PricePNRWithBookingClassReply_07_3_1A.xsd"/>
+      <xsd:import namespace="http://xml.amadeus.com/TPCBRQ_13_2_1A" schemaLocation="Fare_PricePNRWithBookingClass_13_2_1A.xsd"/>
+      <xsd:import namespace="http://xml.amadeus.com/TPCBRR_13_2_1A" schemaLocation="Fare_PricePNRWithBookingClassReply_13_2_1A.xsd"/>
       <xsd:import namespace="http://xml.amadeus.com/TAUTCQ_04_1_1A" schemaLocation="Ticket_CreateTSTFromPricing_04_1_1A.xsd"/>
       <xsd:import namespace="http://xml.amadeus.com/TAUTCR_04_1_1A" schemaLocation="Ticket_CreateTSTFromPricingReply_04_1_1A.xsd"/>
       <xsd:import namespace="http://xml.amadeus.com/FMPCAQ_10_2_1A" schemaLocation="Fare_MasterPricerCalendar_10_2_1A.xsd"/>
@@ -124,11 +124,11 @@
   <wsdl:message name="Fare_SellByFareCalendarReply_10_2">
     <wsdl:part name="Fare_SellByFareCalendarReply_10_2" element="fare_sellbyfarecalendarreply_10_2:Fare_SellByFareCalendarReply"/>
   </wsdl:message>
-  <wsdl:message name="Fare_PricePNRWithBookingClass_7_3">
-    <wsdl:part name="Fare_PricePNRWithBookingClass_7_3" element="fare_pricepnrwithbookingclass_7_3:Fare_PricePNRWithBookingClass"/>
+  <wsdl:message name="Fare_PricePNRWithBookingClass_13_2">
+    <wsdl:part name="Fare_PricePNRWithBookingClass_13_2" element="fare_pricepnrwithbookingclass_13_2:Fare_PricePNRWithBookingClass"/>
   </wsdl:message>
-  <wsdl:message name="Fare_PricePNRWithBookingClassReply_7_3">
-    <wsdl:part name="Fare_PricePNRWithBookingClassReply_7_3" element="fare_pricepnrwithbookingclassreply_7_3:Fare_PricePNRWithBookingClassReply"/>
+  <wsdl:message name="Fare_PricePNRWithBookingClassReply_13_2">
+    <wsdl:part name="Fare_PricePNRWithBookingClassReply_13_2" element="fare_pricepnrwithbookingclassreply_13_2:Fare_PricePNRWithBookingClassReply"/>
   </wsdl:message>
   <wsdl:message name="Ticket_CreateTSTFromPricing_4_1">
     <wsdl:part name="Ticket_CreateTSTFromPricing_4_1" element="ticket_createtstfrompricing_4_1:Ticket_CreateTSTFromPricing"/>
@@ -200,8 +200,8 @@
       <wsdl:output message="aws:Fare_SellByFareCalendarReply_10_2"/>
     </wsdl:operation>
     <wsdl:operation name="Fare_PricePNRWithBookingClass">
-      <wsdl:input message="aws:Fare_PricePNRWithBookingClass_7_3"/>
-      <wsdl:output message="aws:Fare_PricePNRWithBookingClassReply_7_3"/>
+      <wsdl:input message="aws:Fare_PricePNRWithBookingClass_13_2"/>
+      <wsdl:output message="aws:Fare_PricePNRWithBookingClassReply_13_2"/>
     </wsdl:operation>
     <wsdl:operation name="Ticket_CreateTSTFromPricing">
       <wsdl:input message="aws:Ticket_CreateTSTFromPricing_4_1"/>
@@ -369,7 +369,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="Fare_PricePNRWithBookingClass">
-      <soap:operation soapAction="http://webservices.amadeus.com/1ASIWFDIFDA/TPCBRQ_07_3_1A"/>
+      <soap:operation soapAction="http://webservices.amadeus.com/1ASIWFDIFDA/TPCBRQ_13_2_1A"/>
       <wsdl:input>
         <soap:header message="aws:Session" part="Session" use="literal"/>
         <soap:body use="literal"/>
