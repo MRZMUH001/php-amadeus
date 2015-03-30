@@ -17,7 +17,7 @@ trait PricePnrWithBookingClassTrait
      * Show details on price & baggage
      *
      * @param string $currency
-     * @return Object
+     * @return TicketDetails
      */
     public function pricePnrWithBookingClass($currency)
     {

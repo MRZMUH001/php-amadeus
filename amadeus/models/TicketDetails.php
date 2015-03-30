@@ -52,7 +52,7 @@ class TicketDetails
     /**
      * Return total tax
      *
-     * @return static
+     * @return Money
      */
     public function getTotalTaxes()
     {
