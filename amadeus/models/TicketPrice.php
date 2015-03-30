@@ -80,7 +80,7 @@ class TicketPrice
      * @param $fareBasis
      * @param boolean $isPublishedFare
      */
-    function __construct($blankCount, Money $priceFare, Money $priceTax, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
+    function __construct($blankCount, $priceFare, $priceTax, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
     {
         $this->_blankCount = $blankCount;
         $this->_priceFare = $priceFare;

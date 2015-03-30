@@ -274,7 +274,7 @@ class FlightSegment
         $departureDate = DateTime::createFromFormat('dmy', $departureDate);
 
         $flightNumber = substr($flightCode, -3);
-        $carriers = substr($flightCode, 0, strlen($flightNumber) - 3);
+        $carriers = substr($flightCode, 0, strlen($flightCode) - 3);
 
         if (strpos($carriers, ':') === false) {
             $operatingCarrier = $marketingCarrier = $carriers;

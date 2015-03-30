@@ -14,8 +14,11 @@ trait SellFromRecommendationTrait
      *
      * @param TicketPrice $ticketPrice
      * @param int $passengers Number of passengers
+     *
+     * @throws \UnableToSellException
+     * @return Object
      */
-    public function sellFromRecommendation(TicketPrice $ticketPrice,$passengers)
+    public function sellFromRecommendation(TicketPrice $ticketPrice, $passengers)
     {
         $segments = [];
 
@@ -39,7 +42,10 @@ trait SellFromRecommendationTrait
             $segments
         );
 
-        print_r($data);
+        if (isset($data->errorAtMessageLevel->errorSegment->errorDetails->errorCode) && $data->errorAtMessageLevel->errorSegment->errorDetails->errorCode == '288')
+            throw new \UnableToSellException("Not all segments are confirmed");
+
+        return $data;
     }
 
 }

@@ -20,7 +20,7 @@ class InnerClient
      *
      * @var string
      */
-    const AMD_HEAD_NAMESPACE = 'http://webservices.amadeus.com/definitions';
+    const AMD_HEAD_NAMESPACE = 'http://xml.amadeus.com/ws/2009/01/WBS_Session-2.0.xsd';
 
     /**
      * Response data
@@ -95,7 +95,7 @@ class InnerClient
         $params['Security_Authenticate']['passwordInfo']['dataType'] = 'E';
         $params['Security_Authenticate']['passwordInfo']['binaryData'] = $password;
 
-        $this->_data = $this->_client->__soapCall('Security_Authenticate', $params, null,
+        $this->_data = $this->soapCall('Security_Authenticate', $params, null,
             new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', null), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -110,7 +110,7 @@ class InnerClient
         $params = [];
         $params['Security_SignOut']['SessionId'] = $this->_headers['SessionId'];
 
-        $this->_data = $this->_client->__soapCall('Security_SignOut', $params, null,
+        $this->_data = $this->soapCall('Security_SignOut', $params, null,
             $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -127,7 +127,7 @@ class InnerClient
         $params['Command_Cryptic']['longTextString']['textStringDetails'] = $string;
         $params['Command_Cryptic']['messageAction']['messageFunctionDetails']['messageFunction'] = 'M';
 
-        $this->_data = $this->_client->__soapCall('Command_Cryptic', $params, null,
+        $this->_data = $this->soapCall('Command_Cryptic', $params, null,
             $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -165,7 +165,7 @@ class InnerClient
          */
         $params = [];
 
-        $this->_data = $this->_client->__soapCall('Fare_CheckRules', $params, null, $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('Fare_CheckRules', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -193,7 +193,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['airlineOrFlightOption']['flightIdentification']['number'] = $air_num;
         $params['Air_MultiAvailability']['requestSection']['availabilityOptions']['productTypeDetails']['typeOfRequest'] = 'TN';
 
-        $this->_data = $this->_client->__soapCall('Air_MultiAvailability', $params, null,
+        $this->_data = $this->soapCall('Air_MultiAvailability', $params, null,
             $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -220,7 +220,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['availabilityOptions']['productTypeDetails']['typeOfRequest'] = 'TN';
         $params['Air_MultiAvailability']['requestSection']['cabinOption']['cabinDesignation']['cabinClassOfServiceList'] = $service;
 
-        $this->_data = $this->_client->__soapCall('Air_MultiAvailability', $params, null,
+        $this->_data = $this->soapCall('Air_MultiAvailability', $params, null,
             $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -305,7 +305,7 @@ class InnerClient
             $params['Fare_MasterPricerTravelBoardSearch']['itinerary'][1]['timeDetails']['firstDateTimeDetail']['date'] = $return_date;
         }
 
-        $this->_data = $this->_client->__soapCall(
+        $this->_data = $this->soapCall(
             'Fare_MasterPricerTravelBoardSearch',
             $params,
             null,
@@ -401,8 +401,7 @@ class InnerClient
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['freetextDetail']['type'] = 5;
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['longFreetext'] = '012345 678910';
 
-        $this->_data = $this->_client->__soapCall('PNR_AddMultiElements', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('PNR_AddMultiElements', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -437,8 +436,7 @@ class InnerClient
             $i++;
         }
 
-        $this->_data = $this->_client->__soapCall('Air_SellFromRecommendation', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('Air_SellFromRecommendation', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -446,21 +444,39 @@ class InnerClient
     /**
      * Fare_PricePNRWithBookingClass
      *
-     * @param string $code Carrier code
+     * @param string $urrency Currency
      */
     public function farePricePNRWithBookingClass($currency)
     {
-        //TODO: Currency
         $params = [];
-        $params['Fare_PricePNRWithBookingClass']['overrideInformation']['attributeDetails'][0]['attributeType'] = 'FCO';
-        $params['Fare_PricePNRWithBookingClass']['overrideInformation']['attributeDetails'][1]['attributeType'] = 'RP';
-        $params['Fare_PricePNRWithBookingClass']['overrideInformation']['attributeDetails'][2]['attributeType'] = 'RU';
-        //$params['Fare_PricePNRWithBookingClass']['overrideInformation']['validatingCarrier']['carrierInformation']['carrierCode'] = $code;
+        $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][0] = [
+            'pricingOptionKey' => [
+                'pricingOptionKey' => 'FCO'
+            ],
+            'currency' => [
+                'firstCurrencyDetails' => [
+                    'currencyQualifier' => 'FCO',
+                    'currencyIsoCode' => $currency
+                ]
+            ]
+        ];
+        $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][1]['pricingOptionKey']['pricingOptionKey'] = 'RP';
+        $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][2]['pricingOptionKey']['pricingOptionKey'] = 'RU';
 
-        $this->_data = $this->_client->__soapCall('Fare_PricePNRWithBookingClass', $params, null,
-            $this->getHeader(), $this->_headers);
+        try {
+            $this->_data = $this->soapCall(null, $params);
+        } catch (\Exception $e) {
+
+        }
 
         return $this->debugDump($params, $this->_data);
+    }
+
+    private function soapCall($name, $params)
+    {
+        $data = $this->_client->__soapCall($name, $params, null, $this->getHeader(), $this->_headers);
+
+        return $data;
     }
 
     /**
@@ -477,7 +493,7 @@ class InnerClient
             $params['Ticket_CreateTSTFromPricing']['psaList'][$i]['itemReference']['uniqueReference'] = $i + 1;
         }
 
-        $this->_data = $this->_client->__soapCall('Ticket_CreateTSTFromPricing', $params, null,
+        $this->_data = $this->soapCall('Ticket_CreateTSTFromPricing', $params, null,
             $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -492,7 +508,7 @@ class InnerClient
         $params = [];
         $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
 
-        $this->_data = $this->_client->__soapCall('PNR_AddMultiElements', $params, null,
+        $this->_data = $this->soapCall('PNR_AddMultiElements', $params, null,
             $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -510,7 +526,7 @@ class InnerClient
         $params['PNR_Retrieve']['retrievalFacts']['retrieve']['type'] = 2;
         $params['PNR_Retrieve']['retrievalFacts']['reservationOrProfileIdentifier']['reservation']['controlNumber'] = $pnr_id;
 
-        $this->_data = $this->_client->__soapCall('PNR_Retrieve', $params, null,
+        $this->_data = $this->soapCall('PNR_Retrieve', $params, null,
             $this->getHeader(), $this->_headers);
 
         return $this->debugDump($params, $this->_data);
@@ -550,11 +566,11 @@ class InnerClient
             // Trace output
 //            print "Request Headers:\n";
 //            print_r($this->_client->__getLastRequestHeaders());
-//            print "Request Trace:\n";
-//            print_r($this->_client->__getLastRequest());
-//            echo "\n\nResponse Trace:\n";
-//            print_r($this->_client->__getLastResponse());
-//            echo "\n---\n";
+            print "Request Trace:\n";
+            print_r($this->_client->__getLastRequest());
+            echo "\n\nResponse Trace:\n";
+            print_r($this->_client->__getLastResponse());
+            echo "\n---\n";
         }
 
         //$data = $this->_client->__getLastResponse();
