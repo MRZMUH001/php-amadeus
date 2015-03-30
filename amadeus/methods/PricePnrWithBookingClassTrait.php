@@ -9,7 +9,7 @@ trait PricePnrWithBookingClassTrait
 
     public function pricePnrWithBookingClass($currency)
     {
-        return $this->_ws->farePricePNRWithBookingClass($currency);
+        return $this->getClient()->farePricePNRWithBookingClass($currency);
     }
 
 }

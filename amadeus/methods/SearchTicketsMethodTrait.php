@@ -29,7 +29,7 @@ trait SearchTicketsMethodTrait
             'I' => $searchRequest->getInfants()
         ];
 
-        $data = $this->_ws->fareMasterPricerTravelBoardSearch(
+        $data = $this->getClient()->fareMasterPricerTravelBoardSearch(
             $searchRequest->getDate()->format('dmy'),
             $searchRequest->getOrigin(),
             $searchRequest->getDestination(),

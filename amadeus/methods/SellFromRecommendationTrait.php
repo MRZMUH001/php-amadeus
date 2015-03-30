@@ -33,7 +33,7 @@ trait SellFromRecommendationTrait
             $i++;
         }
 
-        $data = $this->_ws->airSellFromRecommendation(
+        $data = $this->getClient()->airSellFromRecommendation(
             $ticketPrice->getDepartureIata(),
             $ticketPrice->getArrivalIata(),
             $segments

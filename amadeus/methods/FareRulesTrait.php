@@ -10,7 +10,7 @@ trait FareRulesTrait
 
     public function getFareRules()
     {
-        return $this->_ws->checkRules();
+        return $this->getClient()->checkRules();
     }
 
 }
