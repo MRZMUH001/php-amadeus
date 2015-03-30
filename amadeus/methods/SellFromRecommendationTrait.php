@@ -3,6 +3,7 @@
 namespace Amadeus\Methods;
 
 
+use amadeus\exceptions\UnableToSellException;
 use Amadeus\models\TicketPrice;
 
 trait SellFromRecommendationTrait
@@ -15,7 +16,7 @@ trait SellFromRecommendationTrait
      * @param TicketPrice $ticketPrice
      * @param int $passengers Number of passengers
      *
-     * @throws \UnableToSellException
+     * @throws UnableToSellException
      * @return Object
      */
     public function sellFromRecommendation(TicketPrice $ticketPrice, $passengers)
@@ -43,7 +44,7 @@ trait SellFromRecommendationTrait
         );
 
         if (isset($data->errorAtMessageLevel->errorSegment->errorDetails->errorCode) && $data->errorAtMessageLevel->errorSegment->errorDetails->errorCode == '288')
-            throw new \UnableToSellException("Not all segments are confirmed");
+            throw new UnableToSellException("Not all segments are confirmed");
 
         return $data;
     }

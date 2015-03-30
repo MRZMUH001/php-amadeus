@@ -2,8 +2,9 @@
 
 namespace Amadeus\models;
 
-use DateTime;
+use amadeus\exceptions\ValidationException;
 use Respect\Validation\Validator as v;
+use DateTime;
 
 class SimpleSearchRequest
 {
@@ -36,7 +37,7 @@ class SimpleSearchRequest
      * @param string $currency Currency of prices
      * @param string $cabin Type of cabin
      * @param int $limit Number of tickets
-     * @throws \ValidationException
+     * @throws ValidationException
      */
     function __construct(DateTime $date, $origin, $destination, $adults, $children = 0, $infants = 0, DateTime $dateReturn = null, $currency = 'USD', $cabin = "Y", $limit = 20)
     {
@@ -47,15 +48,15 @@ class SimpleSearchRequest
 
         //Validate dates
         if (!$dateValidator->validate($date))
-            throw new \ValidationException("Please specify flight date");
+            throw new ValidationException("Please specify flight date");
         if (!$returnDateValidator->validate($dateReturn))
-            throw new \ValidationException("Return date should be null or later than today");
+            throw new ValidationException("Return date should be null or later than today");
 
         //Validate iatas
         if (!$iataValidator->validate($origin))
-            throw new \ValidationException("Origin should be 3-4 char IATA code");
+            throw new ValidationException("Origin should be 3-4 char IATA code");
         if (!$iataValidator->validate($destination))
-            throw new \ValidationException("Destination should be 3-4 char IATA code");
+            throw new ValidationException("Destination should be 3-4 char IATA code");
 
         //TODO: Add more validation
         $this->_adults = $adults;
