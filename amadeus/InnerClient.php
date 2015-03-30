@@ -57,7 +57,7 @@ class InnerClient
     }
 
     /**
-     * @return array
+     * @return Object
      */
     public function getData()
     {
@@ -65,7 +65,7 @@ class InnerClient
     }
 
     /**
-     * @return array
+     * @return Object
      */
     public function getHeaders()
     {
@@ -81,6 +81,7 @@ class InnerClient
      * @param string $password password binaryData
      * @param integer $passlen length of binaryData
      * @param string $org organizationId string
+     * @return Object
      */
     public function securityAuthenticate($source, $origin, $password, $passlen, $org)
     {
@@ -120,6 +121,7 @@ class InnerClient
      * Command_Cryptic
      *
      * @param string $string The string to be sent
+     * @return Object
      */
     public function commandCryptic($string)
     {
@@ -180,6 +182,7 @@ class InnerClient
      * @param string $service Class of service
      * @param string $air_code Airline code
      * @param string $air_num Airline number
+     * @return Object
      */
     public function airFlightAvailability($deprt_date, $deprt_loc, $arrive_loc, $service, $air_code, $air_num)
     {
@@ -209,6 +212,7 @@ class InnerClient
      * @param string $service Class of service
      * @param string $air_code Airline code
      * @param string $air_num Airline number
+     * @return Object
      */
     public function airServiceAvailability($deprt_date, $deprt_loc, $arrive_loc, $service)
     {
@@ -238,6 +242,7 @@ class InnerClient
      * @param int $limit_tickets Number of tickets to return
      * @param string $currency Currency code for prices
      * @param string $cabin Cabin
+     * @return Object
      */
     public function fareMasterPricerTravelBoardSearch($deprt_date, $deprt_loc, $arrive_loc, $travellers, $return_date = null, $limitTickets = 100, $currency = 'USD', $cabin = 'Y')
     {
@@ -320,6 +325,7 @@ class InnerClient
      * Make reservation call
      *
      * @param array $travellers Travellers array
+     * @return Object
      */
     public function pnrAddMultiElements($travellers)
     {
@@ -413,6 +419,7 @@ class InnerClient
      * @param string $from Boarding point
      * @param string $to Destination
      * @param array $segments Travel Segments
+     * @return Object
      */
     public function airSellFromRecommendation($from, $to, $segments)
     {
@@ -444,11 +451,14 @@ class InnerClient
     /**
      * Fare_PricePNRWithBookingClass
      *
-     * @param string $urrency Currency
+     * @param string $currency Currency
+     * @return Object
      */
     public function farePricePNRWithBookingClass($currency)
     {
         $params = [];
+
+        //Currency override
         $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][0] = [
             'pricingOptionKey' => [
                 'pricingOptionKey' => 'FCO'
@@ -460,14 +470,14 @@ class InnerClient
                 ]
             ]
         ];
+
+        //Published fares
         $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][1]['pricingOptionKey']['pricingOptionKey'] = 'RP';
+
+        //Unifares
         $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][2]['pricingOptionKey']['pricingOptionKey'] = 'RU';
 
-        try {
-            $this->_data = $this->soapCall(null, $params);
-        } catch (\Exception $e) {
-
-        }
+        $this->_data = $this->soapCall("Fare_PricePNRWithBookingClass", $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -483,6 +493,7 @@ class InnerClient
      * Ticket_CreateTSTFromPricing
      *
      * @param integer $types Number of passenger types
+     * @return Object
      */
     public function ticketCreateTSTFromPricing($types)
     {
@@ -519,6 +530,7 @@ class InnerClient
      * Get PNR by id
      *
      * @param string $pnr_id PNR ID
+     * @return Object
      */
     public function pnrRetrieve($pnr_id)
     {

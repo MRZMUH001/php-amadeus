@@ -16,7 +16,7 @@ class Client
     //Sell from recommendation
     use SellFromRecommendationTrait;
 
-    //TODO:
+    //Get price details
     use PricePnrWithBookingClassTrait;
 
     use InformativePricingWithoutPnrTrait;
