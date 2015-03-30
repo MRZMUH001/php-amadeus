@@ -226,6 +226,7 @@ class FlightSegment
 
     /**
      * "4U:LH" in case 4U operates, just "LH" in case it's not codeshare
+     *
      * @return string
      */
     public function getCarrierPair()
@@ -235,6 +236,7 @@ class FlightSegment
 
     /**
      * Return flight number: SU712
+     *
      * @return string
      */
     public function getFullFlightNumber()
@@ -244,6 +246,7 @@ class FlightSegment
 
     /**
      * Serialized flight hash
+     *
      * @return string
      */
     public function serialize()
@@ -260,6 +263,7 @@ class FlightSegment
 
     /**
      * Deserialize flight segment
+     *
      * @param string $code
      * @return FlightSegment
      */
