@@ -53,7 +53,7 @@ class InnerClient
         $endpoint = 'https://test.webservices.amadeus.com';
         if ($env == 'prod')
             $endpoint = 'https://production.webservices.amadeus.com';
-        $this->_client = new \SoapClient($wsdl, ['trace' => $debug, 'location' => $endpoint]);
+        $this->_client = new \SoapClient($wsdl, ['trace' => $debug, 'location' => $endpoint, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP]);
     }
 
     /**
