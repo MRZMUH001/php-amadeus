@@ -53,7 +53,7 @@ trait SellFromRecommendationTrait
         foreach ($this->iterateStd($data->itineraryDetails->segmentInformation) as $s) {
             $fi = $s->flightDetails;
             $segment = new FlightSegment(
-                (string)$fi->companyDetails->marketingCompany,
+                (string)$fi->companyDetails->marketingCompany,//TODO: Not really right, need to find operating carrier
                 (string)$fi->companyDetails->marketingCompany,
                 (string)$fi->boardPointDetails->trueLocationId,
                 (string)$fi->offpointDetails->trueLocationId,
@@ -63,6 +63,8 @@ trait SellFromRecommendationTrait
                 $this->convertAmadeusDate((string)$fi->flightDate->departureDate),
                 $this->convertAmadeusTime((string)$fi->flightDate->departureTime)
             );
+            $segment->setEquipmentTypeIata((string)$s->apdSegment->legDetails->equipment);
+            $segment->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);
             $ticketDetails->addSegment($segment);
         }
 
