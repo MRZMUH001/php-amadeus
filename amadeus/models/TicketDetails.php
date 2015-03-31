@@ -29,6 +29,11 @@ class TicketDetails
     private $_segmentDetails = [];
 
     /**
+     * @var FlightSegmentCollection
+     */
+    private $_segments = [];
+
+    /**
      * @var DateTime
      */
     private $_lastTicketingDate = null;
@@ -40,20 +45,9 @@ class TicketDetails
      */
     private $_rules = '';
 
-    /**
-     * Constructor
-     *
-     * @param Money[] $fares
-     * @param Money[] $taxes
-     * @param SegmentDetails[] $segmentDetails
-     * @param DateTime $lastTicketingDate
-     */
-    function __construct($fares, $taxes, $segmentDetails, $lastTicketingDate)
+    function __construct()
     {
-        $this->_fares = $fares;
-        $this->_taxes = $taxes;
-        $this->_segmentDetails = $segmentDetails;
-        $this->_lastTicketingDate = $lastTicketingDate;
+        $this->_segments = new FlightSegmentCollection();
     }
 
     /**
@@ -111,6 +105,54 @@ class TicketDetails
     public function setRules($rules)
     {
         $this->_rules = $rules;
+    }
+
+    /**
+     * @param \SebastianBergmann\Money\Money[] $fares
+     */
+    public function setFares($fares)
+    {
+        $this->_fares = $fares;
+    }
+
+    /**
+     * @param \SebastianBergmann\Money\Money[] $taxes
+     */
+    public function setTaxes($taxes)
+    {
+        $this->_taxes = $taxes;
+    }
+
+    /**
+     * @param SegmentDetails[] $segmentDetails
+     */
+    public function setSegmentDetails($segmentDetails)
+    {
+        $this->_segmentDetails = $segmentDetails;
+    }
+
+    /**
+     * @param DateTime $lastTicketingDate
+     */
+    public function setLastTicketingDate($lastTicketingDate)
+    {
+        $this->_lastTicketingDate = $lastTicketingDate;
+    }
+
+    /**
+     * @return FlightSegmentCollection
+     */
+    public function getSegments()
+    {
+        return $this->_segments;
+    }
+
+    /**
+     * @param FlightSegment $segment
+     */
+    public function addSegment($segment)
+    {
+        $this->_segments->addSegment($segment);
     }
 
 }

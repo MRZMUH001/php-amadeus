@@ -138,8 +138,9 @@ class Client
      */
     public function prepareBooking(TicketPrice $ticketPrice, $currency, $adults, $children = 0, $infants = 0)
     {
-        $this->sellFromRecommendation($ticketPrice, $adults);
-        $ticketDetails = $this->pricePnrWithBookingClass($currency);
+        //TODO: Use adults + children + infants
+        $ticketDetails = $this->sellFromRecommendation($ticketPrice, $adults);
+        $ticketDetails = $this->pricePnrWithBookingClass($ticketDetails, $currency);
         $ticketDetails->setRules($this->getFareRules());
 
         return $ticketDetails;

@@ -16,10 +16,11 @@ trait PricePnrWithBookingClassTrait
     /**
      * Show details on price & baggage
      *
+     * @param TicketDetails $ticketDetails
      * @param string $currency
      * @return TicketDetails
      */
-    public function pricePnrWithBookingClass($currency)
+    public function pricePnrWithBookingClass($ticketDetails, $currency)
     {
         $data = $this->getClient()->farePricePNRWithBookingClass($currency);
 
@@ -58,10 +59,15 @@ trait PricePnrWithBookingClassTrait
                 isset($bagAllowanceInformation->measureUnit) ? (string)$bagAllowanceInformation->measureUnit : null,
                 isset($bagAllowanceInformation->baggageQuantity) ? (string)$bagAllowanceInformation->baggageQuantity : null
             );
-            $segments = new SegmentDetails($classOfService, $bagAllowance);
+            $segments[] = new SegmentDetails($classOfService, $bagAllowance);
         }
 
-        return new TicketDetails($fareList, $taxesList, $segments, $lastTktDate);
+        $ticketDetails->setFares($fareList);
+        $ticketDetails->setTaxes($taxesList);
+        $ticketDetails->setSegmentDetails($segments);
+        $ticketDetails->setLastTicketingDate($lastTktDate);
+
+        return $ticketDetails;
     }
 
 }
