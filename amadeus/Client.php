@@ -111,8 +111,10 @@ class Client
      */
     protected function convertAmadeusTime($time)
     {
-        $dt = \DateTime::createFromFormat('Hm', $time);
-        return $dt->format('H:m');
+        $minutes = substr($time, -2);
+        $hours = substr($time, 0, strlen($time) - 2);
+
+        return $hours . ":" . $minutes;
     }
 
     /**

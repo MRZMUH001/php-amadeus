@@ -301,10 +301,11 @@ class FlightSegment
     {
         $date = clone $this->getDepartureDate();
         list($hour, $minute) = explode(':', $this->getDepartureTime());
-        $date->setTime($hour, $minute);
 
         $timezone = $timezoneResolver($this->getDepartureIata());
         $date->setTimezone(new \DateTimeZone($timezone));
+
+        $date->setTime($hour, $minute);
 
         return $date;
     }
@@ -319,10 +320,11 @@ class FlightSegment
     {
         $date = clone $this->getArrivalDate();
         list($hour, $minute) = explode(':', $this->getArrivalTime());
-        $date->setTime($hour, $minute);
 
         $timezone = $timezoneResolver($this->getArrivalIata());
         $date->setTimezone(new \DateTimeZone($timezone));
+
+        $date->setTime($hour, $minute);
 
         return $date;
     }
@@ -337,6 +339,6 @@ class FlightSegment
     {
         $diff = $this->getArrivalDateTime($timezoneResolver)->getTimestamp() - $this->getDepartureDateTime($timezoneResolver)->getTimestamp();
 
-        return $diff;
+        return abs(round($diff / 60));
     }
 }
