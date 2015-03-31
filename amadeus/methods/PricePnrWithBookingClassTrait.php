@@ -25,22 +25,23 @@ trait PricePnrWithBookingClassTrait
 
         $fareList = [];
         foreach ($data->fareList->fareDataInformation as $f) {
-            $fareList[(string)$f->fareDataQualifier] = Money::fromString(
-                (string)$f->fareAmount,
-                new Currency((string)$f->fareCurrency)
-            );
+            if (isset($f->fareAmount))
+                $fareList[(string)$f->fareDataQualifier] = Money::fromString(
+                    (string)$f->fareAmount,
+                    new Currency((string)$f->fareCurrency)
+                );
         }
 
         $taxesList = [];
-        foreach ($this->iterateStd($data->taxInformation) as $t) {
+        foreach ($this->iterateStd($data->fareList->taxInformation) as $t) {
             $taxesList[] = Money::fromString(
                 (string)$t->amountDetails->fareDataMainInformation->fareAmount,
                 new Currency((string)$t->amountDetails->fareDataMainInformation->fareCurrency)
             );
         }
 
-        $lastTktDate = \DateTime::createFromFormat('dmY',
-            join('', [
+        $lastTktDate = \DateTime::createFromFormat('d-m-Y',
+            join('-', [
                 $data->fareList->lastTktDate->dateTime->day,
                 $data->fareList->lastTktDate->dateTime->month,
                 $data->fareList->lastTktDate->dateTime->year
@@ -54,7 +55,7 @@ trait PricePnrWithBookingClassTrait
             $bagAllowance = new BagAllowance(
                 isset($bagAllowanceInformation->baggageWeight) ? (string)$bagAllowanceInformation->baggageWeight : null,
                 (string)$bagAllowanceInformation->baggageType,
-                isset($bagAllowanceInformation->baggageUnit) ? (string)$bagAllowanceInformation->baggageUnit : null,
+                isset($bagAllowanceInformation->measureUnit) ? (string)$bagAllowanceInformation->measureUnit : null,
                 isset($bagAllowanceInformation->baggageQuantity) ? (string)$bagAllowanceInformation->baggageQuantity : null
             );
             $segments = new SegmentDetails($classOfService, $bagAllowance);

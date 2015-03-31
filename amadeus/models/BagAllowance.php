@@ -33,12 +33,12 @@ class BagAllowance {
      */
     private $_quantity;
 
-    function __construct($_weight, $_type, $_unit,$_quantity)
+    function __construct($weight, $type, $unit,$quantity)
     {
-        $this->_weight = $_weight;
-        $this->_type = $_type;
-        $this->_unit = $_unit;
-        $this->_quanity = $_quantity;
+        $this->_weight = $weight;
+        $this->_type = $type;
+        $this->_unit = $unit;
+        $this->_quanity = $quantity;
     }
 
     /**

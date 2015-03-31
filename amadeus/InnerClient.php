@@ -135,37 +135,17 @@ class InnerClient
         return $this->debugDump($params, $this->_data);
     }
 
+    /**
+     * Return fare rules
+     *
+     * @return Object
+     */
     public function checkRules()
     {
-        /**
-         * <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wbs="http://xml.amadeus.com/ws/2009/01/WBS_Session-2.0.xsd">
-         * <soapenv:Header>
-         * <wbs:Session>
-         * <wbs:SessionId>08GDV739PK</wbs:SessionId>
-         * <wbs:SequenceNumber>5</wbs:SequenceNumber>
-         * <wbs:SecurityToken>S1IDJSAA8AZ091855U94D55Y</wbs:SecurityToken>
-         * </wbs:Session>
-         * </soapenv:Header>
-         * <soapenv:Body>
-         * <Fare_CheckRules>
-         * <msgType>
-         * <messageFunctionDetails>
-         * <messageFunction>712</messageFunction>
-         * </messageFunctionDetails>
-         * </msgType>
-         * <itemNumber>
-         * <itemNumberDetails>
-         * <number>1</number>
-         * </itemNumberDetails>
-         * </itemNumber>
-         * <fareRule>
-         * <tarifFareRule>
-         * <ruleSectionId>PE</ruleSectionId>
-         * </tarifFareRule>
-         * </fareRule>
-         * </Fare_CheckRules>
-         */
         $params = [];
+        $params['Fare_CheckRules']['msgType']['messageFunctionDetails']['messageFunction'] = 712;
+        $params['Fare_CheckRules']['itemNumber']['itemNumberDetails']['number'] = 1;
+        $params['Fare_CheckRules']['fareRule']['tarifFareRule']['ruleSectionId'] = 'PE';
 
         $this->_data = $this->soapCall('Fare_CheckRules', $params);
 
