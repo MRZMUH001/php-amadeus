@@ -38,7 +38,7 @@ class BagAllowance {
         $this->_weight = $weight;
         $this->_type = $type;
         $this->_unit = $unit;
-        $this->_quanity = $quantity;
+        $this->_quantity = $quantity;
     }
 
     /**

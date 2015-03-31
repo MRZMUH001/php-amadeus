@@ -24,7 +24,7 @@ trait PricePnrWithBookingClassTrait
         $data = $this->getClient()->farePricePNRWithBookingClass($currency);
 
         $fareList = [];
-        foreach ($data->fareList->fareDataInformation as $f) {
+        foreach ($this->iterateStd($data->fareList->fareDataInformation->fareDataSupInformation) as $f) {
             if (isset($f->fareAmount))
                 $fareList[(string)$f->fareDataQualifier] = Money::fromString(
                     (string)$f->fareAmount,

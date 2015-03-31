@@ -16,19 +16,19 @@ class TicketPrice
      * Fare
      * @var Money
      */
-    private $_priceFare;
+    protected $_priceFare;
 
     /**
      * Tax
      * @var Money
      */
-    private $_priceTax;
+    protected $_priceTax;
 
     /**
      * Flight segments
      * @var FlightSegmentCollection
      */
-    private $_segments;
+    protected $_segments;
 
     /**
      * Validating carrier IATA
