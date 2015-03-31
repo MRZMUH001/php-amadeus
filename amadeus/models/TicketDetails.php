@@ -34,6 +34,13 @@ class TicketDetails
     private $_lastTicketingDate = null;
 
     /**
+     * Fare rules
+     *
+     * @var string
+     */
+    private $_rules = '';
+
+    /**
      * Constructor
      *
      * @param Money[] $fares
@@ -88,6 +95,22 @@ class TicketDetails
     public function getLastTicketingDate()
     {
         return $this->_lastTicketingDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRules()
+    {
+        return $this->_rules;
+    }
+
+    /**
+     * @param string $rules
+     */
+    public function setRules($rules)
+    {
+        $this->_rules = $rules;
     }
 
 }

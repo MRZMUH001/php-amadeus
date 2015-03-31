@@ -7,6 +7,7 @@ use Amadeus\Methods\InformativePricingWithoutPnrTrait;
 use Amadeus\Methods\PricePnrWithBookingClassTrait;
 use Amadeus\Methods\SearchTicketsMethodTrait;
 use Amadeus\Methods\SellFromRecommendationTrait;
+use Amadeus\models\TicketPrice;
 
 class Client
 {
@@ -117,4 +118,25 @@ class Client
     {
         return intval($duration / 100) * 60 + $duration % 100;
     }
+
+    /**
+     * Prepare everything for booking page
+     *
+     * @param TicketPrice $ticketPrice
+     * @param string $currency currency
+     * @param int $adults Number of adults
+     * @param int $children Number of children
+     * @param int $infants Number of infants
+     * @return models\TicketDetails
+     * @throws \amadeus\exceptions\UnableToSellException
+     */
+    public function prepareBooking(TicketPrice $ticketPrice, $currency, $adults, $children = 0, $infants = 0)
+    {
+        $this->sellFromRecommendation($ticketPrice, $adults);
+        $ticketDetails = $this->pricePnrWithBookingClass($currency);
+        $ticketDetails->setRules($this->getFareRules());
+
+        return $ticketDetails;
+    }
+
 }
