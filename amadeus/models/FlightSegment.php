@@ -57,7 +57,7 @@ class FlightSegment
     private $_arrivalDate;
 
     /**
-     * Arrival time
+     * Arrival time (H:m)
      * @var string
      */
     private $_arrivalTime;
@@ -69,7 +69,7 @@ class FlightSegment
     private $_departureDate;
 
     /**
-     * Departure time
+     * Departure time (H:m)
      * @var string
      */
     private $_departureTime;
@@ -193,6 +193,8 @@ class FlightSegment
     }
 
     /**
+     * Arrival time (H:m)
+     *
      * @return string
      */
     public function getArrivalTime()
@@ -209,6 +211,8 @@ class FlightSegment
     }
 
     /**
+     * Departure time (H:m)
+     *
      * @return string
      */
     public function getDepartureTime()
@@ -217,6 +221,8 @@ class FlightSegment
     }
 
     /**
+     * Plane type IATA
+     *
      * @return null|string
      */
     public function getEquipmentTypeIata()
@@ -283,5 +289,54 @@ class FlightSegment
         }
 
         return new FlightSegment($operatingCarrier, $marketingCarrier, $departureIata, $arrivalIata, $flightNumber, null, null, $departureDate);
+    }
+
+    /**
+     * Departure DateTime with timezone
+     *
+     * @param callable $timezoneResolver Function resolving IATA to timezone string
+     * @return DateTime
+     */
+    public function getDepartureDateTime($timezoneResolver)
+    {
+        $date = clone $this->getDepartureDate();
+        list($hour, $minute) = explode(':', $this->getDepartureTime());
+        $date->setTime($hour, $minute);
+
+        $timezone = $timezoneResolver($this->getDepartureIata());
+        $date->setTimezone(new \DateTimeZone($timezone));
+
+        return $date;
+    }
+
+    /**
+     * Arrival DateTime with timezone
+     *
+     * @param callable $timezoneResolver Function resolving IATA to timezone string
+     * @return DateTime
+     */
+    public function getArrivalDateTime($timezoneResolver)
+    {
+        $date = clone $this->getArrivalDate();
+        list($hour, $minute) = explode(':', $this->getArrivalTime());
+        $date->setTime($hour, $minute);
+
+        $timezone = $timezoneResolver($this->getArrivalIata());
+        $date->setTimezone(new \DateTimeZone($timezone));
+
+        return $date;
+    }
+
+    /**
+     * Return segment duration in minutes
+     *
+     * @param callable $timezoneResolver
+     * @return int
+     */
+    public function getDurationInMinutes($timezoneResolver)
+    {
+        $diff = $this->getArrivalDateTime($timezoneResolver)->getTimestamp() - $this->getDepartureDateTime($timezoneResolver)->getTimestamp();
+
+        return $diff;
     }
 }
