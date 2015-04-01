@@ -81,6 +81,12 @@ class FlightSegment
     private $_equipmentTypeIata;
 
     /**
+     * Booking class
+     * @var null
+     */
+    private $_bookingClass = null;
+
+    /**
      * @param string $operatingCarrierIata
      * @param string $marketingCarrierIata
      * @param string $departureIata
@@ -341,4 +347,21 @@ class FlightSegment
 
         return abs(round($diff / 60));
     }
+
+    /**
+     * @return null
+     */
+    public function getBookingClass()
+    {
+        return $this->_bookingClass;
+    }
+
+    /**
+     * @param null $bookingClass
+     */
+    public function setBookingClass($bookingClass)
+    {
+        $this->_bookingClass = $bookingClass;
+    }
+
 }

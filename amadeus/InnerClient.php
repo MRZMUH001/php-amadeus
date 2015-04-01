@@ -9,7 +9,9 @@
  */
 
 namespace Amadeus;
-use Amadeus\models\TicketPrice;
+
+use amadeus\exceptions\AmadeusException;
+use Amadeus\models\TicketDetails;
 
 /**
  * @see https://extranets.us.amadeus.com
@@ -112,8 +114,7 @@ class InnerClient
         $params = [];
         $params['Security_SignOut']['SessionId'] = $this->_headers['SessionId'];
 
-        $this->_data = $this->soapCall('Security_SignOut', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('Security_SignOut', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -130,8 +131,7 @@ class InnerClient
         $params['Command_Cryptic']['longTextString']['textStringDetails'] = $string;
         $params['Command_Cryptic']['messageAction']['messageFunctionDetails']['messageFunction'] = 'M';
 
-        $this->_data = $this->soapCall('Command_Cryptic', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('Command_Cryptic', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -177,8 +177,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['airlineOrFlightOption']['flightIdentification']['number'] = $air_num;
         $params['Air_MultiAvailability']['requestSection']['availabilityOptions']['productTypeDetails']['typeOfRequest'] = 'TN';
 
-        $this->_data = $this->soapCall('Air_MultiAvailability', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('Air_MultiAvailability', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -205,8 +204,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['availabilityOptions']['productTypeDetails']['typeOfRequest'] = 'TN';
         $params['Air_MultiAvailability']['requestSection']['cabinOption']['cabinDesignation']['cabinClassOfServiceList'] = $service;
 
-        $this->_data = $this->soapCall('Air_MultiAvailability', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('Air_MultiAvailability', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -291,12 +289,7 @@ class InnerClient
             $params['Fare_MasterPricerTravelBoardSearch']['itinerary'][1]['timeDetails']['firstDateTimeDetail']['date'] = $return_date;
         }
 
-        $this->_data = $this->soapCall(
-            'Fare_MasterPricerTravelBoardSearch',
-            $params,
-            null,
-            $this->getHeader(),
-            $this->_headers);
+        $this->_data = $this->soapCall('Fare_MasterPricerTravelBoardSearch', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -466,13 +459,14 @@ class InnerClient
     /**
      *
      *
-     * @param TicketPrice $ticketPrice
+     * @param TicketDetails $ticketDetails
      * @param int $adults
      * @param int $infants
      * @param int $children
      * @param string $currency
+     * @return array
      */
-    public function fareInformativePricingWithoutPnr($ticketPrice, $adults, $infants, $children, $currency)
+    public function fareInformativePricingWithoutPnr($ticketDetails, $adults, $infants, $children, $currency)
     {
         $params = [];
 
@@ -483,7 +477,7 @@ class InnerClient
             'numberOfUnits' => $adults
         ];
         for ($i = 1; $i < $adults; $i++)
-            $passengerGroup['travellersID'][] = ['travellerDetails']['measurementValue'] = $i;
+            $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
         $passengerGroups[] = $passengerGroup;
         $passengerGroup = [];
 
@@ -494,12 +488,12 @@ class InnerClient
                 'numberOfUnits' => $infants
             ];
             for ($i = 1; $i <= $infants; $i++)
-                $passengerGroup['travellersID'][] = ['travellerDetails']['measurementValue'] = $i;
+                $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
             $passengerGroup['discountPtc'] = [
                 'valueQualifier' => 'INF',
                 'fareDetails' => ['qualifier' => 766]
             ];
-            $passengerGroups = $passengerGroup;
+            $passengerGroups[] = $passengerGroup;
             $passengerGroup = [];
         }
 
@@ -510,26 +504,26 @@ class InnerClient
                 'numberOfUnits' => $children
             ];
             for ($i = 1; $i <= $children; $i++)
-                $passengerGroup['travellersID'][] = ['travellerDetails']['measurementValue'] = $i + $adults;
+                $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i + $adults;
             $passengerGroup['discountPtc'] = [
                 'valueQualifier' => 'CH'
             ];
-            $passengerGroups = $passengerGroup;
+            $passengerGroups[] = $passengerGroup;
         }
 
         $params['Fare_InformativePricingWithoutPNR']['passengersGroup'] = $passengerGroups;
 
         //Segments
         $i = 1;
-        foreach ($ticketPrice->getSegments()->getSegements() as $segment) {
-            $segments = [];
+        $segments = [];
+        foreach ($ticketDetails->getSegments()->getSegments() as $segment) {
             $segments[] = [
                 'segmentInformation' => [
                     'flightDate' => [
                         'departureDate' => $segment->getDepartureDate()->format('dmy'),
-                        'departureTime' => $segment->getDepartureTime(),
+                        'departureTime' => str_replace(':', '', $segment->getDepartureTime()),
                         'arrivalDate' => $segment->getArrivalDate()->format('dmy'),
-                        'arrivalTime' => $segment->getArrivalTime()
+                        'arrivalTime' => str_replace(':', '', $segment->getArrivalTime())
                     ],
                     'boardPointDetails' => [
                         'trueLocationId' => $segment->getDepartureIata()
@@ -543,15 +537,16 @@ class InnerClient
                     ],
                     'flightIdentification' => [
                         'flightNumber' => $segment->getFlightNumber(),
-                        'bookingClass' => $ticketPrice->getBookingClasses()[$i - 1]
+                        'bookingClass' => $segment->getBookingClass()
                     ],
                     'flightTypeDetails' => [
                         'flightIndicator' => 0
                     ],
-                    'itemNumber' => $i
+                    'itemNumber' => $i++
                 ]
             ];
         }
+        $params['Fare_InformativePricingWithoutPNR']['segmentGroup'] = $segments;
 
         //Pricing
         //Currency override
@@ -581,6 +576,9 @@ class InnerClient
     {
         $data = $this->_client->__soapCall($name, $params, null, $this->getHeader(), $this->_headers);
 
+        if(isset($data->errorMessage))
+            throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error.' - '.$data->errorMessage->errorMessageText->description);
+
         return $data;
     }
 
@@ -599,8 +597,7 @@ class InnerClient
             $params['Ticket_CreateTSTFromPricing']['psaList'][$i]['itemReference']['uniqueReference'] = $i + 1;
         }
 
-        $this->_data = $this->soapCall('Ticket_CreateTSTFromPricing', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('Ticket_CreateTSTFromPricing', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -614,8 +611,7 @@ class InnerClient
         $params = [];
         $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
 
-        $this->_data = $this->soapCall('PNR_AddMultiElements', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('PNR_AddMultiElements', $params);
 
         return $this->debugDump($params, $this->_data);
     }
@@ -633,8 +629,7 @@ class InnerClient
         $params['PNR_Retrieve']['retrievalFacts']['retrieve']['type'] = 2;
         $params['PNR_Retrieve']['retrievalFacts']['reservationOrProfileIdentifier']['reservation']['controlNumber'] = $pnr_id;
 
-        $this->_data = $this->soapCall('PNR_Retrieve', $params, null,
-            $this->getHeader(), $this->_headers);
+        $this->_data = $this->soapCall('PNR_Retrieve', $params);
 
         return $this->debugDump($params, $this->_data);
     }

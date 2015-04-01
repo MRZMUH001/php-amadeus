@@ -9,7 +9,7 @@ class FlightSegmentCollection
      * Flight segments
      * @var FlightSegment[]
      */
-    private $_segements = [];
+    private $_segments = [];
 
     /**
      * Estimated flight price
@@ -20,9 +20,9 @@ class FlightSegmentCollection
     /**
      * @return FlightSegment[]
      */
-    public function getSegements()
+    public function getSegments()
     {
-        return $this->_segements;
+        return $this->_segments;
     }
 
     /**
@@ -31,7 +31,7 @@ class FlightSegmentCollection
      */
     public function addSegment(FlightSegment $segment)
     {
-        $this->_segements[] = $segment;
+        $this->_segments[] = $segment;
     }
 
     /**

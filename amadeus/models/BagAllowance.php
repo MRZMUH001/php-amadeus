@@ -10,67 +10,35 @@ class BagAllowance {
      *
      * @var float
      */
-    private $_weight;
+    private $_freeAllowance;
 
     /**
-     * N - quantity or W - weight
+     * N(number of bags)/700
      *
      * @var string
      */
-    private $_type;
+    private $_quantityCode;
 
-    /**
-     * Measurement unit (usually kilos - K)
-     *
-     * @var string
-     */
-    private $_unit;
-
-    /**
-     * Number of bags
-     *
-     * @var int
-     */
-    private $_quantity;
-
-    function __construct($weight, $type, $unit,$quantity)
+    function __construct($freeAllowance, $quantityCode)
     {
-        $this->_weight = $weight;
-        $this->_type = $type;
-        $this->_unit = $unit;
-        $this->_quantity = $quantity;
+        $this->_freeAllowance = $freeAllowance;
+        $this->_quantityCode = $quantityCode;
     }
 
     /**
      * @return float
      */
-    public function getWeight()
+    public function getFreeAllowance()
     {
-        return $this->_weight;
+        return $this->_freeAllowance;
     }
 
     /**
      * @return string
      */
-    public function getType()
+    public function getQuantityCode()
     {
-        return $this->_type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUnit()
-    {
-        return $this->_unit;
-    }
-
-    /**
-     * @return int
-     */
-    public function getQuantity()
-    {
-        return $this->_quantity;
+        return $this->_quantityCode;
     }
 
 }

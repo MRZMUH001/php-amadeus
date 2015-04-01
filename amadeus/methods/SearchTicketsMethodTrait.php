@@ -95,7 +95,7 @@ trait SearchTicketsMethodTrait
             }
         }
 
-        //Parse recomendations
+        //Parse recommendations
         foreach ($data->recommendation as $recommendation) {
             //Get prices
             $priceTotal = Money::fromString((string)$recommendation->paxFareProduct->paxFareDetail->totalFareAmount, new Currency($currency));

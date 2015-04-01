@@ -138,9 +138,16 @@ class Client
      */
     public function prepareBooking(TicketPrice $ticketPrice, $request)
     {
+        //Check bookingability + add segment details
         $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
-        $ticketDetails = $this->pricePnrWithBookingClass($ticketDetails, $request->getCurrency());
-        $this->informativePricingWithoutPnr($ticketPrice, $request);
+
+        //Who knows what for :)
+        $this->pricePnrWithBookingClass($ticketDetails, $request->getCurrency());
+
+        //Get proper fares
+        $ticketDetails = $this->informativePricingWithoutPnr($ticketDetails, $request);
+
+        //Set fare rules
         $ticketDetails->setRules($this->getFareRules());
 
         return $ticketDetails;

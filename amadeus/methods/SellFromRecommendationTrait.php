@@ -5,7 +5,6 @@ namespace Amadeus\Methods;
 
 use amadeus\exceptions\UnableToSellException;
 use Amadeus\models\FlightSegment;
-use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\TicketDetails;
 use Amadeus\models\TicketPrice;
 
@@ -28,7 +27,7 @@ trait SellFromRecommendationTrait
         $segments = [];
 
         $i = 0;
-        foreach ($ticketPrice->getSegments()->getSegements() as $segment) {
+        foreach ($ticketPrice->getSegments()->getSegments() as $segment) {
             $segments[] = [
                 'dep_date' => $segment->getDepartureDate()->format('dmy'),
                 'dep_location' => $segment->getDepartureIata(),
@@ -65,7 +64,9 @@ trait SellFromRecommendationTrait
                 $this->convertAmadeusTime((string)$fi->flightDate->departureTime)
             );
             $segment->setEquipmentTypeIata((string)$s->apdSegment->legDetails->equipment);
-            $segment->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);
+            if (isset($s->apdSegment->arrivalStationInfo->terminal))
+                $segment->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);
+            $segment->setBookingClass((string)$fi->flightIdentification->bookingClass);
             $ticketDetails->addSegment($segment);
         }
 

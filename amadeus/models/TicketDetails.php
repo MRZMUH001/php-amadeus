@@ -45,6 +45,13 @@ class TicketDetails
      */
     private $_rules = '';
 
+    /**
+     * Is published fare
+     *
+     * @var bool
+     */
+    private $_isPublishedFare;
+
     function __construct()
     {
         $this->_segments = new FlightSegmentCollection();
@@ -153,6 +160,22 @@ class TicketDetails
     public function addSegment($segment)
     {
         $this->_segments->addSegment($segment);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPublishedFare()
+    {
+        return $this->_isPublishedFare;
+    }
+
+    /**
+     * @param boolean $isPublishedFare
+     */
+    public function setIsPublishedFare($isPublishedFare)
+    {
+        $this->_isPublishedFare = $isPublishedFare;
     }
 
 }

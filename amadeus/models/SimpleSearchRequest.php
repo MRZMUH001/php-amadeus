@@ -98,7 +98,7 @@ class SimpleSearchRequest
      */
     public function getInfants()
     {
-        return ($this->_adults >= $$this->_infants) ? $this->_infants : $this->_adults;
+        return ($this->_adults >= $this->_infants) ? $this->_infants : $this->_adults;
     }
 
     /**
