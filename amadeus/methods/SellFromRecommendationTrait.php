@@ -15,14 +15,15 @@ trait SellFromRecommendationTrait
     use BasicMethodsTrait;
 
     /**
+     * Checks if all segments are confirmed and return segments data
      *
      * @param TicketPrice $ticketPrice
-     * @param int $passengers Number of passengers
+     * @param int $seats Number of seats
      *
      * @throws UnableToSellException
      * @return TicketDetails
      */
-    public function sellFromRecommendation(TicketPrice $ticketPrice, $passengers)
+    public function sellFromRecommendation(TicketPrice $ticketPrice, $seats)
     {
         $segments = [];
 
@@ -35,7 +36,7 @@ trait SellFromRecommendationTrait
                 'company' => $segment->getMarketingCarrierIata(),
                 'flight_no' => $segment->getFlightNumber(),
                 'class' => $ticketPrice->getBookingClasses()[$i],
-                'passengers' => $passengers
+                'passengers' => $seats
             ];
             $i++;
         }

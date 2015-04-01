@@ -9,6 +9,7 @@
  */
 
 namespace Amadeus;
+use Amadeus\models\TicketPrice;
 
 /**
  * @see https://extranets.us.amadeus.com
@@ -459,6 +460,120 @@ class InnerClient
 
         $this->_data = $this->soapCall("Fare_PricePNRWithBookingClass", $params);
 
+        return $this->debugDump($params, $this->_data);
+    }
+
+    /**
+     *
+     *
+     * @param TicketPrice $ticketPrice
+     * @param int $adults
+     * @param int $infants
+     * @param int $children
+     * @param string $currency
+     */
+    public function fareInformativePricingWithoutPnr($ticketPrice, $adults, $infants, $children, $currency)
+    {
+        $params = [];
+
+        //Adults
+        $passengerGroups = [];
+        $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
+            'quantity' => 1,
+            'numberOfUnits' => $adults
+        ];
+        for ($i = 1; $i < $adults; $i++)
+            $passengerGroup['travellersID'][] = ['travellerDetails']['measurementValue'] = $i;
+        $passengerGroups[] = $passengerGroup;
+        $passengerGroup = [];
+
+        //Infants
+        if ($infants > 0) {
+            $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
+                'quantity' => 2,
+                'numberOfUnits' => $infants
+            ];
+            for ($i = 1; $i <= $infants; $i++)
+                $passengerGroup['travellersID'][] = ['travellerDetails']['measurementValue'] = $i;
+            $passengerGroup['discountPtc'] = [
+                'valueQualifier' => 'INF',
+                'fareDetails' => ['qualifier' => 766]
+            ];
+            $passengerGroups = $passengerGroup;
+            $passengerGroup = [];
+        }
+
+        //Children
+        if ($children > 0) {
+            $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
+                'quantity' => 3,
+                'numberOfUnits' => $children
+            ];
+            for ($i = 1; $i <= $children; $i++)
+                $passengerGroup['travellersID'][] = ['travellerDetails']['measurementValue'] = $i + $adults;
+            $passengerGroup['discountPtc'] = [
+                'valueQualifier' => 'CH'
+            ];
+            $passengerGroups = $passengerGroup;
+        }
+
+        $params['Fare_InformativePricingWithoutPNR']['passengersGroup'] = $passengerGroups;
+
+        //Segments
+        $i = 1;
+        foreach ($ticketPrice->getSegments()->getSegements() as $segment) {
+            $segments = [];
+            $segments[] = [
+                'segmentInformation' => [
+                    'flightDate' => [
+                        'departureDate' => $segment->getDepartureDate()->format('dmy'),
+                        'departureTime' => $segment->getDepartureTime(),
+                        'arrivalDate' => $segment->getArrivalDate()->format('dmy'),
+                        'arrivalTime' => $segment->getArrivalTime()
+                    ],
+                    'boardPointDetails' => [
+                        'trueLocationId' => $segment->getDepartureIata()
+                    ],
+                    'offpointDetails' => [
+                        'trueLocationId' => $segment->getArrivalIata()
+                    ],
+                    'companyDetails' => [
+                        'marketingCompany' => $segment->getMarketingCarrierIata(),
+                        'operatingCompany' => $segment->getOperatingCarrierIata()
+                    ],
+                    'flightIdentification' => [
+                        'flightNumber' => $segment->getFlightNumber(),
+                        'bookingClass' => $ticketPrice->getBookingClasses()[$i - 1]
+                    ],
+                    'flightTypeDetails' => [
+                        'flightIndicator' => 0
+                    ],
+                    'itemNumber' => $i
+                ]
+            ];
+        }
+
+        //Pricing
+        //Currency override
+        $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][0] = [
+            'pricingOptionKey' => [
+                'pricingOptionKey' => 'FCO'
+            ],
+            'currency' => [
+                'firstCurrencyDetails' => [
+                    'currencyQualifier' => 'FCO',
+                    'currencyIsoCode' => $currency
+                ]
+            ]
+        ];
+
+        //Published fares
+        $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][1]['pricingOptionKey']['pricingOptionKey'] = 'RP';
+
+        //Unifares
+        $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][2]['pricingOptionKey']['pricingOptionKey'] = 'RU';
+
+        $this->_data = $this->soapCall("Fare_InformativePricingWithoutPNR", $params);
         return $this->debugDump($params, $this->_data);
     }
 

@@ -3,8 +3,8 @@
 namespace Amadeus\models;
 
 use amadeus\exceptions\ValidationException;
-use Respect\Validation\Validator as v;
 use DateTime;
+use Respect\Validation\Validator as v;
 
 class SimpleSearchRequest
 {
@@ -73,6 +73,7 @@ class SimpleSearchRequest
 
     /**
      * Number of adults
+     *
      * @return int
      */
     public function getAdults()
@@ -82,24 +83,37 @@ class SimpleSearchRequest
 
     /**
      * Number of children
+     *
      * @return int
      */
     public function getChildren()
     {
-        return $this->_children;
+        return $this->_children + (($this->_adults < $this->_infants) ? ($this->_infants - $this->_adults) : 0);
     }
 
     /**
      * Number of infants
+     *
      * @return int
      */
     public function getInfants()
     {
-        return $this->_infants;
+        return ($this->_adults >= $$this->_infants) ? $this->_infants : $this->_adults;
+    }
+
+    /**
+     * Number of occupied seats
+     *
+     * @return int
+     */
+    public function getSeats()
+    {
+        return max($this->getAdults(), $this->getInfants()) + $this->getChildren();
     }
 
     /**
      * Date of flight
+     *
      * @return DateTime
      */
     public function getDate()
@@ -109,6 +123,7 @@ class SimpleSearchRequest
 
     /**
      * Origin IATA
+     *
      * @return string
      */
     public function getOrigin()
@@ -118,6 +133,7 @@ class SimpleSearchRequest
 
     /**
      * Destination IATA
+     *
      * @return string
      */
     public function getDestination()
@@ -127,6 +143,7 @@ class SimpleSearchRequest
 
     /**
      * Date of return flight or null if one-way
+     *
      * @return DateTime|null
      */
     public function getDateReturn()
@@ -136,6 +153,7 @@ class SimpleSearchRequest
 
     /**
      * One way flight request
+     *
      * @return bool
      */
     public function isOneWay()
@@ -145,6 +163,7 @@ class SimpleSearchRequest
 
     /**
      * Currency of price request
+     *
      * @return string
      */
     public function getCurrency()
@@ -154,6 +173,7 @@ class SimpleSearchRequest
 
     /**
      * Type of cabin, Y-economy, C-business
+     *
      * @return string
      */
     public function getCabin()
@@ -162,7 +182,8 @@ class SimpleSearchRequest
     }
 
     /**
-     * Number of tickets to get
+     * Number of tickets to fetch
+     *
      * @return int
      */
     public function getLimit()
