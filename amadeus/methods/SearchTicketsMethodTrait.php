@@ -98,8 +98,8 @@ trait SearchTicketsMethodTrait
         //Parse recommendations
         foreach ($data->recommendation as $recommendation) {
             //Get prices
-            $priceTotal = Money::fromString((string)$recommendation->paxFareProduct->paxFareDetail->totalFareAmount, new Currency($currency));
-            $priceTax = Money::fromString((string)$recommendation->paxFareProduct->paxFareDetail->totalTaxAmount, new Currency($currency));
+            $priceTotal = Money::fromString((string)$recommendation->recPriceInfo->monetaryDetail[0]->amount, new Currency($currency));
+            $priceTax = Money::fromString((string)$recommendation->recPriceInfo->monetaryDetail[1]->amount, new Currency($currency));
             $priceFare = $priceTotal->subtract($priceTax);
 
             $blankCount = 1;//count($recommendation->xpath(".//traveller"));//TODO
@@ -110,29 +110,31 @@ trait SearchTicketsMethodTrait
             $fareBasis = [];
             $publishedFare = true;
 
-            if ((string)$recommendation->paxFareProduct->paxReference->ptc == 'ADT')
-                foreach ($this->iterateStd($recommendation->paxFareProduct->fareDetails->groupOfFares) as $fare) {
-                    $cabins[] = (string)$fare->productInformation->cabinProduct->cabin;
-                    $bookingClasses[] = (string)$fare->productInformation->cabinProduct->rbd;
-                    $availabilities[] = (string)$fare->productInformation->cabinProduct->avlStatus;
-                    $fareBasis[] = (string)$fare->productInformation->fareProductDetail->fareBasis;
+            foreach ($this->iterateStd($recommendation->paxFareProduct) as $fp)
+                if ((string)$fp->paxReference->ptc == 'ADT')
+                    foreach ($this->iterateStd($fp->fareDetails->groupOfFares) as $fare) {
+                        $cabins[] = (string)$fare->productInformation->cabinProduct->cabin;
+                        $bookingClasses[] = (string)$fare->productInformation->cabinProduct->rbd;
+                        $availabilities[] = (string)$fare->productInformation->cabinProduct->avlStatus;
+                        $fareBasis[] = (string)$fare->productInformation->fareProductDetail->fareBasis;
 
-                    $fareTypes = $fare->productInformation->fareProductDetail->fareType;
-                    if (is_string($fareTypes))
-                        $isPublished = $fareTypes == 'RP'; else
-                        $isPublished = array_search('RP', $fareTypes) !== false;
+                        $fareTypes = $fare->productInformation->fareProductDetail->fareType;
+                        if (is_string($fareTypes))
+                            $isPublished = $fareTypes == 'RP'; else
+                            $isPublished = array_search('RP', $fareTypes) !== false;
 
-                    $publishedFare = $publishedFare && $isPublished;
-                }
+                        $publishedFare = $publishedFare && $isPublished;
+                    }
 
             $validatingCarrierIata = '';
             $marketingCarrierIatas = [];
-            foreach ($this->IterateStd($recommendation->paxFareProduct->paxFareDetail->codeShareDetails) as $codeShare) {
-                if (isset($codeShare->transportStageQualifier) && (string)$codeShare->transportStageQualifier == 'V')
-                    $validatingCarrierIata = (string)$codeShare->company;
+            foreach ($this->iterateStd($recommendation->paxFareProduct) as $fp)
+                foreach ($this->iterateStd($fp->paxFareDetail->codeShareDetails) as $codeShare) {
+                    if (isset($codeShare->transportStageQualifier) && (string)$codeShare->transportStageQualifier == 'V')
+                        $validatingCarrierIata = (string)$codeShare->company;
 
-                $marketingCarrierIatas[] = (string)$codeShare->company;
-            }
+                    $marketingCarrierIatas[] = (string)$codeShare->company;
+                }
 
             $lastTktDate = null;
             if (isset($recommendation->paxFareProduct))
@@ -158,8 +160,9 @@ trait SearchTicketsMethodTrait
             $additionalInfo = '';
             if (isset($recommendation->paxFareProduct->fare->pricingMessage->description))
                 $additionalInfo = $recommendation->paxFareProduct->fare->pricingMessage->description;
-            foreach ($this->iterateStd($recommendation->paxFareProduct->fareDetails->groupOfFares) as $fare)
-                $additionalInfo .= "\n\nFare basis: " . (string)$fare->productInformation->fareProductDetail->fareBasis;
+            foreach ($this->iterateStd($recommendation->paxFareProduct) as $fp)
+                foreach ($this->iterateStd($fp->fareDetails->groupOfFares) as $fare)
+                    $additionalInfo .= "\n\nFare basis: " . (string)$fare->productInformation->fareProductDetail->fareBasis;
 
             $results[] = new TicketPrice(
                 $blankCount,
@@ -167,7 +170,7 @@ trait SearchTicketsMethodTrait
                 $priceTax,
                 $segments,
                 $validatingCarrierIata,
-                $marketingCarrierIatas,
+                array_unique($marketingCarrierIatas),
                 $additionalInfo,
                 $cabins,
                 $bookingClasses,

@@ -64,12 +64,15 @@ class TicketDetails
      */
     public function getTotalTaxes()
     {
-        $tax = Money::fromString('0', $this->_taxes[0]->getCurrency());
 
-        foreach ($this->_taxes as $t)
-            $tax = $tax->add($t);
+        /**
+         * $tax = Money::fromString('0', $this->_taxes[0]->getCurrency());
+         *
+         * foreach ($this->_taxes as $t)
+         * $tax = $tax->add($t);
+         */
 
-        return $tax;
+        return $this->_fares['712']->subtract($this->getFare());
     }
 
     /**

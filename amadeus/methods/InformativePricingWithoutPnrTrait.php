@@ -27,7 +27,7 @@ trait InformativePricingWithoutPnrTrait
         $totalFares = [];
         $totalTaxes = [];
         $segmentDetails = [];
-        $isPublishedFare = $data->mainGroup->generalIndicatorsGroup->generalIndicators->priceTicketDetails->indicators = 'I';
+        $isPublishedFare = $data->mainGroup->generalIndicatorsGroup->generalIndicators->priceTicketDetails->indicators == 'I';
 
         //Iterate via passenger groups
         $groupNumber = 0;
@@ -35,16 +35,17 @@ trait InformativePricingWithoutPnrTrait
             $personsCount = $g->numberOfPax->segmentControlDetails->numberOfUnits;
 
             //Fares
-            foreach ($g->fareAmount->children() as $d) {
-                $fare = Money::fromString(floatval((string)$d->amount) * $personsCount, new Currency((string)$d->currency));
+            foreach ($g->fareInfoGroup->fareAmount as $d) {
+                $fare = Money::fromString((string)(floatval((string)$d->amount) * $personsCount), new Currency((string)$d->currency));
                 $totalFares[(string)$d->typeQualifier] = isset($totalFares[(string)$d->typeQualifier]) ? $fare->add($totalFares[(string)$d->typeQualifier]) : $fare;
             }
 
             //Taxes
-            foreach ($this->iterateStd($g->surchargeGroup->taxesAmount->taxDetails) as $d) {
-                $tax = Money::fromString(floatval((string)$d->rate) * $personsCount, new Currency($request->getCurrency()));;
-                $totalTaxes[(string)$d->type] = isset($totalTaxes[(string)$d->type]) ? $tax->add($totalTaxes[(string)$d->type]) : $tax;
-            }
+            if (isset($g->fareInfoGroup->surchargesGroup->taxesAmount) && isset($g->fareInfoGroup->surchargesGroup->taxesAmount->taxDetails))
+                foreach ($this->iterateStd($g->fareInfoGroup->surchargesGroup->taxesAmount->taxDetails) as $d) {
+                    $tax = Money::fromString((string)(floatval((string)$d->rate) * $personsCount), new Currency($request->getCurrency()));;
+                    $totalTaxes[(string)$d->type] = isset($totalTaxes[(string)$d->type]) ? $tax->add($totalTaxes[(string)$d->type]) : $tax;
+                }
 
             //Iterate segments for first passenger group TODO: Find out the right way
             if ($groupNumber++ == 0)

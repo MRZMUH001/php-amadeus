@@ -112,8 +112,13 @@ class Client
      */
     protected function convertAmadeusTime($time)
     {
-        $minutes = substr($time, -2);
-        $hours = substr($time, 0, strlen($time) - 2);
+        if (strlen($time) == 2) {
+            $hours = substr($time, 0, 1);
+            $minutes = substr($time, 1, 1);
+        } else {
+            $minutes = substr($time, -2);
+            $hours = substr($time, 0, strlen($time) - 2);
+        }
 
         return $hours . ":" . $minutes;
     }

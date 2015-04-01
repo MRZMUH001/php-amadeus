@@ -226,34 +226,28 @@ class InnerClient
     public function fareMasterPricerTravelBoardSearch($deprt_date, $deprt_loc, $arrive_loc, $travellers, $return_date = null, $limitTickets = 100, $currency = 'USD', $cabin = 'Y')
     {
         $params = [];
-        $j = 0;
-        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j]['numberOfUnits'] = $travellers['A'] + $travellers['C'];
-        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j]['typeOfUnit'] = 'PX';
-        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j + 1]['numberOfUnits'] = $limitTickets;
-        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][$j + 1]['typeOfUnit'] = 'RC';
-        $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['ptc'] = 'ADT';
+        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][0]['numberOfUnits'] = $travellers['A'] + $travellers['C'];
+        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][0]['typeOfUnit'] = 'PX';
+        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][1]['numberOfUnits'] = $limitTickets;
+        $params['Fare_MasterPricerTravelBoardSearch']['numberOfUnit']['unitNumberDetail'][1]['typeOfUnit'] = 'RC';
 
-        for ($i = 1; $i <= $travellers['A']; $i++) {
-            $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['traveller'][]['ref'] = $i;
-        }
+        $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][0]['ptc'] = 'ADT';
+        for ($i = 1; $i <= $travellers['A']; $i++)
+            $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][0]['traveller'][]['ref'] = $i;
 
+        $j = 1;
         if ($travellers['C'] > 0) {
+            $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['ptc'] = 'CH';
+            for ($i = 1; $i <= $travellers['C']; $i++)
+                $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['traveller'][]['ref'] = $i + $travellers['A'];
             $j++;
-            $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['ptc'] = 'CNN';
-            for (; $i <= $travellers['C'] + $travellers['A']; $i++) {
-                $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['traveller'][]['ref'] = $i;
-            }
         }
 
         if ($travellers['I'] > 0) {
-            $j++;
             $k = 0;
             $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['ptc'] = 'INF';
-            for (; $i <= $travellers['I'] + $travellers['C'] + $travellers['A']; $i++) {
-                $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['traveller'][$k]['ref'] = $i;
-                $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['traveller'][$k]['infantIndicator'] = 1;
-                $k++;
-            }
+            for ($i = 1; $i <= $travellers['I']; $i++)
+                $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['traveller'][] = ['ref' => $i, 'infantIndicator' => 1];
         }
 
         $params['Fare_MasterPricerTravelBoardSearch']['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = [
@@ -576,8 +570,8 @@ class InnerClient
     {
         $data = $this->_client->__soapCall($name, $params, null, $this->getHeader(), $this->_headers);
 
-        if(isset($data->errorMessage))
-            throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error.' - '.$data->errorMessage->errorMessageText->description);
+        if (isset($data->errorMessage))
+            throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error . ' - ' . $data->errorMessage->errorMessageText->description);
 
         return $data;
     }
