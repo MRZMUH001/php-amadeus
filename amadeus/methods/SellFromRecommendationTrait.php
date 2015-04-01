@@ -2,8 +2,7 @@
 
 namespace Amadeus\Methods;
 
-
-use amadeus\exceptions\UnableToSellException;
+use Amadeus\exceptions\UnableToSellException;
 use Amadeus\models\FlightSegment;
 use Amadeus\models\TicketDetails;
 use Amadeus\models\TicketPrice;

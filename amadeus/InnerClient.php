@@ -10,7 +10,7 @@
 
 namespace Amadeus;
 
-use amadeus\exceptions\AmadeusException;
+use Amadeus\exceptions\AmadeusException;
 use Amadeus\models\TicketDetails;
 
 /**
