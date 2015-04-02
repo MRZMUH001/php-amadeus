@@ -50,7 +50,7 @@ trait PricePnrWithBookingClassTrait
         );
 
         $segments = [];
-        foreach ($data->fareList->segmentInformation as $s) {
+        foreach ($this->iterateStd($data->fareList->segmentInformation) as $s) {
             $classOfService = $s->segDetails->segmentDetail->classOfService;
             $bagAllowanceInformation = $s->bagAllowanceInformation->bagAllowanceDetails;
             $bagAllowance = new BagAllowance(
