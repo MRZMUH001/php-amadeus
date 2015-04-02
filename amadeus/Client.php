@@ -44,6 +44,11 @@ class Client
     private $_ws = null;
 
     /**
+     * @var \Monolog\Logger
+     */
+    private $_logger;
+
+    /**
      * Constructor
      *
      * @param string $env
@@ -52,8 +57,12 @@ class Client
     public function __construct($env = 'prod', $debug = true)
     {
         $path = realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . 'prod' . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl';
+
         // Instantiate the Amadeus class (Debug enabled)
         $this->_ws = new InnerClient($path, $env, $debug);
+
+        //Copy logger
+        $this->_logger = &$this->_ws->getLogger();
     }
 
     /**
@@ -182,6 +191,14 @@ class Client
 
         //Add passenger details
         return $this->addMultiPnrTrait($passengers, $ticketPrice, $email, $phone);
+    }
+
+    /**
+     * @return \Monolog\Logger
+     */
+    public function getLogger()
+    {
+        return $this->_logger;
     }
 
 }
