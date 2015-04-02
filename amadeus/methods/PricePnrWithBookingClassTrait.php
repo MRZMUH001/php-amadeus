@@ -49,7 +49,6 @@ trait PricePnrWithBookingClassTrait
             ])
         );
 
-        /*
         $segments = [];
         foreach ($data->fareList->segmentInformation as $s) {
             $classOfService = $s->segDetails->segmentDetail->classOfService;
@@ -66,7 +65,7 @@ trait PricePnrWithBookingClassTrait
         $ticketDetails->setFares($fareList);
         $ticketDetails->setTaxes($taxesList);
         $ticketDetails->setSegmentDetails($segments);
-        */
+
         $ticketDetails->setLastTicketingDate($lastTktDate);
 
         return $ticketDetails;

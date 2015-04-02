@@ -231,7 +231,7 @@ class FlightSegment
         $time = $this->_departureTime;
         if (strlen($time) < 5) {
             list($hour, $minutes) = explode(':', $time);
-            return sprintf('%02d%02d', $hour, $minutes);
+            return sprintf('%02d:%02d', $hour, $minutes);
         }
         return $time;
     }
