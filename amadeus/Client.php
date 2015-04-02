@@ -188,7 +188,7 @@ class Client
      * @return array
      * @throws \amadeus\exceptions\UnableToSellException
      */
-    public function prebook(TicketPrice $ticketPrice, $request, $passengers, $email = null, $phone = null)
+    public function createPnr(TicketPrice $ticketPrice, $request, $passengers, $email = null, $phone = null)
     {
         //Check bookingability + add segment details
         $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
