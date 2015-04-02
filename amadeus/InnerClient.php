@@ -14,7 +14,6 @@ use Amadeus\exceptions\AmadeusException;
 use Amadeus\models\Passenger;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\TicketDetails;
-use Amadeus\models\TicketPrice;
 use Monolog\Logger;
 
 /**
@@ -296,10 +295,14 @@ class InnerClient
      * Make reservation call
      *
      * @param PassengerCollection $travellers
-     * @param TicketPrice $ticketPrice
+     * @param TicketDetails $ticketDetails
+     * @param string $validatingCarrier
+     * @param string $phoneNumber
+     * @param string $email
      * @return Object
+     * @throws AmadeusException
      */
-    public function pnrAddMultiElements($travellers, $ticketPrice, $phoneNumber = null, $email = null)
+    public function pnrAddMultiElements($travellers, $ticketDetails, $validatingCarrier, $phoneNumber = null, $email = null)
     {
         $params = [];
         $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
@@ -406,8 +409,8 @@ class InnerClient
                 'passengerType' => 'PAX',
                 'ticket' => [
                     'indicator' => 'XL',
-                    'date' => $ticketPrice->getSegments()->getSegments()[0]->getDepartureDate()->format('dmy'),
-                    'time' => substr_replace(':', '', $ticketPrice->getSegments()->getSegments()[0]->getDepartureTime())
+                    'date' => $ticketDetails->getSegments()->getSegments()[0]->getDepartureDate()->format('dmy'),
+                    'time' => substr_replace(':', '', $ticketDetails->getSegments()->getSegments()[0]->getDepartureTime())
                 ]
             ]
         ];
@@ -419,7 +422,7 @@ class InnerClient
             ],
             'ticketingCarrier' => [
                 'carrier' => [
-                    'airlineCode' => $ticketPrice->getValidatingCarrierIata()
+                    'airlineCode' => $validatingCarrier
                 ]
             ]
         ];
@@ -435,7 +438,7 @@ class InnerClient
                         'subjectQualifier' => 3,
                         'type' => 3
                     ],
-                    'longFreetext' => str_replace(['-', '+', ' ', '(', ')', '.'], '', $phoneNumber)
+                    'longFreetext' => $phoneNumber
                 ]
             ];
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
@@ -501,7 +504,7 @@ class InnerClient
                 ],
                 'serviceRequest' => [
                     'ssr' => [
-                        'type' => 'RM',
+                        'type' => 'DOCS',
                         'status' => 'HK',
                         'quantity' => 1,
                         'companyId' => 'YY',
@@ -531,7 +534,7 @@ class InnerClient
                 ],
                 'fareElement' => [
                     'generalIndicator' => 'E',
-                    'freetextLong' => $ticketPrice->getValidatingCarrierIata() . " ONLY PSPT " . $passenger->clearedPassport(),
+                    'freetextLong' => $validatingCarrier . " ONLY PSPT " . $passenger->clearedPassport(),
                 ],
                 'referenceForDataElement' => [
                     'reference' => [
@@ -570,7 +573,7 @@ class InnerClient
                     'fareElement' => [
                         'generalIndicator' => 'E',
                         'passengerType' => 'INF',
-                        'freetextLong' => $ticketPrice->getValidatingCarrierIata() . " ONLY PSPT " . $infant->clearedPassport(),
+                        'freetextLong' => $validatingCarrier . " ONLY PSPT " . $infant->clearedPassport(),
                     ],
                     'referenceForDataElement' => [
                         'reference' => [

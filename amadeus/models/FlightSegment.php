@@ -87,6 +87,11 @@ class FlightSegment
     private $_bookingClass = null;
 
     /**
+     * @var int
+     */
+    private $_technicalStopsCount;
+
+    /**
      * @param string $operatingCarrierIata
      * @param string $marketingCarrierIata
      * @param string $departureIata
@@ -362,6 +367,38 @@ class FlightSegment
     public function setBookingClass($bookingClass)
     {
         $this->_bookingClass = $bookingClass;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTechnicalStopsCount()
+    {
+        return $this->_technicalStopsCount;
+    }
+
+    /**
+     * @param int $technicalStopsCount
+     */
+    public function setTechnicalStopsCount($technicalStopsCount)
+    {
+        $this->_technicalStopsCount = $technicalStopsCount;
+    }
+
+    /**
+     * @param string $operatingCarrierIata
+     */
+    public function setOperatingCarrierIata($operatingCarrierIata)
+    {
+        $this->_operatingCarrierIata = $operatingCarrierIata;
+    }
+
+    /**
+     * @param string $marketingCarrierIata
+     */
+    public function setMarketingCarrierIata($marketingCarrierIata)
+    {
+        $this->_marketingCarrierIata = $marketingCarrierIata;
     }
 
 }

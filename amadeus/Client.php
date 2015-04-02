@@ -191,7 +191,8 @@ class Client
         $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
 
         //Add passenger details
-        return $this->addMultiPnrTrait($passengers, $ticketPrice, $email, $phone);
+        //TODO: Check for errors
+        $data = $this->addMultiPnrTrait($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone);
     }
 
     /**
