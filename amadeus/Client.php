@@ -2,12 +2,13 @@
 
 namespace Amadeus;
 
+use Amadeus\Methods\AddMultiPnrTrait;
 use Amadeus\Methods\FareRulesTrait;
 use Amadeus\Methods\InformativePricingWithoutPnrTrait;
 use Amadeus\Methods\PricePnrWithBookingClassTrait;
 use Amadeus\Methods\SearchTicketsMethodTrait;
 use Amadeus\Methods\SellFromRecommendationTrait;
-use Amadeus\models\Passenger;
+use Amadeus\models\PassengerCollection;
 use Amadeus\models\SimpleSearchRequest;
 use Amadeus\models\TicketPrice;
 
@@ -24,7 +25,11 @@ class Client
 
     use InformativePricingWithoutPnrTrait;
 
+    //Get fare rules
     use FareRulesTrait;
+
+    //Add passengers
+    use AddMultiPnrTrait;
 
     /**
      * Is session open
@@ -164,7 +169,7 @@ class Client
      *
      * @param TicketPrice $ticketPrice
      * @param SimpleSearchRequest $request
-     * @param Passenger[] $passengers
+     * @param PassengerCollection $passengers
      * @return models\TicketDetails
      * @throws \amadeus\exceptions\UnableToSellException
      */
@@ -172,6 +177,9 @@ class Client
     {
         //Check bookingability + add segment details
         $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
+
+        //Add passenger details
+        return $this->addMultiPnrTrait($passengers, $ticketPrice);
     }
 
 }
