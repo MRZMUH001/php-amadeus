@@ -21,7 +21,7 @@ trait AddMultiPnrTrait
      * @param string $phone
      * @return Object
      */
-    public function addMultiPnrTrait($passengers, $ticketDetails, $validatingCarrier, $email, $phone)
+    public function pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $email, $phone)
     {
         return $this->getClient()->pnrAddMultiElements($passengers, $ticketDetails, $phone, $email);
     }

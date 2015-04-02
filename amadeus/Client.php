@@ -175,14 +175,14 @@ class Client
     }
 
     /**
-     * Create prebooking
+     * Create PNR
      *
      * @param TicketPrice $ticketPrice
      * @param SimpleSearchRequest $request
      * @param PassengerCollection $passengers
      * @param string $email
      * @param string $phone
-     * @return models\TicketDetails
+     * @return array
      * @throws \amadeus\exceptions\UnableToSellException
      */
     public function prebook(TicketPrice $ticketPrice, $request, $passengers, $email = null, $phone = null)
@@ -192,7 +192,13 @@ class Client
 
         //Add passenger details
         //TODO: Check for errors
-        $data = $this->addMultiPnrTrait($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone);
+        $pnrNumber = $this->pnrAddMultiElements($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone);
+
+        $ticketDetails = $this->pricePnrWithBookingClass($ticketDetails, $request->getCurrency());
+
+        $this->getClient()->pnrAddMultiElementsFinal();
+
+        return [$pnrNumber, $ticketDetails];
     }
 
     /**

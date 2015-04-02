@@ -305,7 +305,12 @@ class InnerClient
     public function pnrAddMultiElements($travellers, $ticketDetails, $validatingCarrier, $phoneNumber = null, $email = null)
     {
         $params = [];
-        $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
+        /**
+         * 0 - save and close PNR
+         * 10 - save and leave PNR open,
+         * 11 - different save types with notification on segment status changes
+         */
+        $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 0;
 
         foreach ($travellers->getAdults() as $adult) {
             $adultData = [
