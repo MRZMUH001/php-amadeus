@@ -7,6 +7,7 @@ use Amadeus\Methods\InformativePricingWithoutPnrTrait;
 use Amadeus\Methods\PricePnrWithBookingClassTrait;
 use Amadeus\Methods\SearchTicketsMethodTrait;
 use Amadeus\Methods\SellFromRecommendationTrait;
+use Amadeus\models\Passenger;
 use Amadeus\models\SimpleSearchRequest;
 use Amadeus\models\TicketPrice;
 
@@ -156,6 +157,21 @@ class Client
         $ticketDetails->setRules($this->getFareRules());
 
         return $ticketDetails;
+    }
+
+    /**
+     * Create prebooking
+     *
+     * @param TicketPrice $ticketPrice
+     * @param SimpleSearchRequest $request
+     * @param Passenger[] $passengers
+     * @return models\TicketDetails
+     * @throws \amadeus\exceptions\UnableToSellException
+     */
+    public function prebook(TicketPrice $ticketPrice, $request, $passengers)
+    {
+        //Check bookingability + add segment details
+        $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
     }
 
 }

@@ -11,7 +11,10 @@
 namespace Amadeus;
 
 use Amadeus\exceptions\AmadeusException;
+use Amadeus\models\Passenger;
+use Amadeus\models\PassengerCollection;
 use Amadeus\models\TicketDetails;
+use Amadeus\models\TicketPrice;
 
 /**
  * @see https://extranets.us.amadeus.com
@@ -292,88 +295,292 @@ class InnerClient
      * pnrAddMultiElements
      * Make reservation call
      *
-     * @param array $travellers Travellers array
+     * @param PassengerCollection $travellers
+     * @param TicketPrice $ticketPrice
      * @return Object
      */
-    public function pnrAddMultiElements($travellers)
+    public function pnrAddMultiElements($travellers, $ticketPrice, $phoneNumber = null, $email = null)
     {
-        $adults = count($travellers['A']);
-        $children = count($travellers['C']);
-        $infants = count($travellers['I']);
-        $total_passengers = $adults + $children + $infants;
         $params = [];
-        $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 0;
+        $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
 
-        $i = 0;
-        $inf = 0;
-        foreach ($travellers['A'] as $adult) {
-            $trav = 0;
-            $params['PNR_AddMultiElements']['travellerInfo'][$i]['elementManagementPassenger']['reference']['qualifier'] = 'PR';
-            $params['PNR_AddMultiElements']['travellerInfo'][$i]['elementManagementPassenger']['reference']['number'] = $i + 1;
-            $params['PNR_AddMultiElements']['travellerInfo'][$i]['elementManagementPassenger']['segmentName'] = 'NM';
+        foreach ($travellers->getAdults() as $adult) {
+            $adultData = [
+                'elementManagementPassenger' => [
+                    'reference' => [
+                        'qualifier' => 'PR',
+                        'number' => $adult->getIndex()
+                    ],
+                    'segmentName' => 'NM'
+                ],
+                'passengerData' => [
+                    'travellerInformation' => [
+                        'traveller' => [
+                            'quantity' => $adult->getAssociatedInfant() == null ? 1 : 2,
+                            'surname' => $adult->getLastName()
+                        ],
+                        'passenger' => [
+                            'firstname' => $adult->getFirstNameWithCode()
+                        ]
+                    ]
+                ]
+            ];
 
-            $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['traveller']['surname'] = $adult['surname'];
-            $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['traveller']['quantity'] = 1;
-            $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['passenger'][$trav]['firstName'] = $adult['first_name'];
-            $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['passenger'][$trav]['type'] = 'ADT';
-
-            if ($infants > 0) {
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['passenger'][$trav]['infantIndicator'] = 2;
-                $trav++;
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['passenger'][$trav]['firstName'] = $travellers['I'][$inf]['first_name'];
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['passenger'][$trav]['type'] = 'INF';
-                $infants--;
-                $inf++;
+            if ($adult->getAssociatedInfant() != null) {
+                $infant = $adult->getAssociatedInfant();
+                $adultData['passengerData']['travellerInformation']['passenger']['infantIndicator'] = 3;
+                $adultData['passengerData'] = [
+                    $adultData['passengerData'],
+                    [
+                        'travellerInformation' => [
+                            'traveller' => [
+                                'surname' => $infant->getLastName()
+                            ],
+                            'passenger' => [
+                                'firstname' => $infant->getFirstNameWithCode(),
+                                'type' => 'INF'
+                            ]
+                        ],
+                        'dateOfBirth' => [
+                            'dateAndTimeDetails' => [
+                                'date' => strtoupper($infant->getBirthday()->format('dMy'))
+                            ]
+                        ]
+                    ]
+                ];
             }
-            $i++;
+
+            $params['PNR_AddMultiElements']['travellerInfo'][] = $adultData;
         }
 
-        if ($children > 0) {
-            foreach ($travellers['C'] as $child) {
-                $trav = 0;
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['elementManagementPassenger']['reference']['qualifier'] = 'PR';
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['elementManagementPassenger']['reference']['number'] = $i + 1;
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['elementManagementPassenger']['segmentName'] = 'NM';
+        foreach ($travellers->getChildren() as $child) {
+            $childData = [
+                'elementManagementPassenger' => [
+                    'reference' => [
+                        'qualifier' => 'PR',
+                        'number' => $child->getIndex()
+                    ],
+                    'segmentName' => 'NM'
+                ],
+                'passengerData' => [
+                    'travellerInformation' => [
+                        'traveller' => [
+                            'quantity' => 1,
+                            'surname' => $child->getLastName()
+                        ],
+                        'passenger' => [
+                            'firstname' => $child->getFirstNameWithCode(),
+                            'type' => 'CHD'
+                        ]
+                    ],
+                    'dateOfBirth' => [
+                        'dateAndTimeDetails' => [
+                            'date' => strtoupper($child->getBirthday()->format('dMy'))
+                        ]
+                    ]
+                ]
+            ];
 
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['traveller']['surname'] = $child['surname'];
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['traveller']['quantity'] = 1;
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['passenger'][$trav]['firstName'] = $child['first_name'];
-                $params['PNR_AddMultiElements']['travellerInfo'][$i]['passengerData']['travellerInformation']['passenger'][$trav]['type'] = 'CHD';
-
-                $i++;
-            }
+            $params['PNR_AddMultiElements']['travellerInfo'][] = $childData;
         }
 
-        $j = 0;
+        //Additional details
         $params['PNR_AddMultiElements']['dataElementsMaster']['marker1'] = null;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['qualifier'] = 'OT';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['number'] = 1;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['segmentName'] = 'RF';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['freetextDetail']['subjectQualifier'] = 3;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['freetextDetail']['type'] = 'P22';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['longFreetext'] = 'Received From Whoever';
 
-        $j++;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['qualifier'] = 'OT';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['number'] = 2;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['segmentName'] = 'TK';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['ticketElement']['ticket']['indicator'] = 'OK';
+        //Unknown
+        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            'elementManagementData' => [
+                'segmentName' => 'RF'
+            ],
+            'freetextData' => [
+                'longFreetext' => 'WS'
+            ]
+        ];
 
-        $j++;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['qualifier'] = 'OT';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['number'] = 3;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['segmentName'] = 'ABU';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['freetextDetail']['subjectQualifier'] = 3;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['freetextDetail']['type'] = 2;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['longFreetext'] = 'MR ESTEBAN LORENZO, BUCKINGHAM PALACE, LONDON, N1 1BP, UK';
+        //TK
+        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            'elementManagementData' => [
+                'segmentName' => 'TK'
+            ],
+            'ticketElement' => [
+                'passengerType' => 'PAX',
+                'ticket' => [
+                    'indicator' => 'XL',
+                    'date' => $ticketPrice->getSegments()->getSegments()[0]->getDepartureDate()->format('dmy'),
+                    'time' => substr_replace(':', '', $ticketPrice->getSegments()->getSegments()[0]->getDepartureTime())
+                ]
+            ]
+        ];
 
-        $j++;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['qualifier'] = 'OT';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['reference']['number'] = 4;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['elementManagementData']['segmentName'] = 'AP';
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['freetextDetail']['subjectQualifier'] = 3;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['freetextDetail']['type'] = 5;
-        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][$j]['freetextData']['longFreetext'] = '012345 678910';
+        //Validating carrier
+        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            'elementManagementData' => [
+                'segmentName' => 'FV'
+            ],
+            'ticketingCarrier' => [
+                'carrier' => [
+                    'airlineCode' => $ticketPrice->getValidatingCarrierIata()
+                ]
+            ]
+        ];
+
+        //Phone number
+        if ($phoneNumber != null) {
+            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                'elementManagementData' => [
+                    'segmentName' => 'AP'
+                ],
+                'freetextData' => [
+                    'freetextDetail' => [
+                        'subjectQualifier' => 3,
+                        'type' => 3
+                    ],
+                    'longFreetext' => str_replace(['-', '+', ' ', '(', ')', '.'], '', $phoneNumber)
+                ]
+            ];
+            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                'elementManagementData' => [
+                    'segmentName' => 'OS'
+                ],
+                'freetextData' => [
+                    'freetextDetail' => [
+                        'subjectQualifier' => 3,
+                        'type' => 28,
+                        'companyId' => 'YY'
+                    ],
+                    'longFreetext' => 'CTCP' . preg_replace('/[^\D]/', '', $phoneNumber) . '-M'
+                ]
+            ];
+        }
+
+        //Email
+        if ($email != null)
+            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                'elementManagementData' => [
+                    'segmentName' => 'AP'
+                ],
+                'freetextData' => [
+                    'freetextDetail' => [
+                        'subjectQualifier' => 3,
+                        'type' => 'P02'
+                    ],
+                    'longFreetext' => $email
+                ]
+            ];
+
+        //Form of payment = cash
+        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            'elementManagementData' => [
+                'segmentName' => 'FP'
+            ],
+            'formOfPayment' => [
+                'fop' => [
+                    'identification' => 'CA'
+                ]
+            ]
+        ];
+
+        //Internet-booking remark
+        $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            'elementManagementData' => [
+                'segmentName' => 'RM'
+            ],
+            'miscellaneousRemark' => [
+                'remarks' => [
+                    'type' => 'RM',
+                    'freetext' => 'INTERNET BOOKING'
+                ]
+            ]
+        ];
+
+        foreach (array_merge($travellers->getAdults(), $travellers->getChildren()) as $passenger) {
+            /** @var Passenger $passenger */
+            $dataElement = [
+                'elementManagementData' => [
+                    'segmentName' => 'SSR'
+                ],
+                'serviceRequest' => [
+                    'ssr' => [
+                        'type' => 'RM',
+                        'status' => 'HK',
+                        'quantity' => 1,
+                        'companyId' => 'YY',
+                        'freetext' => substr($passenger->ssrDocsText(), 0, 70)
+                    ]
+                ],
+                'referenceForDataElement' => [
+                    'reference' => [
+                        'qualifier' => 'PR',
+                        'number' => $passenger->getIndex()
+                    ]
+                ]
+            ];
+
+            //Long ssr
+            if (strlen($passenger->ssrDocsText()) > 70)
+                $dataElement['serviceRequest']['ssr']['freetext'] = [
+                    substr($passenger->ssrDocsText(), 0, 70),
+                    substr($passenger->ssrDocsText(), 70, 70)
+                ];
+
+            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = $dataElement;
+
+            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                'elementManagementData' => [
+                    'segmentName' => 'FE'
+                ],
+                'fareElement' => [
+                    'generalIndicator' => 'E',
+                    'freetextLong' => $ticketPrice->getValidatingCarrierIata() . " ONLY PSPT " . $passenger->clearedPassport(),
+                ],
+                'referenceForDataElement' => [
+                    'reference' => [
+                        'qualifier' => 'PR',
+                        'number' => $passenger->getIndex()
+                    ]
+                ]
+            ];
+
+            if ($infant = $passenger->getAssociatedInfant()) {
+                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                    'elementManagementData' => [
+                        'segmentName' => 'SSR'
+                    ],
+                    'serviceRequest' => [
+                        'ssr' => [
+                            'type' => 'RM',
+                            'status' => 'HK',
+                            'quantity' => 1,
+                            'companyId' => 'YY',
+                            'freetext' => substr($infant->ssrDocsText(), 0, 70)
+                        ]
+                    ],
+                    'referenceForDataElement' => [
+                        'reference' => [
+                            'qualifier' => 'PR',
+                            'number' => $passenger->getIndex()
+                        ]
+                    ]
+                ];
+
+                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                    'elementManagementData' => [
+                        'segmentName' => 'FE'
+                    ],
+                    'fareElement' => [
+                        'generalIndicator' => 'E',
+                        'passengerType' => 'INF',
+                        'freetextLong' => $ticketPrice->getValidatingCarrierIata() . " ONLY PSPT " . $infant->clearedPassport(),
+                    ],
+                    'referenceForDataElement' => [
+                        'reference' => [
+                            'qualifier' => 'PR',
+                            'number' => $passenger->getIndex()
+                        ]
+                    ]
+                ];
+            }
+        }
 
         $this->_data = $this->soapCall('PNR_AddMultiElements', $params);
 
