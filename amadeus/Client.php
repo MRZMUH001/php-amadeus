@@ -51,7 +51,7 @@ class Client
      */
     public function __construct($env = 'prod', $debug = true)
     {
-        $path = realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . $env . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl';
+        $path = realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . 'prod' . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl';
         // Instantiate the Amadeus class (Debug enabled)
         $this->_ws = new InnerClient($path, $env, $debug);
     }

@@ -113,7 +113,7 @@ class Passenger
      */
     public function getSex()
     {
-        return $this->_sex;
+        return strtoupper($this->_sex);
     }
 
     /**

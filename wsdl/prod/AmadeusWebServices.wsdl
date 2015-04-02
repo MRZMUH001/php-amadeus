@@ -11,8 +11,8 @@
         xmlns:command_crypticreply_7_3="http://xml.amadeus.com/HSFRES_07_3_1A"
         xmlns:air_sellfromrecommendation_5_2="http://xml.amadeus.com/ITAREQ_05_2_IA"
         xmlns:air_sellfromrecommendationreply_5_2="http://xml.amadeus.com/ITARES_05_2_IA"
-        xmlns:pnr_addmultielements_9_1="http://xml.amadeus.com/PNRADD_09_1_1A"
-        xmlns:pnr_reply_9_1="http://xml.amadeus.com/PNRACC_09_1_1A"
+        xmlns:pnr_addmultielements_13_2="http://xml.amadeus.com/PNRADD_13_2_1A"
+        xmlns:pnr_reply_13_2="http://xml.amadeus.com/PNRACC_13_2_1A"
         xmlns:queue_moveitem_3_1="http://xml.amadeus.com/QUQMUQ_03_1_1A"
         xmlns:queue_moveitemreply_3_1="http://xml.amadeus.com/QUQMUR_03_1_1A"
         xmlns:security_authenticate_6_1="http://xml.amadeus.com/VLSSLQ_06_1_1A"
@@ -50,8 +50,8 @@
             <xsd:import namespace="http://xml.amadeus.com/HSFRES_07_3_1A" schemaLocation="Command_CrypticReply_07_3_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/ITAREQ_05_2_IA" schemaLocation="Air_SellFromRecommendation_05_2_IA.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/ITARES_05_2_IA" schemaLocation="Air_SellFromRecommendationReply_05_2_IA.xsd"/>
-            <xsd:import namespace="http://xml.amadeus.com/PNRADD_09_1_1A" schemaLocation="PNR_AddMultiElements_09_1_1A.xsd"/>
-            <xsd:import namespace="http://xml.amadeus.com/PNRACC_09_1_1A" schemaLocation="PNR_Reply_09_1_1A.xsd"/>
+            <xsd:import namespace="http://xml.amadeus.com/PNRADD_13_2_1A" schemaLocation="PNR_AddMultiElements_13_2_1A.xsd"/>
+            <xsd:import namespace="http://xml.amadeus.com/PNRACC_13_2_1A" schemaLocation="PNR_Reply_13_2_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/QUQMUQ_03_1_1A" schemaLocation="Queue_MoveItem_03_1_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/QUQMUR_03_1_1A" schemaLocation="Queue_MoveItemReply_03_1_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/VLSSLQ_06_1_1A" schemaLocation="Security_Authenticate_06_1_1A.xsd"/>
@@ -103,11 +103,11 @@
     <wsdl:message name="Air_SellFromRecommendationReply_5_2">
         <wsdl:part name="Air_SellFromRecommendationReply_5_2" element="air_sellfromrecommendationreply_5_2:Air_SellFromRecommendationReply"/>
     </wsdl:message>
-    <wsdl:message name="PNR_AddMultiElements_9_1">
-        <wsdl:part name="PNR_AddMultiElements_9_1" element="pnr_addmultielements_9_1:PNR_AddMultiElements"/>
+    <wsdl:message name="PNR_AddMultiElements_13_2">
+        <wsdl:part name="PNR_AddMultiElements_13_2" element="pnr_addmultielements_13_2:PNR_AddMultiElements"/>
     </wsdl:message>
-    <wsdl:message name="PNR_Reply_9_1">
-        <wsdl:part name="PNR_Reply_9_1" element="pnr_reply_9_1:PNR_Reply"/>
+    <wsdl:message name="PNR_Reply_13_2">
+        <wsdl:part name="PNR_Reply_13_2" element="pnr_reply_13_2:PNR_Reply"/>
     </wsdl:message>
     <wsdl:message name="Queue_MoveItem_3_1">
         <wsdl:part name="Queue_MoveItem_3_1" element="queue_moveitem_3_1:Queue_MoveItem"/>
@@ -204,8 +204,8 @@
             <wsdl:output message="aws:Air_SellFromRecommendationReply_5_2"/>
         </wsdl:operation>
         <wsdl:operation name="PNR_AddMultiElements">
-            <wsdl:input message="aws:PNR_AddMultiElements_9_1"/>
-            <wsdl:output message="aws:PNR_Reply_9_1"/>
+            <wsdl:input message="aws:PNR_AddMultiElements_13_2"/>
+            <wsdl:output message="aws:PNR_Reply_13_2"/>
         </wsdl:operation>
         <wsdl:operation name="Queue_MoveItem">
             <wsdl:input message="aws:Queue_MoveItem_3_1"/>
@@ -300,7 +300,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="PNR_AddMultiElements">
-            <soap:operation soapAction="http://webservices.amadeus.com/1ASIWASLXNX/PNRADD_09_1_1A"/>
+            <soap:operation soapAction="http://webservices.amadeus.com/1ASIWASLXNX/PNRADD_13_2_1A"/>
             <wsdl:input>
                 <soap:header message="aws:Session" part="Session" use="literal"/>
                 <soap:body use="literal"/>
