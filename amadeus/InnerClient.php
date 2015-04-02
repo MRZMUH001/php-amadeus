@@ -102,9 +102,7 @@ class InnerClient
         $params['Security_Authenticate']['passwordInfo']['dataType'] = 'E';
         $params['Security_Authenticate']['passwordInfo']['binaryData'] = $password;
 
-        $this->_data = $this->soapCall('Security_Authenticate', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Security_Authenticate', $params);
     }
 
     /**
@@ -116,9 +114,7 @@ class InnerClient
         $params = [];
         $params['Security_SignOut']['SessionId'] = $this->_headers['SessionId'];
 
-        $this->_data = $this->soapCall('Security_SignOut', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Security_SignOut', $params);
     }
 
     /**
@@ -133,9 +129,7 @@ class InnerClient
         $params['Command_Cryptic']['longTextString']['textStringDetails'] = $string;
         $params['Command_Cryptic']['messageAction']['messageFunctionDetails']['messageFunction'] = 'M';
 
-        $this->_data = $this->soapCall('Command_Cryptic', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Command_Cryptic', $params);
     }
 
     /**
@@ -150,9 +144,7 @@ class InnerClient
         $params['Fare_CheckRules']['itemNumber']['itemNumberDetails']['number'] = 1;
         $params['Fare_CheckRules']['fareRule']['tarifFareRule']['ruleSectionId'] = 'PE';
 
-        $this->_data = $this->soapCall('Fare_CheckRules', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Fare_CheckRules', $params);
     }
 
     /**
@@ -179,9 +171,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['airlineOrFlightOption']['flightIdentification']['number'] = $air_num;
         $params['Air_MultiAvailability']['requestSection']['availabilityOptions']['productTypeDetails']['typeOfRequest'] = 'TN';
 
-        $this->_data = $this->soapCall('Air_MultiAvailability', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Air_MultiAvailability', $params);
     }
 
     /**
@@ -206,9 +196,7 @@ class InnerClient
         $params['Air_MultiAvailability']['requestSection']['availabilityOptions']['productTypeDetails']['typeOfRequest'] = 'TN';
         $params['Air_MultiAvailability']['requestSection']['cabinOption']['cabinDesignation']['cabinClassOfServiceList'] = $service;
 
-        $this->_data = $this->soapCall('Air_MultiAvailability', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Air_MultiAvailability', $params);
     }
 
     /**
@@ -285,9 +273,7 @@ class InnerClient
             $params['Fare_MasterPricerTravelBoardSearch']['itinerary'][1]['timeDetails']['firstDateTimeDetail']['date'] = $return_date;
         }
 
-        $this->_data = $this->soapCall('Fare_MasterPricerTravelBoardSearch', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Fare_MasterPricerTravelBoardSearch', $params);
     }
 
     /**
@@ -415,7 +401,7 @@ class InnerClient
                 'ticket' => [
                     'indicator' => 'XL',
                     'date' => $ticketDetails->getSegments()->getSegments()[0]->getDepartureDate()->format('dmy'),
-                    'time' => substr_replace(':', '', $ticketDetails->getSegments()->getSegments()[0]->getDepartureTime())
+                    'time' => str_replace(':', '', $ticketDetails->getSegments()->getSegments()[0]->getDepartureTime())
                 ]
             ]
         ];
@@ -590,9 +576,7 @@ class InnerClient
             }
         }
 
-        $this->_data = $this->soapCall('PNR_AddMultiElements', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('PNR_AddMultiElements', $params);
     }
 
     /**
@@ -626,9 +610,7 @@ class InnerClient
             $i++;
         }
 
-        $this->_data = $this->soapCall('Air_SellFromRecommendation', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Air_SellFromRecommendation', $params);
     }
 
     /**
@@ -660,9 +642,7 @@ class InnerClient
         //Unifares
         $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][2]['pricingOptionKey']['pricingOptionKey'] = 'RU';
 
-        $this->_data = $this->soapCall("Fare_PricePNRWithBookingClass", $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall("Fare_PricePNRWithBookingClass", $params);
     }
 
     /**
@@ -777,14 +757,24 @@ class InnerClient
         //Unifares
         $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][2]['pricingOptionKey']['pricingOptionKey'] = 'RU';
 
-        $this->_data = $this->soapCall("Fare_InformativePricingWithoutPNR", $params);
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall("Fare_InformativePricingWithoutPNR", $params);
     }
 
     private function soapCall($name, $params)
     {
         $this->_logger->info('Amadeus method called: ' . $name);
-        $data = $this->_client->__soapCall($name, $params, null, $this->getHeader(), $this->_headers);
+
+        $exc = null;
+        try {
+            $data = $this->_client->__soapCall($name, $params, null, $this->getHeader(), $this->_headers);
+        } catch (\Exception $e) {
+            $exc = $e;
+        }
+
+        $this->log($params, null);
+
+        if ($exc != null)
+            throw $exc;
 
         if (isset($data->errorMessage))
             throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error . ' - ' . $data->errorMessage->errorMessageText->description);
@@ -807,9 +797,7 @@ class InnerClient
             $params['Ticket_CreateTSTFromPricing']['psaList'][$i]['itemReference']['uniqueReference'] = $i + 1;
         }
 
-        $this->_data = $this->soapCall('Ticket_CreateTSTFromPricing', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('Ticket_CreateTSTFromPricing', $params);
     }
 
     /**
@@ -821,9 +809,7 @@ class InnerClient
         $params = [];
         $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
 
-        $this->_data = $this->soapCall('PNR_AddMultiElements', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('PNR_AddMultiElements', $params);
     }
 
     /**
@@ -839,9 +825,7 @@ class InnerClient
         $params['PNR_Retrieve']['retrievalFacts']['retrieve']['type'] = 2;
         $params['PNR_Retrieve']['retrievalFacts']['reservationOrProfileIdentifier']['reservation']['controlNumber'] = $pnr_id;
 
-        $this->_data = $this->soapCall('PNR_Retrieve', $params);
-
-        return $this->debugDump($params, $this->_data);
+        return $this->soapCall('PNR_Retrieve', $params);
     }
 
     /**
@@ -863,18 +847,16 @@ class InnerClient
     }
 
     /**
-     * Dump the variables in debug mode
+     * Save to log
      *
      * @param array $params The parameters used
      * @param array $data The response data
      * @return Object
      */
-    private function debugDump($params, $data)
+    private function log($params, $data)
     {
         $this->_logger->debug("Request Trace: " . $this->_client->__getLastRequest());
         $this->_logger->debug("Response Trace: " . $this->_client->__getLastResponse());
-
-        return $data;
     }
 
     /**

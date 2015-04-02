@@ -62,7 +62,7 @@ trait SellFromRecommendationTrait
                 $this->convertAmadeusDate((string)$fi->flightDate->departureDate),
                 $this->convertAmadeusTime((string)$fi->flightDate->departureTime)
             );
-            $segment->setTechnicalStopsCount((string)$s->apdSegment->legDetails->numberOfStops);
+            $segment->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string)$s->apdSegment->legDetails->numberOfStops : 0);
             $segment->setEquipmentTypeIata((string)$s->apdSegment->legDetails->equipment);
             if (isset($s->apdSegment->arrivalStationInfo->terminal))
                 $segment->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);

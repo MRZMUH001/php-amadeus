@@ -2,9 +2,10 @@
 
 namespace Amadeus;
 
-use Amadeus\Methods\AddMultiPnrTrait;
 use Amadeus\Methods\FareRulesTrait;
 use Amadeus\Methods\InformativePricingWithoutPnrTrait;
+use Amadeus\Methods\PnrAddMultiElementsFinalTrait;
+use Amadeus\Methods\PnrAddMultiElementsTrait;
 use Amadeus\Methods\PricePnrWithBookingClassTrait;
 use Amadeus\Methods\SearchTicketsMethodTrait;
 use Amadeus\Methods\SellFromRecommendationTrait;
@@ -30,7 +31,9 @@ class Client
     use FareRulesTrait;
 
     //Add passengers
-    use AddMultiPnrTrait;
+    use PnrAddMultiElementsTrait;
+
+    use PnrAddMultiElementsFinalTrait;
 
     /**
      * Is session open
@@ -192,11 +195,11 @@ class Client
 
         //Add passenger details
         //TODO: Check for errors
-        $pnrNumber = $this->pnrAddMultiElements($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone);
+        $this->pnrAddMultiElements($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone);
 
         $ticketDetails = $this->pricePnrWithBookingClass($ticketDetails, $request->getCurrency());
 
-        $this->getClient()->pnrAddMultiElementsFinal();
+        $pnrNumber = $this->pnrAddMultiElementsFinal();
 
         return [$pnrNumber, $ticketDetails];
     }
