@@ -59,10 +59,6 @@ class InnerClient
     public function __construct($wsdl, $env = 'prod', $debug = false)
     {
         $this->_logger = new Logger('main');
-        $this->_logger->pushHandler(new RotatingFileHandler('logs/amadeus.log'));
-        if ($debug) {
-            $this->_logger->pushHandler(new BrowserConsoleHandler());
-        }
 
         $endpoint = 'https://test.webservices.amadeus.com';
         if ($env == 'prod')
