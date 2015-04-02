@@ -23,7 +23,11 @@ trait AddMultiPnrTrait
      */
     public function pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $email, $phone)
     {
-        return $this->getClient()->pnrAddMultiElements($passengers, $ticketDetails, $phone, $email);
+        $data = $this->getClient()->pnrAddMultiElements($passengers, $ticketDetails, $phone, $email);
+        if (isset($data->reservationInfo->reservation->controlNumber))
+            return (string)$data->reservationInfo->reservation->controlNumber;
+
+        return null;
     }
 
 }
