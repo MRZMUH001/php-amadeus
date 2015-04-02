@@ -448,7 +448,7 @@ class InnerClient
                         'type' => 28,
                         'companyId' => 'YY'
                     ],
-                    'longFreetext' => 'CTCP' . preg_replace('/[^\D]/', '', $phoneNumber) . '-M'
+                    'longFreetext' => 'CTCP' . preg_replace('/\D/', '', $phoneNumber) . '-M'
                 ]
             ];
         }
