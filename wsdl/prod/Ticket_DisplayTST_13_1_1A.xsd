@@ -1,96 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://xml.amadeus.com/TAUTCR_04_1_1A" xmlns="http://xml.amadeus.com/TAUTCR_04_1_1A" elementFormDefault="qualified">
-  <xs:element name="Ticket_CreateTSTFromPricingReply">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://xml.amadeus.com/TTSTRQ_13_1_1A" xmlns="http://xml.amadeus.com/TTSTRQ_13_1_1A" elementFormDefault="qualified">
+  <xs:element name="Ticket_DisplayTST">
     <xs:annotation>
-      <xs:documentation xml:lang="en">TST creation acknowledgment</xs:documentation>
+      <xs:documentation xml:lang="en">Get TST information query</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="applicationError" minOccurs="0">
+        <xs:element name="displayMode" type="CodedAttributeType">
           <xs:annotation>
-            <xs:documentation xml:lang="en">Application error information</xs:documentation>
+            <xs:documentation xml:lang="en">It can be: - 'ALL' - all TSTs are displayed; - 'SEL' - only the information corresponding to the TST/passenger selection is displayed.</xs:documentation>
           </xs:annotation>
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="applicationErrorInfo" type="ApplicationErrorInformationType">
-                <xs:annotation>
-                  <xs:documentation xml:lang="en">General error information returned by ticketing application</xs:documentation>
-                </xs:annotation>
-              </xs:element>
-              <xs:element name="errorText" minOccurs="0" type="InteractiveFreeTextTypeI">
-                <xs:annotation>
-                  <xs:documentation xml:lang="en">Description in free flow text of the error returned by ticketing application</xs:documentation>
-                </xs:annotation>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
         </xs:element>
         <xs:element name="pnrLocatorData" minOccurs="0" type="ReservationControlInformationTypeI">
           <xs:annotation>
-            <xs:documentation xml:lang="en">PNR record locator information for this transaction. This PNR record locator is used for tracing purpose.</xs:documentation>
+            <xs:documentation xml:lang="en">PNR record locator information for this transaction. This PNR record locator is used for tracing purpose, no internal retrieve.</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element name="tstList" minOccurs="0" maxOccurs="1980">
+        <xs:element name="scrollingInformation" minOccurs="0" type="ActionDetailsTypeI">
           <xs:annotation>
-            <xs:documentation xml:lang="en">List of TST tattoos created. As we can have 10 TST per Pax, 99 passenger per PNR, and a TST split with the Infant , the max number of TST is 1980.</xs:documentation>
+            <xs:documentation xml:lang="en">Scrolling information.</xs:documentation>
           </xs:annotation>
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="tstReference" type="ItemReferencesAndVersionsType">
-                <xs:annotation>
-                  <xs:documentation xml:lang="en">TST tattoo number created by the transaction.</xs:documentation>
-                </xs:annotation>
-              </xs:element>
-              <xs:element name="paxInformation" minOccurs="0" type="ReferenceInformationTypeI">
-                <xs:annotation>
-                  <xs:documentation xml:lang="en">Reference information on passengers.</xs:documentation>
-                </xs:annotation>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
+        </xs:element>
+        <xs:element name="tstReference" minOccurs="0" maxOccurs="1980" type="ItemReferencesAndVersionsType">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Used to get TST information for selected TST references. As we can have 10 TST per Pax, 99 passenger per PNR, and a TST split with the Infant , the max number of TST is 1980.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="psaInformation" minOccurs="0" type="ReferenceInformationTypeI">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Passenger/segment references information about TST(s) to retrieve. - Passenger reference specified : all the TSTs concerning this passenger reference are returned. - Passenger/segment reference : only the TST having this passenger/segment association is returned.</xs:documentation>
+          </xs:annotation>
         </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="ApplicationErrorDetailType">
+  <xs:complexType name="ActionDetailsTypeI">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">To specify the action that should be taken on a selected reference number.</xs:documentation>
+    </xs:annotation>
     <xs:sequence>
-      <xs:element name="applicationErrorCode" type="AlphaNumericString_Length1To5">
+      <xs:element name="nextListInformation" minOccurs="0" type="ReferenceTypeI">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Code identifying the data validation error condition.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="codeListQualifier" minOccurs="0" type="AlphaNumericString_Length1To3">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">Identification of a code list.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="codeListResponsibleAgency" minOccurs="0" type="AlphaNumericString_Length1To3">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">Code identifying the agency responsible for a code list.</xs:documentation>
+          <xs:documentation xml:lang="en">Information on next list of TSTs to return.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ApplicationErrorInformationType">
+  <xs:complexType name="CodedAttributeInformationType">
     <xs:annotation>
-      <xs:documentation xml:lang="en">To identify the type of application error within a message.</xs:documentation>
+      <xs:documentation xml:lang="en">Convey coded key and corresponding value</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="applicationErrorDetail" type="ApplicationErrorDetailType">
+      <xs:element name="attributeType" type="AlphaNumericString_Length1To3">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Application error details.</xs:documentation>
+          <xs:documentation xml:lang="en">provides the attribute Type</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="InteractiveFreeTextTypeI">
+  <xs:complexType name="CodedAttributeType">
     <xs:annotation>
-      <xs:documentation xml:lang="en">To provide error free text information.</xs:documentation>
+      <xs:documentation xml:lang="en">Used to specify the selection of the TSTs to be displayed/deleted.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="errorFreeText" minOccurs="0" type="AlphaNumericString_Length1To70">
+      <xs:element name="attributeDetails" type="CodedAttributeInformationType">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Free flow text describing the error</xs:documentation>
+          <xs:documentation xml:lang="en">provides details for the Attribute</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -125,6 +100,23 @@
       <xs:element name="refDetails" minOccurs="0" maxOccurs="99" type="ReferencingDetailsTypeI">
         <xs:annotation>
           <xs:documentation xml:lang="en">Passenger/segment/TST reference details</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ReferenceTypeI">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">To specify which number in a sequence of references and/or the reference number.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="remainingInformation" minOccurs="0" type="NumericInteger_Length1To5">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">In case of query specifies the number of TSTs to get in reply. In case of response specifies the number of TSTs remaining.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="remainingReference" minOccurs="0" type="AlphaNumericString_Length1To5">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">In case of first query specifies the value of  this field in the last reply. In case of other queries specifies the last reference returned in the previous list. In case of reply specifies the last TST reference of the list. In case of last reply the value of this field set in the first query is sent.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -179,15 +171,6 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:simpleType name="AlphaNumericString_Length1To70">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">Format limitations: an..70</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:minLength value="1" />
-      <xs:maxLength value="70" />
-    </xs:restriction>
-  </xs:simpleType>
   <xs:simpleType name="AlphaNumericString_Length1To3">
     <xs:annotation>
       <xs:documentation xml:lang="en">Format limitations: an..3</xs:documentation>
@@ -205,15 +188,6 @@
       <xs:pattern value="-?[0-9]{1,5}" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="AlphaNumericString_Length1To5">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">Format limitations: an..5</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:minLength value="1" />
-      <xs:maxLength value="5" />
-    </xs:restriction>
-  </xs:simpleType>
   <xs:simpleType name="AlphaNumericString_Length1To20">
     <xs:annotation>
       <xs:documentation xml:lang="en">Format limitations: an..20</xs:documentation>
@@ -221,6 +195,15 @@
     <xs:restriction base="xs:string">
       <xs:minLength value="1" />
       <xs:maxLength value="20" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AlphaNumericString_Length1To5">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Format limitations: an..5</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="5" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="NumericInteger_Length1To11">
@@ -236,6 +219,6 @@
 <!--Created with SchemaBuilder 5.0.0 by Amadeus S.A.S.-->
 <!--"Amadeus Proprietary and Confidential Information: unauthorized use and disclosure strictly forbidden. 2010 - Amadeus s.a.s - All Rights Reserved."-->
 <!--Build Key:
-1F8B080000000000000095534D6FDB3810BDF35710BDF4B0B02CA7E96E618007D596B345D749602B3703064D8E6DA214A972A8206A90FFBE43496ED34BBB7B116686A3F978EFCD4D795B6E8AAA5CEEEF6EC5553EBB9EE41F26B39C6F5BA765C7F3F7F377EFE6D77FF19B75F5479ECFF39C15EB22760DE0CA5870B2064181FD47894655299C3DA1660789704B6FD84805E21C63339F4E9F6A9BC95A6A683153BE9EB203F5B0B034414C116234EE84536D14327506F5654BDF5A8A185A60CA6BA01414CEBBE4D53538F2C6B7BA91AE4BED846BADA540D305733A47F1A618DAF1FBE09B6020CAD071E9345F7877349A6A1869F92777F4A196D17837E7AD936D3CFB60BE81E62D429FAE0D2AEBB10DC03106A3A2ED38FD73309A6A649C60CBF9845F9A6126334CBEB57C93E640BEA1E9C323E8EC0DD37094AD8D37A14970697194168169DF1E2C6CE16B0B4EC1BD8CEA3CBE80FBF89FC004F723E73911F4B27F7E8480B41559012C5019B2E4893A742FEC48F46D5A4B98F9C464EFF774F63F27EB3705AC57D28E905B7FD244E372BEFBBB2C96BB529BA354B1F2DEE2AEACF64B8351BAB820A6883F626EB796E10B24C6871CECB9C6DD3FFE44B5DCA91FC4E83B673B564338C108466FAF0C588D5B1FE277F86871A4B90A4C98FE1C5B12EBC68ECA71FF0BA2C61B176F210E74F4620BDEC75708F57E1270C6861512A298EE289FE6B331862B1F0A6BA8F6A8D8A405A30097A424EA4DA21C50C45A8698EA3E38A34CECC64562900E6DAF4FC24710D6381D2B57C57AFAACC11A5A4392805E327A65693CFDFA7C482C8BCBCD0C3529D243D55FB2718A3DA18D776D6CDAB8F256431029C0D864B21E607C8BDCFCB893C9840D208959C15EF517C57DB1AF8C226EF7B35C1E48D7B5344E549F4B064F0D51B697B85F9637A2DA3C94178AB80C20C5D59F175F54C543B5D8B0866EC2E099581EB01F081233B21E4D624D5C0DE0C81E4731365E50B508D5B65A055FDFD3B992CCD885B25F256DA021BD8D8A10F935FB17AC9C34771D050000
+1F8B080000000000000095534D6FE33610BDF357107BD94361594EB02D6A80076DEC6417A893D4D1A21703C6841CDBC452A4CAA1826883FCF70E25B99B0205BABD08F341CDC77B6F6ED6B7EB6D55AF57FBBB5B75512E2E67E587D9C585FC038D4732D0CBF297E565B9FCF0ABBCD9D43F95E5B22C45B5A952DF225D5B871E1A541CD87F04B2BACEE1E2998C7804C25BCE510B1AD529A576399F3F37AE80060C7654E8D0CCC563E78DC3958D6A4E9892F5479A1BAB49E813EAAF0FFC6D40A5D8A1D0C1203F21E583CF5ED3A0676FCA352DF83EB753BE738E036D1FEDF194D4BB6A6C27EF6368A3C504B197E08DBC0AFE600DD7B0E0E4677F08B18164835FCACE43974E21DA6F686447383C3796B40BD4459494A2D5C9F592FF79B4866B1492912BE54C9E9B51010565DF39B9CD7390DCF2F4F1094DF14E183C40E7D24D6C335C461DC0110A13BA47870FF867875EE33D247D9A32E83FFE1098E8BFBF79C904BDEE5F9E30126FC55644875C862D387287FE551C98BE6DE718B390991CFC81CEE1E76CFD47011734B80972178E86695C2D779FD6D56AB736F6003AD52138DAADEBFDCA52029FAE9829E68F99DB6D207EC5CCF8F88606AE69F75B38722D7F1C06B1E6CEBB5E34188F388131D8D7169DA18710D3DFF0F1E2C473559431FD676CC5AC5B3729C7FF2F88DA607DBAC534D231882D8690DE2034F859C0851857C888523EA5725E2EA6185D875839CBB527C5662D588DB46225716F16E58822351053AEFBC55B6D533F2D92227872833E191FC558D37CAA5C579BF98B4167790D6001BD169C15793CF3F67C582C57E79B196B7264806AB864EBB5782697EEBAD476E93A388351E58010B3D96684F13D49FBFD4E66333182A4169578D35F55F7D5BEB69AB9DD2F2E17C0BA6EC07A553FD4029F5BA66C0FB45FAD6F54BDFDB23E53242122A88B9FCFBEAAF9FDF677D1F24D583A31CB23F623416AC1D693CDACB1398003038E6A6ACC6A6B1DF4B9E799A87F494DC4ABC5A5F80BBE29A3A607050000
 -->
 
