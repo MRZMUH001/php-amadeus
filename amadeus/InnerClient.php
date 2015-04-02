@@ -47,11 +47,6 @@ class InnerClient
     private $_client = null;
 
     /**
-     * Indicates debug mode on/off
-     */
-    private $_debug = false;
-
-    /**
      * @var Logger
      */
     private $_logger;
@@ -64,7 +59,7 @@ class InnerClient
     public function __construct($wsdl, $env = 'prod', $debug = false)
     {
         $this->_logger = new Logger('main');
-        $this->_logger->pushHandler(new RotatingFileHandler('path/to/your.log', Logger::WARNING));
+        $this->_logger->pushHandler(new RotatingFileHandler('logs/amadeus.log'));
         if ($debug) {
             $this->_logger->pushHandler(new BrowserConsoleHandler());
         }
@@ -115,8 +110,7 @@ class InnerClient
         $params['Security_Authenticate']['passwordInfo']['dataType'] = 'E';
         $params['Security_Authenticate']['passwordInfo']['binaryData'] = $password;
 
-        $this->_data = $this->soapCall('Security_Authenticate', $params, null,
-            new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', null), $this->_headers);
+        $this->_data = $this->soapCall('Security_Authenticate', $params);
 
         return $this->debugDump($params, $this->_data);
     }
