@@ -170,16 +170,18 @@ class Client
      * @param TicketPrice $ticketPrice
      * @param SimpleSearchRequest $request
      * @param PassengerCollection $passengers
+     * @param string $email
+     * @param string $phone
      * @return models\TicketDetails
      * @throws \amadeus\exceptions\UnableToSellException
      */
-    public function prebook(TicketPrice $ticketPrice, $request, $passengers)
+    public function prebook(TicketPrice $ticketPrice, $request, $passengers, $email = null, $phone = null)
     {
         //Check bookingability + add segment details
         $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
 
         //Add passenger details
-        return $this->addMultiPnrTrait($passengers, $ticketPrice);
+        return $this->addMultiPnrTrait($passengers, $ticketPrice, $email, $phone);
     }
 
 }

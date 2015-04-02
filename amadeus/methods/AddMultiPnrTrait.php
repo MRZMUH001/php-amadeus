@@ -16,11 +16,13 @@ trait AddMultiPnrTrait
      *
      * @param PassengerCollection $passengers
      * @param TicketPrice $ticketPrice
+     * @param string $email
+     * @param string $phone
      * @return Object
      */
-    public function addMultiPnrTrait($passengers, $ticketPrice)
+    public function addMultiPnrTrait($passengers, $ticketPrice, $email, $phone)
     {
-        return $this->getClient()->pnrAddMultiElements($passengers, $ticketPrice);
+        return $this->getClient()->pnrAddMultiElements($passengers, $ticketPrice, $phone, $email);
     }
 
 }

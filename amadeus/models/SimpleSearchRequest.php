@@ -191,4 +191,28 @@ class SimpleSearchRequest
         return $this->_limit;
     }
 
+    /**
+     * @param int $adults
+     */
+    public function setAdults($adults)
+    {
+        $this->_adults = $adults;
+    }
+
+    /**
+     * @param int $children
+     */
+    public function setChildren($children)
+    {
+        $this->_children = $children;
+    }
+
+    /**
+     * @param int $infants
+     */
+    public function setInfants($infants)
+    {
+        $this->_infants = $infants;
+    }
+
 }
