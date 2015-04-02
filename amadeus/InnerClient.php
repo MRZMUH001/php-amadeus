@@ -15,8 +15,6 @@ use Amadeus\models\Passenger;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\TicketDetails;
 use Amadeus\models\TicketPrice;
-use Monolog\Handler\BrowserConsoleHandler;
-use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 
 /**
@@ -54,16 +52,15 @@ class InnerClient
     /**
      * @param $wsdl  string   Path to the WSDL file
      * @param $env   string   prod/test
-     * @param $debug boolean  Enable/disable debug mode
+     * @param $logger Logger
      */
-    public function __construct($wsdl, $env = 'prod', $debug = false)
+    public function __construct($wsdl, $env = 'prod', &$logger)
     {
-        $this->_logger = new Logger('main');
-
+        $this->_logger = $logger;
         $endpoint = 'https://test.webservices.amadeus.com';
         if ($env == 'prod')
             $endpoint = 'https://production.webservices.amadeus.com';
-        $this->_client = new \SoapClient($wsdl, ['trace' => $debug, 'location' => $endpoint, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP]);
+        $this->_client = new \SoapClient($wsdl, ['trace' => true, 'location' => $endpoint, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP]);
     }
 
     /**
@@ -778,7 +775,7 @@ class InnerClient
 
     private function soapCall($name, $params)
     {
-        $this->getLogger()->info('Amadeus method called: ' . $name);
+        $this->_logger->info('Amadeus method called: ' . $name);
         $data = $this->_client->__soapCall($name, $params, null, $this->getHeader(), $this->_headers);
 
         if (isset($data->errorMessage))
@@ -866,8 +863,8 @@ class InnerClient
      */
     private function debugDump($params, $data)
     {
-        $this->getLogger()->debug("Request Trace:\n" . $this->_client->__getLastRequest());
-        $this->getLogger()->debug("Response Trace:\n" . $this->_client->__getLastResponse());
+        $this->_logger->debug("Request Trace: " . $this->_client->__getLastRequest());
+        $this->_logger->debug("Response Trace: " . $this->_client->__getLastResponse());
 
         return $data;
     }
@@ -882,13 +879,5 @@ class InnerClient
             $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']);
 
         return $soapHeader;
-    }
-
-    /**
-     * @return Logger
-     */
-    public function getLogger()
-    {
-        return $this->_logger;
     }
 }

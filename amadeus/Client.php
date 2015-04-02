@@ -11,6 +11,7 @@ use Amadeus\Methods\SellFromRecommendationTrait;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\SimpleSearchRequest;
 use Amadeus\models\TicketPrice;
+use Monolog\Logger;
 
 class Client
 {
@@ -58,11 +59,11 @@ class Client
     {
         $path = realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . 'prod' . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl';
 
-        // Instantiate the Amadeus class (Debug enabled)
-        $this->_ws = new InnerClient($path, $env, $debug);
+        //Create logger
+        $this->_logger = new Logger('main');
 
-        //Copy logger
-        $this->_logger = &$this->_ws->getLogger();
+        // Instantiate the Amadeus class (Debug enabled)
+        $this->_ws = new InnerClient($path, $env, $this->_logger);
     }
 
     /**
