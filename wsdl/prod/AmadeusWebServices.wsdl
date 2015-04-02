@@ -109,6 +109,9 @@
     <wsdl:message name="PNR_Reply_13_2">
         <wsdl:part name="PNR_Reply_13_2" element="pnr_reply_13_2:PNR_Reply"/>
     </wsdl:message>
+    <wsdl:message name="PNR_Reply_9_1">
+        <wsdl:part name="PNR_Reply_9_1" element="pnr_reply_9_1:PNR_Reply"/>
+    </wsdl:message>
     <wsdl:message name="Queue_MoveItem_3_1">
         <wsdl:part name="Queue_MoveItem_3_1" element="queue_moveitem_3_1:Queue_MoveItem"/>
     </wsdl:message>

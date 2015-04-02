@@ -15,6 +15,9 @@ use Amadeus\models\Passenger;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\TicketDetails;
 use Amadeus\models\TicketPrice;
+use Monolog\Handler\BrowserConsoleHandler;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
 
 /**
  * @see https://extranets.us.amadeus.com
@@ -49,13 +52,23 @@ class InnerClient
     private $_debug = false;
 
     /**
+     * @var Logger
+     */
+    private $_logger;
+
+    /**
      * @param $wsdl  string   Path to the WSDL file
      * @param $env   string   prod/test
      * @param $debug boolean  Enable/disable debug mode
      */
     public function __construct($wsdl, $env = 'prod', $debug = false)
     {
-        $this->_debug = $debug;
+        $this->_logger = new Logger('main');
+        $this->_logger->pushHandler(new RotatingFileHandler('path/to/your.log', Logger::WARNING));
+        if ($debug) {
+            $this->_logger->pushHandler(new BrowserConsoleHandler());
+        }
+
         $endpoint = 'https://test.webservices.amadeus.com';
         if ($env == 'prod')
             $endpoint = 'https://production.webservices.amadeus.com';
@@ -320,7 +333,7 @@ class InnerClient
                             'surname' => $adult->getLastName()
                         ],
                         'passenger' => [
-                            'firstname' => $adult->getFirstNameWithCode()
+                            'firstName' => $adult->getFirstNameWithCode()
                         ]
                     ]
                 ]
@@ -337,7 +350,7 @@ class InnerClient
                                 'surname' => $infant->getLastName()
                             ],
                             'passenger' => [
-                                'firstname' => $infant->getFirstNameWithCode(),
+                                'firstName' => $infant->getFirstNameWithCode(),
                                 'type' => 'INF'
                             ]
                         ],
@@ -369,7 +382,7 @@ class InnerClient
                             'surname' => $child->getLastName()
                         ],
                         'passenger' => [
-                            'firstname' => $child->getFirstNameWithCode(),
+                            'firstName' => $child->getFirstNameWithCode(),
                             'type' => 'CHD'
                         ]
                     ],
@@ -775,6 +788,7 @@ class InnerClient
 
     private function soapCall($name, $params)
     {
+        $this->getLogger()->info('Amadeus method called: ' . $name);
         $data = $this->_client->__soapCall($name, $params, null, $this->getHeader(), $this->_headers);
 
         if (isset($data->errorMessage))
@@ -858,26 +872,12 @@ class InnerClient
      *
      * @param array $params The parameters used
      * @param array $data The response data
+     * @return Object
      */
     private function debugDump($params, $data)
     {
-        if ($this->_debug) {
-            // Request and Response
-            //$this->dumpVariable('', $params);
-            //$this->dumpVariable('data', $data);
-
-            // Trace output
-//            print "Request Headers:\n";
-//            print_r($this->_client->__getLastRequestHeaders());
-            print "Request Trace:\n";
-            print_r($this->_client->__getLastRequest());
-            echo "\n\nResponse Trace:\n";
-            print_r($this->_client->__getLastResponse());
-            echo "\n---\n";
-        }
-
-        //$data = $this->_client->__getLastResponse();
-        //$xml = simplexml_load_string($data, NULL, false, "http://schemas.xmlsoap.org/soap/envelope/");
+        $this->getLogger()->debug("Request Trace:\n" . $this->_client->__getLastRequest());
+        $this->getLogger()->debug("Response Trace:\n" . $this->_client->__getLastResponse());
 
         return $data;
     }
@@ -892,5 +892,13 @@ class InnerClient
             $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']);
 
         return $soapHeader;
+    }
+
+    /**
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        return $this->_logger;
     }
 }
