@@ -11,6 +11,7 @@
 namespace Amadeus;
 
 use Amadeus\exceptions\AmadeusException;
+use Amadeus\models\AgentCommission;
 use Amadeus\models\Passenger;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\TicketDetails;
@@ -285,10 +286,11 @@ class InnerClient
      * @param string $validatingCarrier
      * @param string $phoneNumber
      * @param string $email
+     * @param AgentCommission $agentCommission
      * @return Object
      * @throws AmadeusException
      */
-    public function pnrAddMultiElements($travellers, $ticketDetails, $validatingCarrier, $phoneNumber = null, $email = null)
+    public function pnrAddMultiElements($travellers, $ticketDetails, $validatingCarrier, $phoneNumber = null, $email = null, $agentCommission = null)
     {
         $params = [];
         /**
@@ -487,6 +489,25 @@ class InnerClient
             ]
         ];
 
+        //Agent commission
+        if ($agentCommission != null) {
+            $data = [
+                'elementManagementData' => [
+                    'segmentName' => 'FM'
+                ],
+                'commission' => [
+                    'commissionInfo' => []
+                ]
+            ];
+
+            if ($agentCommission->isPercentage())
+                $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent();
+            else
+                $data['commission']['commissionInfo']['amount'] = $agentCommission->getAmount();
+
+            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = $data;
+        }
+
         foreach (array_merge($travellers->getAdults(), $travellers->getChildren()) as $passenger) {
             /** @var Passenger $passenger */
             $dataElement = [
@@ -518,6 +539,29 @@ class InnerClient
                 ];
 
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = $dataElement;
+
+
+            //FOID
+            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                'elementManagementData' => [
+                    'segmentName' => 'SSR'
+                ],
+                'serviceRequest' => [
+                    'ssr' => [
+                        'type' => 'FOID',
+                        'status' => 'HK',
+                        'quantity' => 1,
+                        'companyId' => $validatingCarrier,
+                        'freetext' => 'PP' . $passenger->clearedPassport()
+                    ]
+                ],
+                'referenceForDataElement' => [
+                    'reference' => [
+                        'qualifier' => 'PR',
+                        'number' => $passenger->getIndex()
+                    ]
+                ]
+            ];
 
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
