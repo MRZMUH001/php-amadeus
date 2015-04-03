@@ -185,17 +185,18 @@ class Client
      * @param PassengerCollection $passengers
      * @param string $email
      * @param string $phone
+     * @param AgentCommission $agentCommission
      * @return array
      * @throws \amadeus\exceptions\UnableToSellException
      */
-    public function createPnr(TicketPrice $ticketPrice, $request, $passengers, $email = null, $phone = null)
+    public function createPnr(TicketPrice $ticketPrice, $request, $passengers, $email = null, $phone = null, $agentCommission = null)
     {
         //Check bookingability + add segment details
         $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
 
         //Add passenger details
         //TODO: Check for errors
-        $this->pnrAddMultiElements($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone);
+        $this->pnrAddMultiElements($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone, $agentCommission);
 
         $ticketDetails = $this->pricePnrWithBookingClass($ticketDetails, $request->getCurrency());
 

@@ -19,11 +19,12 @@ trait PnrAddMultiElementsTrait
      * @param string $validatingCarrier
      * @param string $email
      * @param string $phone
+     * @param AgentCommission $agentCommission
      * @return Object
      */
-    public function pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $email, $phone)
+    public function pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $email, $phone, $agentCommission = null)
     {
-        $data = $this->getClient()->pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $phone, $email);
+        $data = $this->getClient()->pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $phone, $email, $agentCommission);
 
         return null;
     }

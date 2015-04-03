@@ -501,7 +501,7 @@ class InnerClient
             ];
 
             if ($agentCommission->isPercentage())
-                $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent();
+                $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent() . '%';
             else
                 $data['commission']['commissionInfo']['amount'] = $agentCommission->getAmount();
 
