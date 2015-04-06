@@ -56,6 +56,9 @@ class Recommendation
      */
     private $_isPublishedFare;
 
+    /** @var string */
+    private $_provider;
+
     /**
      * Create ticket price
      * @param int $blankCount
@@ -216,5 +219,86 @@ class Recommendation
     public function setPrice($price)
     {
         $this->_price = $price;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProvider()
+    {
+        return $this->_provider;
+    }
+
+    /**
+     * @param string $provider
+     */
+    public function setProvider($provider)
+    {
+        $this->_provider = $provider;
+    }
+
+    /**
+     * Serialize ticket offer.
+     *
+     * @return string
+     */
+    public function serialize()
+    {
+        $segmentCodes = implode(
+            '-',
+            array_map(
+                function (FlightSegment $x) {
+                    return $x->serialize();
+                },
+                $this->getSegments()->getSegments()
+            )
+        );
+
+        $parts = [
+            $this->getSource(),
+            $this->getValidatingCarrierIata(),
+            round($this->getPrice()->getTotalPrice()->getAmount() / 100),
+            implode('', $this->getBookingClasses()),
+            implode('', $this->getCabins()),
+            implode('', $this->getAvailabilities()),
+            $segmentCodes,
+        ];
+
+        return implode('.', $parts);
+    }
+
+    /**
+     * Create ticket offer from recommendation hash
+     *
+     * @param string $recommendation
+     * @return Recommendation
+     */
+    public static function deserialize($recommendation)
+    {
+        list($source, $validatingCarrierIata, $declaredPrice, $bookingClasses, $cabins, $availabilities, $segmentCodes) = explode('.', $recommendation);
+
+        $segments = new FlightSegmentCollection();
+        foreach (explode('-', $segmentCodes) as $segmentCode)
+            $segments->addSegment(FlightSegment::deserialize($segmentCode));
+
+        $recommendation = new Recommendation(
+            1,
+            null,
+            null,
+            $segments,
+            $validatingCarrierIata,
+            null,
+            '',
+            $cabins,
+            $bookingClasses,
+            $availabilities,
+            null,
+            null,
+            true
+        );
+
+        $recommendation->setProvider($source);
+
+        return $recommendation;
     }
 }

@@ -177,7 +177,7 @@ trait SearchTicketsMethodTrait
 
             $commissions->apply($price, $searchRequest);
 
-            $results[] = new Recommendation(
+            $recommendation = new Recommendation(
                 $blankCount,
                 $price,
                 $segments,
@@ -191,6 +191,10 @@ trait SearchTicketsMethodTrait
                 $fareBasis,
                 $publishedFare
             );
+
+            $recommendation->setProvider($this->getId());
+
+            $results[] = $recommendation;
         }
 
         return $results;
