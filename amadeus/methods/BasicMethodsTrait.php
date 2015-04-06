@@ -3,6 +3,7 @@
 namespace Amadeus\Methods;
 
 use Amadeus\InnerClient;
+use Amadeus\models\AgentCommissions;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\Recommendation;
 use Amadeus\models\SimpleSearchRequest;
@@ -50,7 +51,7 @@ trait BasicMethodsTrait
      * @param FlightSegmentCollection $segments
      * @param string $validatingCarrier
      * @param SimpleSearchRequest $searchRequest
-     * @param Price $price
+     * @return AgentCommissions
      */
-    abstract function getCommissions(FlightSegmentCollection $segments, $validatingCarrier, SimpleSearchRequest $searchRequest, &$price);
+    abstract function getCommissions(FlightSegmentCollection $segments, $validatingCarrier, SimpleSearchRequest $searchRequest);
 }

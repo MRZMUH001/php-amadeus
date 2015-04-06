@@ -11,7 +11,7 @@
 namespace Amadeus;
 
 use Amadeus\exceptions\AmadeusException;
-use Amadeus\models\AgentCommission;
+use Amadeus\models\AgentCommissions;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\Passenger;
 use Amadeus\models\PassengerCollection;
@@ -287,7 +287,7 @@ class InnerClient
      * @param string $validatingCarrier
      * @param string $phoneNumber
      * @param string $email
-     * @param AgentCommission $agentCommission
+     * @param AgentCommissions $agentCommission
      * @return Object
      * @throws AmadeusException
      */

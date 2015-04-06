@@ -92,6 +92,11 @@ class FlightSegment
     private $_technicalStopsCount;
 
     /**
+     * @var BagAllowance
+     */
+    private $_bagAllowance;
+
+    /**
      * @param string $operatingCarrierIata
      * @param string $marketingCarrierIata
      * @param string $departureIata
@@ -404,6 +409,22 @@ class FlightSegment
     public function setMarketingCarrierIata($marketingCarrierIata)
     {
         $this->_marketingCarrierIata = $marketingCarrierIata;
+    }
+
+    /**
+     * @return BagAllowance
+     */
+    public function getBagAllowance()
+    {
+        return $this->_bagAllowance;
+    }
+
+    /**
+     * @param BagAllowance $bagAllowance
+     */
+    public function setBagAllowance($bagAllowance)
+    {
+        $this->_bagAllowance = $bagAllowance;
     }
 
 }

@@ -4,7 +4,6 @@ namespace Amadeus\Methods;
 
 use Amadeus\models\BagAllowance;
 use Amadeus\models\OrderFlow;
-use Amadeus\models\SegmentDetails;
 use common\models\Price;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
@@ -49,8 +48,11 @@ trait PricePnrWithBookingClassTrait
             ])
         );
 
-        $segments = [];
+        $i = 0;
+
         foreach ($this->iterateStd($data->fareList->segmentInformation) as $s) {
+            $oldSegment = $orderFlow->getSegments()->getSegment($i);
+
             $classOfService = $s->segDetails->segmentDetail->classOfService;
             $bagAllowanceInformation = $s->bagAllowanceInformation->bagAllowanceDetails;
             $bagAllowance = new BagAllowance(
@@ -59,7 +61,11 @@ trait PricePnrWithBookingClassTrait
                 isset($bagAllowanceInformation->measureUnit) ? (string)$bagAllowanceInformation->measureUnit : null,
                 isset($bagAllowanceInformation->baggageQuantity) ? (string)$bagAllowanceInformation->baggageQuantity : null
             );
-            $segments[] = new SegmentDetails($classOfService, $bagAllowance);
+            $oldSegment->setBookingClass($classOfService);
+            $oldSegment->setBagAllowance($bagAllowance);
+            $orderFlow->getSegments()->updateSegment($i, $oldSegment);
+
+            $i++;
         }
 
         /** @var Money $totalFare */
@@ -74,7 +80,8 @@ trait PricePnrWithBookingClassTrait
         $price = new Price($baseFare, $tax);
 
         //Set commission
-        $this->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest(), $price);
+        $commissions = $this->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest());
+        $commissions->apply($price, $orderFlow->getSearchRequest());
 
         $orderFlow->setPrice($price);
 
