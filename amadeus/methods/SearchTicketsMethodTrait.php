@@ -11,7 +11,6 @@ use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 use SimpleXMLElement;
 
-
 trait SearchTicketsMethodTrait
 {
 
