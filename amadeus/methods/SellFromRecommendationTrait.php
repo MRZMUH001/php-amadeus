@@ -4,8 +4,9 @@ namespace Amadeus\Methods;
 
 use Amadeus\exceptions\UnableToSellException;
 use Amadeus\models\FlightSegment;
+use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\OrderFlow;
 use Amadeus\models\TicketDetails;
-use Amadeus\models\TicketPrice;
 
 trait SellFromRecommendationTrait
 {
@@ -15,43 +16,47 @@ trait SellFromRecommendationTrait
     /**
      * Checks if all segments are confirmed and return segments data
      *
-     * @param TicketPrice $ticketPrice
-     * @param int $seats Number of seats
-     *
+     * @param OrderFlow $orderFlow
+     * @return OrderFlow
      * @throws UnableToSellException
-     * @return TicketDetails
+     *
      */
-    public function sellFromRecommendation(TicketPrice $ticketPrice, $seats)
+    public function sellFromRecommendation(OrderFlow $orderFlow)
     {
         $segments = [];
 
         $i = 0;
-        foreach ($ticketPrice->getSegments()->getSegments() as $segment) {
+        foreach ($orderFlow->getSegments()->getSegments() as $segment) {
             $segments[] = [
                 'dep_date' => $segment->getDepartureDate()->format('dmy'),
                 'dep_location' => $segment->getDepartureIata(),
                 'dest_location' => $segment->getArrivalIata(),
                 'company' => $segment->getMarketingCarrierIata(),
                 'flight_no' => $segment->getFlightNumber(),
-                'class' => $ticketPrice->getBookingClasses()[$i],
-                'passengers' => $seats
+                'class' => $segment->getBookingClass(),
+                'passengers' => $orderFlow->getSearchRequest()->getSeats()
             ];
             $i++;
         }
 
         $data = $this->getClient()->airSellFromRecommendation(
-            $ticketPrice->getDepartureIata(),
-            $ticketPrice->getArrivalIata(),
+            $orderFlow->getSegments()->getFirstSegment()->getDepartureIata(),
+            $orderFlow->getSegments()->getLastSegment()->getArrivalIata(),
             $segments
         );
 
         if (isset($data->errorAtMessageLevel->errorSegment->errorDetails->errorCode) && $data->errorAtMessageLevel->errorSegment->errorDetails->errorCode == '288')
             throw new UnableToSellException("Not all segments are confirmed");
 
-        $ticketDetails = new TicketDetails();
+        $i = 0;
+
         foreach ($this->iterateStd($data->itineraryDetails->segmentInformation) as $s) {
             $fi = $s->flightDetails;
-            $segment = new FlightSegment(
+
+            /** @var FlightSegment $oldSegmentData */
+            $oldSegmentData = $orderFlow->getSegments()->getSegments()[$i];
+
+            /*$segment = new FlightSegment(
                 (string)$fi->companyDetails->marketingCompany,//TODO: Not really right, need to find operating carrier
                 (string)$fi->companyDetails->marketingCompany,
                 (string)$fi->boardPointDetails->trueLocationId,
@@ -61,16 +66,19 @@ trait SellFromRecommendationTrait
                 $this->convertAmadeusTime((string)$fi->flightDate->arrivalTime),
                 $this->convertAmadeusDate((string)$fi->flightDate->departureDate),
                 $this->convertAmadeusTime((string)$fi->flightDate->departureTime)
-            );
-            $segment->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string)$s->apdSegment->legDetails->numberOfStops : 0);
-            $segment->setEquipmentTypeIata((string)$s->apdSegment->legDetails->equipment);
+            );*/
+
+            $oldSegmentData->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string)$s->apdSegment->legDetails->numberOfStops : 0);
+            $oldSegmentData->setEquipmentTypeIata((string)$s->apdSegment->legDetails->equipment);
             if (isset($s->apdSegment->arrivalStationInfo->terminal))
-                $segment->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);
-            $segment->setBookingClass((string)$fi->flightIdentification->bookingClass);
-            $ticketDetails->addSegment($segment);
+                $oldSegmentData->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);
+            $oldSegmentData->setBookingClass((string)$fi->flightIdentification->bookingClass);
+
+            //Save updated details
+            $orderFlow->getSegments()->updateSegment($i++, $oldSegmentData);
         }
 
-        return $ticketDetails;
+        return $orderFlow;
     }
 
 }

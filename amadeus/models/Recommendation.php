@@ -5,7 +5,7 @@ namespace Amadeus\models;
 use DateTime;
 use SebastianBergmann\Money\Money;
 
-class TicketPrice
+class Recommendation
 {
     /**
      * @var int

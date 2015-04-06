@@ -4,6 +4,7 @@ namespace Amadeus\Methods;
 
 
 use Amadeus\models\BagAllowance;
+use Amadeus\models\OrderFlow;
 use Amadeus\models\SegmentDetails;
 use Amadeus\models\SimpleSearchRequest;
 use Amadeus\models\TicketDetails;
@@ -16,13 +17,18 @@ trait InformativePricingWithoutPnrTrait
     use BasicMethodsTrait;
 
     /**
-     * @param TicketDetails $ticketDetails
-     * @param SimpleSearchRequest $request
-     * @return TicketDetails
+     * @param OrderFlow $orderFlow
+     * @return OrderFlow
      */
-    public function informativePricingWithoutPnr($ticketDetails, $request)
+    public function informativePricingWithoutPnr($orderFlow)
     {
-        $data = $this->getClient()->fareInformativePricingWithoutPnr($ticketDetails, $request->getAdults(), $request->getInfants(), $request->getChildren(), $request->getCurrency());
+        $data = $this->getClient()->fareInformativePricingWithoutPnr(
+            $orderFlow->getSegments(),
+            $orderFlow->getSearchRequest()->getAdults(),
+            $orderFlow->getSearchRequest()->getInfants(),
+            $orderFlow->getSearchRequest()->getChildren(),
+            $orderFlow->getSearchRequest()->getCurrency()
+        );
 
         $totalFares = [];
         $totalTaxes = [];
@@ -60,12 +66,21 @@ trait InformativePricingWithoutPnrTrait
                 }
         }
 
-        $ticketDetails->setFares($totalFares);
-        $ticketDetails->setTaxes($totalTaxes);
-        $ticketDetails->setSegmentDetails($segmentDetails);
-        $ticketDetails->setIsPublishedFare($isPublishedFare);
+        /** @var Money $totalFare */
+        $totalFare = $totalFares[712];
 
-        return $ticketDetails;
+        /** @var Money $baseFare */
+        $baseFare = $totalFares['B'];
+
+        /** @var Money $tax */
+        $tax = $totalFare->subtract($baseFare);
+
+        $orderFlow->setPriceTax($tax);
+        $orderFlow->setPriceFare($baseFare);
+
+        $orderFlow->setIsPublishedFare($isPublishedFare);
+
+        return $orderFlow;
     }
 
 }

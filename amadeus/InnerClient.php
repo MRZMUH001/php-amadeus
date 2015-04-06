@@ -12,6 +12,7 @@ namespace Amadeus;
 
 use Amadeus\exceptions\AmadeusException;
 use Amadeus\models\AgentCommission;
+use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\Passenger;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\TicketDetails;
@@ -282,7 +283,7 @@ class InnerClient
      * Make reservation call
      *
      * @param PassengerCollection $travellers
-     * @param TicketDetails $ticketDetails
+     * @param FlightSegmentCollection $segments
      * @param string $validatingCarrier
      * @param string $phoneNumber
      * @param string $email
@@ -290,7 +291,7 @@ class InnerClient
      * @return Object
      * @throws AmadeusException
      */
-    public function pnrAddMultiElements($travellers, $ticketDetails, $validatingCarrier, $phoneNumber = null, $email = null, $agentCommission = null)
+    public function pnrAddMultiElements($travellers, $segments, $validatingCarrier, $phoneNumber = null, $email = null, $agentCommission = null)
     {
         $params = [];
         /**
@@ -402,8 +403,8 @@ class InnerClient
                 'passengerType' => 'PAX',
                 'ticket' => [
                     'indicator' => 'XL',
-                    'date' => $ticketDetails->getSegments()->getSegments()[0]->getDepartureDate()->format('dmy'),
-                    'time' => str_replace(':', '', $ticketDetails->getSegments()->getSegments()[0]->getDepartureTime())
+                    'date' => $segments->getFirstSegment()->getDepartureDate()->format('dmy'),
+                    'time' => str_replace(':', '', $segments->getFirstSegment()->getDepartureTime())
                 ]
             ]
         ];
@@ -692,14 +693,14 @@ class InnerClient
     /**
      *
      *
-     * @param TicketDetails $ticketDetails
+     * @param FlightSegmentCollection $segments
      * @param int $adults
      * @param int $infants
      * @param int $children
      * @param string $currency
      * @return array
      */
-    public function fareInformativePricingWithoutPnr($ticketDetails, $adults, $infants, $children, $currency)
+    public function fareInformativePricingWithoutPnr($segments, $adults, $infants, $children, $currency)
     {
         $params = [];
 
@@ -748,9 +749,9 @@ class InnerClient
 
         //Segments
         $i = 1;
-        $segments = [];
-        foreach ($ticketDetails->getSegments()->getSegments() as $segment) {
-            $segments[] = [
+        $segmentsD = [];
+        foreach ($segments->getSegments() as $segment) {
+            $segmentsD[] = [
                 'segmentInformation' => [
                     'flightDate' => [
                         'departureDate' => $segment->getDepartureDate()->format('dmy'),
@@ -779,7 +780,7 @@ class InnerClient
                 ]
             ];
         }
-        $params['Fare_InformativePricingWithoutPNR']['segmentGroup'] = $segments;
+        $params['Fare_InformativePricingWithoutPNR']['segmentGroup'] = $segmentsD;
 
         //Pricing
         //Currency override

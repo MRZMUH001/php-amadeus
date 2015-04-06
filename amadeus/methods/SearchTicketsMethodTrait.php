@@ -5,7 +5,7 @@ namespace Amadeus\Methods;
 use Amadeus\models\FlightSegment;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\SimpleSearchRequest;
-use Amadeus\models\TicketPrice;
+use Amadeus\models\Recommendation;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 use SimpleXMLElement;
@@ -19,7 +19,7 @@ trait SearchTicketsMethodTrait
     /**
      * Search for flights
      * @param SimpleSearchRequest $searchRequest
-     * @return TicketPrice[]
+     * @return Recommendation[]
      */
     public function searchTickets(SimpleSearchRequest $searchRequest)
     {
@@ -87,6 +87,8 @@ trait SearchTicketsMethodTrait
                         $segment->setArrivalTerm((string)$fi->location[1]->terminal);
 
                     $segment->setEquipmentTypeIata((string)$fi->productDetail->equipmentType);
+
+                    //TODO: Set technical stops
 
                     $flightSegmentsCollection->addSegment($segment);
                 }
@@ -164,7 +166,7 @@ trait SearchTicketsMethodTrait
                 foreach ($this->iterateStd($fp->fareDetails->groupOfFares) as $fare)
                     $additionalInfo .= "\n\nFare basis: " . (string)$fare->productInformation->fareProductDetail->fareBasis;
 
-            $results[] = new TicketPrice(
+            $results[] = new Recommendation(
                 $blankCount,
                 $priceFare,
                 $priceTax,

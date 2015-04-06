@@ -3,6 +3,7 @@
 namespace Amadeus\Methods;
 
 use Amadeus\models\BagAllowance;
+use Amadeus\models\OrderFlow;
 use Amadeus\models\SegmentDetails;
 use Amadeus\models\TicketDetails;
 use SebastianBergmann\Money\Currency;
@@ -16,13 +17,12 @@ trait PricePnrWithBookingClassTrait
     /**
      * Show details on price & baggage
      *
-     * @param TicketDetails $ticketDetails
-     * @param string $currency
-     * @return TicketDetails
+     * @param OrderFlow $orderFlow
+     * @return OrderFlow
      */
-    public function pricePnrWithBookingClass($ticketDetails, $currency)
+    public function pricePnrWithBookingClass($orderFlow)
     {
-        $data = $this->getClient()->farePricePNRWithBookingClass($currency);
+        $data = $this->getClient()->farePricePNRWithBookingClass($orderFlow->getSearchRequest()->getCurrency());
 
         $fareList = [];
         foreach ($this->iterateStd($data->fareList->fareDataInformation->fareDataSupInformation) as $f) {
@@ -62,13 +62,21 @@ trait PricePnrWithBookingClassTrait
             $segments[] = new SegmentDetails($classOfService, $bagAllowance);
         }
 
-        $ticketDetails->setFares($fareList);
-        $ticketDetails->setTaxes($taxesList);
-        $ticketDetails->setSegmentDetails($segments);
+        /** @var Money $totalFare */
+        $totalFare = $fareList[712];
 
-        $ticketDetails->setLastTicketingDate($lastTktDate);
+        /** @var Money $baseFare */
+        $baseFare = $fareList['B'];
 
-        return $ticketDetails;
+        /** @var Money $tax */
+        $tax = $totalFare->subtract($baseFare);
+
+        $orderFlow->setPriceTax($tax);
+        $orderFlow->setPriceFare($baseFare);
+
+        $orderFlow->setLastTktDate($lastTktDate);
+
+        return $orderFlow;
     }
 
 }

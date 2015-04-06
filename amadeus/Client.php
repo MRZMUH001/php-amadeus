@@ -9,9 +9,13 @@ use Amadeus\Methods\PnrAddMultiElementsTrait;
 use Amadeus\Methods\PricePnrWithBookingClassTrait;
 use Amadeus\Methods\SearchTicketsMethodTrait;
 use Amadeus\Methods\SellFromRecommendationTrait;
+use Amadeus\Methods\TicketCreateTrait;
+use Amadeus\models\AgentCommission;
+use Amadeus\models\OrderFlow;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\SimpleSearchRequest;
-use Amadeus\models\TicketPrice;
+use Amadeus\models\TicketDetails;
+use Amadeus\models\Recommendation;
 use Monolog\Logger;
 
 class Client
@@ -34,6 +38,9 @@ class Client
     use PnrAddMultiElementsTrait;
 
     use PnrAddMultiElementsFinalTrait;
+
+    //Create ticket
+    use TicketCreateTrait;
 
     /**
      * Is session open
@@ -155,54 +162,58 @@ class Client
     /**
      * Prepare everything for booking page
      *
-     * @param TicketPrice $ticketPrice
-     * @param SimpleSearchRequest $request
-     * @return models\TicketDetails
-     * @throws \amadeus\exceptions\UnableToSellException
+     * @param OrderFlow $orderFlow
+     * @return OrderFlow
+     * @throws exceptions\UnableToSellException
      */
-    public function prepareBooking(TicketPrice $ticketPrice, $request)
+    public function prepareBooking(OrderFlow $orderFlow)
     {
         //Check bookingability + add segment details
-        $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
+        $orderFlow = $this->sellFromRecommendation($orderFlow);
 
         //Who knows what for :)
-        $this->pricePnrWithBookingClass($ticketDetails, $request->getCurrency());
+        $this->pricePnrWithBookingClass($orderFlow);
 
         //Get proper fares
-        $ticketDetails = $this->informativePricingWithoutPnr($ticketDetails, $request);
+        $orderFlow = $this->informativePricingWithoutPnr($orderFlow);
 
         //Set fare rules
-        $ticketDetails->setRules($this->getFareRules());
+        $orderFlow->setRules($this->getFareRules());
 
-        return $ticketDetails;
+        $this->closeSession();
+
+        return $orderFlow;
     }
 
     /**
      * Create PNR
      *
-     * @param TicketPrice $ticketPrice
-     * @param SimpleSearchRequest $request
-     * @param PassengerCollection $passengers
-     * @param string $email
-     * @param string $phone
-     * @param AgentCommission $agentCommission
+     * @param OrderFlow $orderFlow
      * @return array
-     * @throws \amadeus\exceptions\UnableToSellException
+     * @throws exceptions\UnableToSellException
      */
-    public function createPnr(TicketPrice $ticketPrice, $request, $passengers, $email = null, $phone = null, $agentCommission = null)
+    public function createPnr(OrderFlow $orderFlow)
     {
         //Check bookingability + add segment details
-        $ticketDetails = $this->sellFromRecommendation($ticketPrice, $request->getSeats());
+        $orderFlow = $this->sellFromRecommendation($orderFlow);
 
         //Add passenger details
         //TODO: Check for errors
-        $this->pnrAddMultiElements($passengers, $ticketDetails, $ticketPrice->getValidatingCarrierIata(), $email, $phone, $agentCommission);
+        $this->pnrAddMultiElements($orderFlow);
 
-        $ticketDetails = $this->pricePnrWithBookingClass($ticketDetails, $request->getCurrency());
+        $orderFlow = $this->pricePnrWithBookingClass($orderFlow);
 
-        $pnrNumber = $this->pnrAddMultiElementsFinal();
+        $orderFlow->setPnr($this->pnrAddMultiElementsFinal());
 
-        return [$pnrNumber, $ticketDetails];
+        $this->closeSession();
+
+        return $orderFlow;
+    }
+
+    public function ticket(TicketDetails $ticketDetails, $currency)
+    {
+        //$this->pricePnrWithBookingClass($ticketDetails, $currency);
+        //$this->ticketCreate($types);
     }
 
     /**

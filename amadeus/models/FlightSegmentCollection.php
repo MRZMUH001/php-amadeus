@@ -51,4 +51,38 @@ class FlightSegmentCollection
         $this->_estimatedFlightTime = $estimatedFlightTime;
     }
 
+    /**
+     * @return FlightSegment
+     */
+    public function getFirstSegment()
+    {
+        return $this->_segments[0];
+    }
+
+    /**
+     * @return FlightSegment
+     */
+    public function getLastSegment()
+    {
+        return $this->_segments[count($this->_segments) - 1];
+    }
+
+    /**
+     * @param int $i index
+     * @return FlightSegment
+     */
+    public function getSegment($i)
+    {
+        return $this->_segments[$i];
+    }
+
+    /**
+     * @param int $i
+     * @param FlightSegment $segment
+     */
+    public function updateSegment($i, $segment)
+    {
+        $this->_segments[$i] = $segment;
+    }
+
 }

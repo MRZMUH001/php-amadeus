@@ -3,6 +3,7 @@
 namespace Amadeus\Methods;
 
 
+use Amadeus\models\OrderFlow;
 use Amadeus\models\PassengerCollection;
 use Amadeus\models\TicketDetails;
 
@@ -14,17 +15,19 @@ trait PnrAddMultiElementsTrait
     /**
      * Add passenger details
      *
-     * @param PassengerCollection $passengers
-     * @param TicketDetails $ticketDetails
-     * @param string $validatingCarrier
-     * @param string $email
-     * @param string $phone
-     * @param AgentCommission $agentCommission
+     * @param OrderFlow $orderFlow
      * @return Object
      */
-    public function pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $email, $phone, $agentCommission = null)
+    public function pnrAddMultiElements(OrderFlow $orderFlow)
     {
-        $data = $this->getClient()->pnrAddMultiElements($passengers, $ticketDetails, $validatingCarrier, $phone, $email, $agentCommission);
+        $data = $this->getClient()->pnrAddMultiElements(
+            $orderFlow->getPassengers(),
+            $orderFlow->getSegments(),
+            $orderFlow->getValidatingCarrier(),
+            $orderFlow->getClientPhone(),
+            $orderFlow->getClientEmail(),
+            $agentCommission
+        );
 
         return null;
     }
