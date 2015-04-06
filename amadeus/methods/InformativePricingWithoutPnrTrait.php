@@ -5,9 +5,8 @@ namespace Amadeus\Methods;
 
 use Amadeus\models\BagAllowance;
 use Amadeus\models\OrderFlow;
+use Amadeus\models\Price;
 use Amadeus\models\SegmentDetails;
-use Amadeus\models\SimpleSearchRequest;
-use Amadeus\models\TicketDetails;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 
@@ -75,8 +74,17 @@ trait InformativePricingWithoutPnrTrait
         /** @var Money $tax */
         $tax = $totalFare->subtract($baseFare);
 
-        $orderFlow->setPriceTax($tax);
-        $orderFlow->setPriceFare($baseFare);
+        $price = new Price($baseFare, $tax);
+
+        //Set commission
+        $commissions = $this->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest());
+        if ($commissions == null)
+            throw new \Exception("No commissions found");
+
+        $commissions->apply($price, $orderFlow->getSearchRequest());
+
+        $orderFlow->setPrice($price);
+        $orderFlow->setCommissions($commissions);
 
         $orderFlow->setIsPublishedFare($isPublishedFare);
 

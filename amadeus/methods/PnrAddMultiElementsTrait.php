@@ -26,7 +26,7 @@ trait PnrAddMultiElementsTrait
             $orderFlow->getValidatingCarrier(),
             $orderFlow->getClientPhone(),
             $orderFlow->getClientEmail(),
-            $agentCommission
+            $orderFlow->getCommissions()
         );
 
         return null;

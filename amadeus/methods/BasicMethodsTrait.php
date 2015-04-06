@@ -5,9 +5,7 @@ namespace Amadeus\Methods;
 use Amadeus\InnerClient;
 use Amadeus\models\AgentCommissions;
 use Amadeus\models\FlightSegmentCollection;
-use Amadeus\models\Recommendation;
 use Amadeus\models\SimpleSearchRequest;
-use common\models\Price;
 
 trait BasicMethodsTrait
 {

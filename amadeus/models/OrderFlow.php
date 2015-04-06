@@ -38,6 +38,9 @@ class OrderFlow
     /** @var bool */
     private $_isPublishedFare;
 
+    /** @var  AgentCommissions */
+    private $_commissions;
+
     /**
      * @return FlightSegmentCollection
      */
@@ -212,6 +215,22 @@ class OrderFlow
     public function setIsPublishedFare($isPublishedFare)
     {
         $this->_isPublishedFare = $isPublishedFare;
+    }
+
+    /**
+     * @return AgentCommissions
+     */
+    public function getCommissions()
+    {
+        return $this->_commissions;
+    }
+
+    /**
+     * @param AgentCommissions $commissions
+     */
+    public function setCommissions($commissions)
+    {
+        $this->_commissions = $commissions;
     }
 
 }

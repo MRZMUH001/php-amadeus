@@ -4,7 +4,7 @@ namespace Amadeus\Methods;
 
 use Amadeus\models\BagAllowance;
 use Amadeus\models\OrderFlow;
-use common\models\Price;
+use Amadeus\models\Price;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 
@@ -18,6 +18,7 @@ trait PricePnrWithBookingClassTrait
      *
      * @param OrderFlow $orderFlow
      * @return OrderFlow
+     * @throws \Exception
      */
     public function pricePnrWithBookingClass($orderFlow)
     {
@@ -81,9 +82,13 @@ trait PricePnrWithBookingClassTrait
 
         //Set commission
         $commissions = $this->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest());
+        if ($commissions == null)
+            throw new \Exception("No commissions found");
+
         $commissions->apply($price, $orderFlow->getSearchRequest());
 
         $orderFlow->setPrice($price);
+        $orderFlow->setCommissions($commissions);
 
         $orderFlow->setLastTktDate($lastTktDate);
 

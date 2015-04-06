@@ -172,6 +172,9 @@ trait SearchTicketsMethodTrait
             $price = new Price($priceFare, $priceTax);
 
             $commissions = $this->getCommissions($segments, $validatingCarrierIata, $searchRequest);
+            if ($commissions == null)
+                continue;
+
             $commissions->apply($price, $searchRequest);
 
             $results[] = new Recommendation(
