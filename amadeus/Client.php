@@ -10,15 +10,11 @@ use Amadeus\Methods\PricePnrWithBookingClassTrait;
 use Amadeus\Methods\SearchTicketsMethodTrait;
 use Amadeus\Methods\SellFromRecommendationTrait;
 use Amadeus\Methods\TicketCreateTrait;
-use Amadeus\models\AgentCommission;
 use Amadeus\models\OrderFlow;
-use Amadeus\models\PassengerCollection;
-use Amadeus\models\SimpleSearchRequest;
 use Amadeus\models\TicketDetails;
-use Amadeus\models\Recommendation;
 use Monolog\Logger;
 
-class Client
+abstract class Client
 {
     //Tickets search
     use SearchTicketsMethodTrait;

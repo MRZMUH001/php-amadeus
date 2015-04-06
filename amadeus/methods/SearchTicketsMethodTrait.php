@@ -4,8 +4,9 @@ namespace Amadeus\Methods;
 
 use Amadeus\models\FlightSegment;
 use Amadeus\models\FlightSegmentCollection;
-use Amadeus\models\SimpleSearchRequest;
 use Amadeus\models\Recommendation;
+use Amadeus\models\SimpleSearchRequest;
+use common\models\Price;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 use SimpleXMLElement;
@@ -45,7 +46,10 @@ trait SearchTicketsMethodTrait
         $results = [];
 
         //Parse flights
+
+        /** @var FlightSegmentCollection[] $flights */
         $flights = [];
+
         foreach ($this->iterateStd($data->flightIndex) as $i => $flightIndex) {
             foreach ($flightIndex->groupOfFlights as $group) {
                 //Find flight index
@@ -166,10 +170,13 @@ trait SearchTicketsMethodTrait
                 foreach ($this->iterateStd($fp->fareDetails->groupOfFares) as $fare)
                     $additionalInfo .= "\n\nFare basis: " . (string)$fare->productInformation->fareProductDetail->fareBasis;
 
+            $price = new Price($priceFare, $priceTax);
+
+            $this->getCommissions($segments, $validatingCarrierIata, $searchRequest, $price);
+
             $results[] = new Recommendation(
                 $blankCount,
-                $priceFare,
-                $priceTax,
+                $price,
                 $segments,
                 $validatingCarrierIata,
                 array_unique($marketingCarrierIatas),

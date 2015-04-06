@@ -3,6 +3,10 @@
 namespace Amadeus\Methods;
 
 use Amadeus\InnerClient;
+use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\Recommendation;
+use Amadeus\models\SimpleSearchRequest;
+use common\models\Price;
 
 trait BasicMethodsTrait
 {
@@ -39,4 +43,14 @@ trait BasicMethodsTrait
      * @return int minutes
      */
     protected abstract function convertAmadeusDurationToMinutes($duration);
+
+    /**
+     * Should set $price commission
+     *
+     * @param FlightSegmentCollection $segments
+     * @param string $validatingCarrier
+     * @param SimpleSearchRequest $searchRequest
+     * @param Price $price
+     */
+    abstract function getCommissions(FlightSegmentCollection $segments, $validatingCarrier, SimpleSearchRequest $searchRequest, &$price);
 }

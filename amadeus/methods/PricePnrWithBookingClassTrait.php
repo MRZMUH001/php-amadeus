@@ -5,7 +5,7 @@ namespace Amadeus\Methods;
 use Amadeus\models\BagAllowance;
 use Amadeus\models\OrderFlow;
 use Amadeus\models\SegmentDetails;
-use Amadeus\models\TicketDetails;
+use common\models\Price;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 
@@ -71,8 +71,12 @@ trait PricePnrWithBookingClassTrait
         /** @var Money $tax */
         $tax = $totalFare->subtract($baseFare);
 
-        $orderFlow->setPriceTax($tax);
-        $orderFlow->setPriceFare($baseFare);
+        $price = new Price($baseFare, $tax);
+
+        //Set commission
+        $this->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest(), $price);
+
+        $orderFlow->setPrice($price);
 
         $orderFlow->setLastTktDate($lastTktDate);
 

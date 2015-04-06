@@ -2,6 +2,7 @@
 
 namespace Amadeus\models;
 
+use common\models\Price;
 use DateTime;
 use SebastianBergmann\Money\Money;
 
@@ -13,16 +14,9 @@ class Recommendation
     private $_blankCount;
 
     /**
-     * Fare
-     * @var Money
+     * @var Price
      */
-    protected $_priceFare;
-
-    /**
-     * Tax
-     * @var Money
-     */
-    protected $_priceTax;
+    protected $_price;
 
     /**
      * Flight segments
@@ -67,9 +61,8 @@ class Recommendation
     /**
      * Create ticket price
      * @param int $blankCount
-     * @param Money $priceFare
-     * @param Money $priceTax
-     * @param $segments
+     * @param Price $price
+     * @param FlightSegmentCollection $segments
      * @param string $validatingCarrierIata
      * @param string $suggestedMarketingCarrierIatas
      * @param string $additionalInfo
@@ -80,11 +73,10 @@ class Recommendation
      * @param $fareBasis
      * @param boolean $isPublishedFare
      */
-    function __construct($blankCount, $priceFare, $priceTax, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
+    function __construct($blankCount, $price, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
     {
         $this->_blankCount = $blankCount;
-        $this->_priceFare = $priceFare;
-        $this->_priceTax = $priceTax;
+        $this->_price = $price;
         $this->_segments = $segments;
         $this->_validatingCarrierIata = $validatingCarrierIata;
         $this->_suggestedMarketingCarrierIatas = $suggestedMarketingCarrierIatas;
@@ -106,19 +98,11 @@ class Recommendation
     }
 
     /**
-     * @return Money
+     * @return Price
      */
-    public function getPriceFare()
+    public function getPrice()
     {
-        return $this->_priceFare;
-    }
-
-    /**
-     * @return Money
-     */
-    public function getPriceTax()
-    {
-        return $this->_priceTax;
+        return $this->_price;
     }
 
     /**
@@ -202,14 +186,6 @@ class Recommendation
     }
 
     /**
-     * @return Money
-     */
-    public function getTotalPrice()
-    {
-        return $this->_priceFare->add($this->_priceTax);
-    }
-
-    /**
      * Return provider name
      * @return string
      */
@@ -224,7 +200,7 @@ class Recommendation
      */
     public function getDepartureIata()
     {
-        return $this->getSegments()->getSegments()[0]->getDepartureIata();
+        return $this->getSegments()->getFirstSegment()->getDepartureIata();
     }
 
     /**
@@ -233,7 +209,14 @@ class Recommendation
      */
     public function getArrivalIata()
     {
-        return array_reverse($this->getSegments()->getSegments())[0]->getArrivalIata();
+        return $this->getSegments()->getLastSegment()->getArrivalIata();
     }
 
+    /**
+     * @param Price $price
+     */
+    public function setPrice($price)
+    {
+        $this->_price = $price;
+    }
 }

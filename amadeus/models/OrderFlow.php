@@ -3,6 +3,7 @@
 namespace Amadeus\models;
 
 
+use common\models\Price;
 use SebastianBergmann\Money\Money;
 
 class OrderFlow
@@ -19,17 +20,8 @@ class OrderFlow
 
     private $_pnr;
 
-    /** @var Money */
-    private $_priceTax;
-
-    /** @var Money */
-    private $_priceFare;
-
-    /** @var Money */
-    private $_priceCommission;
-
-    /** @var Money */
-    private $_priceMarkup;
+    /** @var Price */
+    private $_price;
 
     /** @var  PassengerCollection */
     private $_passengers;
@@ -114,67 +106,19 @@ class OrderFlow
     }
 
     /**
-     * @return Money
+     * @return Price
      */
-    public function getPriceTax()
+    public function getPrice()
     {
-        return $this->_priceTax;
+        return $this->_price;
     }
 
     /**
-     * @param Money $priceTax
+     * @param Price $price
      */
-    public function setPriceTax($priceTax)
+    public function setPrice($price)
     {
-        $this->_priceTax = $priceTax;
-    }
-
-    /**
-     * @return Money
-     */
-    public function getPriceFare()
-    {
-        return $this->_priceFare;
-    }
-
-    /**
-     * @param Money $priceFare
-     */
-    public function setPriceFare($priceFare)
-    {
-        $this->_priceFare = $priceFare;
-    }
-
-    /**
-     * @return Money
-     */
-    public function getPriceCommission()
-    {
-        return $this->_priceCommission;
-    }
-
-    /**
-     * @param Money $priceCommission
-     */
-    public function setPriceCommission($priceCommission)
-    {
-        $this->_priceCommission = $priceCommission;
-    }
-
-    /**
-     * @return Money
-     */
-    public function getPriceMarkup()
-    {
-        return $this->_priceMarkup;
-    }
-
-    /**
-     * @param Money $priceMarkup
-     */
-    public function setPriceMarkup($priceMarkup)
-    {
-        $this->_priceMarkup = $priceMarkup;
+        $this->_price = $price;
     }
 
     /**
