@@ -2,9 +2,9 @@
 
 namespace Amadeus\requests;
 
-use Amadeus\InnerClient;
+use Amadeus\Client;
 use Amadeus\models\SimpleSearchRequest;
-use Amadeus\responses\Fare_MasterPricerTravelBoardSearchResponse;
+use Amadeus\replies\Fare_MasterPricerTravelBoardSearchReply;
 
 class Fare_MasterPricerTravelBoardSearchRequest extends Request
 {
@@ -29,11 +29,11 @@ class Fare_MasterPricerTravelBoardSearchRequest extends Request
     }
 
     /**
-     * @param InnerClient $client
-     * @return Fare_MasterPricerTravelBoardSearchResponse
+     * @param Client $client
+     * @return Fare_MasterPricerTravelBoardSearchReply
      * @throws \Exception
      */
-    public function send(InnerClient $client)
+    public function send(Client $client)
     {
         if ($this->_searchRequest == null)
             throw new \Exception("Search request not set");
@@ -97,7 +97,7 @@ class Fare_MasterPricerTravelBoardSearchRequest extends Request
             $params['itinerary'][1]['timeDetails']['firstDateTimeDetail']['date'] = $r->getDateReturn()->format('dmy');
         }
 
-        return $this->innerSend($client, 'Fare_MasterPricerTravelBoardSearch', $params, Fare_MasterPricerTravelBoardSearchResponse::class);
+        return $this->innerSend($client, 'Fare_MasterPricerTravelBoardSearch', $params, Fare_MasterPricerTravelBoardSearchReply::class);
     }
 
 }

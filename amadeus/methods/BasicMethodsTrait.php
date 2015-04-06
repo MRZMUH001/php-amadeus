@@ -9,10 +9,6 @@ use Amadeus\models\SimpleSearchRequest;
 
 trait BasicMethodsTrait
 {
-    /**
-     * @return string
-     */
-    public abstract function getId();
 
     /**
      * @return InnerClient

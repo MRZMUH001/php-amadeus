@@ -2,31 +2,32 @@
 
 namespace Amadeus\requests;
 
-use Amadeus\InnerClient;
-use Amadeus\responses\Response;
+use Amadeus\Client;
+use Amadeus\replies\Reply;
 
 abstract class Request
 {
 
-    abstract function send(InnerClient $client);
+    abstract function send(Client $client);
 
     /**
      * Sends request and returns response object
      *
-     * @param InnerClient $client
+     * @param Client $client
      * @param string $actionName
      * @param array $params
      * @param string $class
      *
-     * @return Response
+     * @return Reply
      */
-    protected function innerSend(InnerClient $client, $actionName, $params, $class)
+    protected function innerSend(Client $client, $actionName, $params, $class)
     {
-        $data = $client->soapCall($actionName, [$actionName => $params]);
+        $data = $client->getClient()->soapCall($actionName, [$actionName => $params]);
 
-        $result = new $class($data);
+        $result = new $class($client, $this, $data);
 
         return $result;
     }
+
 
 }

@@ -1,44 +1,25 @@
 <?php
 
-namespace Amadeus\Methods;
+namespace Amadeus\replies;
 
 use Amadeus\models\FlightSegment;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\Price;
 use Amadeus\models\Recommendation;
-use Amadeus\models\SimpleSearchRequest;
+use Amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 use SimpleXMLElement;
 
-trait SearchTicketsMethodTrait
+class Fare_MasterPricerTravelBoardSearchReply extends Reply
 {
 
-    use BasicMethodsTrait;
-
     /**
-     * Search for flights
-     * @param SimpleSearchRequest $searchRequest
-     * @return Recommendation[]
+     * @return Recommendation[];
      */
-    public function searchTickets(SimpleSearchRequest $searchRequest)
+    public function getRecommendations()
     {
-        $travellers = [
-            'A' => $searchRequest->getAdults(),
-            'C' => $searchRequest->getChildren(),
-            'I' => $searchRequest->getInfants()
-        ];
-
-        $data = $this->getClient()->fareMasterPricerTravelBoardSearch(
-            $searchRequest->getDate()->format('dmy'),
-            $searchRequest->getOrigin(),
-            $searchRequest->getDestination(),
-            $travellers,
-            $searchRequest->getDateReturn() == null ? null : $searchRequest->getDateReturn()->format('dmy'),
-            $searchRequest->getLimit(),
-            $searchRequest->getCurrency(),
-            $searchRequest->getCabin()
-        );
+        $data = $this->xml();
 
         $currency = (string)$data->conversionRate->conversionRateDetail->currency;
 
@@ -123,7 +104,7 @@ trait SearchTicketsMethodTrait
                         $availabilities[] = (string)$fare->productInformation->cabinProduct->avlStatus;
                         $fareBasis[] = (string)$fare->productInformation->fareProductDetail->fareBasis;
 
-                        $fareTypes = $fare->productInformation->fareProductDetail->fareType;
+                        $fareTypes = (array)$fare->productInformation->fareProductDetail->fareType;
                         if (is_string($fareTypes))
                             $isPublished = $fareTypes == 'RP'; else
                             $isPublished = array_search('RP', $fareTypes) !== false;
@@ -154,11 +135,13 @@ trait SearchTicketsMethodTrait
                                 //last_tkt_date = Date . parse(last_tkt_date) if last_tkt_date
                             }
 
+            /** @var FlightSegmentCollection $segments */
             $segments = [];
-            foreach ($this->IterateStd($recommendation->segmentFlightRef) as $flightRef)
-                foreach ($this->IterateStd($flightRef->referencingDetail) as $refDetail) {
-                    if ($refDetail->refQualifier == 'S')
-                        $segments = $flights[intval($refDetail->refNumber)];
+            foreach ($this->iterateStd($recommendation->segmentFlightRef) as $flightRef)
+                foreach ($this->iterateStd($flightRef->referencingDetail) as $refDetail) {
+                    if ($refDetail->refQualifier == 'S'){
+                        $segments = clone $flights[intval($refDetail->refNumber)];
+                    }
                     break;
                 }
 
@@ -171,11 +154,11 @@ trait SearchTicketsMethodTrait
 
             $price = new Price($priceFare, $priceTax);
 
-            $commissions = $this->getCommissions($segments, $validatingCarrierIata, $searchRequest);
+            $commissions = $this->getClient()->getCommissions($segments, $validatingCarrierIata, $this->getRequest()->getSearchRequest());
             if ($commissions == null)
                 continue;
 
-            $commissions->apply($price, $searchRequest);
+            $commissions->apply($price, $this->getRequest()->getSearchRequest());
 
             $recommendation = new Recommendation(
                 $blankCount,
@@ -192,7 +175,7 @@ trait SearchTicketsMethodTrait
                 $publishedFare
             );
 
-            $recommendation->setProvider($this->getId());
+            $recommendation->setProvider($this->getClient()->getId());
 
             $results[] = $recommendation;
         }
@@ -200,5 +183,11 @@ trait SearchTicketsMethodTrait
         return $results;
     }
 
-
+    /**
+     * @return Fare_MasterPricerTravelBoardSearchRequest
+     */
+    function getRequest()
+    {
+        return $this->_request;
+    }
 }

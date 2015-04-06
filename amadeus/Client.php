@@ -2,41 +2,42 @@
 
 namespace Amadeus;
 
-use Amadeus\Methods\FareRulesTrait;
-use Amadeus\Methods\InformativePricingWithoutPnrTrait;
-use Amadeus\Methods\PnrAddMultiElementsFinalTrait;
-use Amadeus\Methods\PnrAddMultiElementsTrait;
-use Amadeus\Methods\PricePnrWithBookingClassTrait;
-use Amadeus\Methods\SearchTicketsMethodTrait;
-use Amadeus\Methods\SellFromRecommendationTrait;
-use Amadeus\Methods\TicketCreateTrait;
+use Amadeus\exceptions\UnableToSellException;
+use Amadeus\models\AgentCommissions;
+use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\OrderFlow;
+use Amadeus\models\SimpleSearchRequest;
 use Amadeus\models\TicketDetails;
+use Amadeus\requests\Air_SellFromRecommendationRequest;
+use Amadeus\requests\Fare_CheckRulesRequest;
+use Amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
+use Amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
+use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;
 use Monolog\Logger;
 
 abstract class Client
 {
     //Tickets search
-    use SearchTicketsMethodTrait;
+    //use SearchTicketsMethodTrait;
 
     //Sell from recommendation
-    use SellFromRecommendationTrait;
+    //use SellFromRecommendationTrait;
 
     //Get price details
-    use PricePnrWithBookingClassTrait;
+    //use PricePnrWithBookingClassTrait;
 
-    use InformativePricingWithoutPnrTrait;
+    //use InformativePricingWithoutPnrTrait;
 
     //Get fare rules
-    use FareRulesTrait;
+    //use FareRulesTrait;
 
     //Add passengers
-    use PnrAddMultiElementsTrait;
+    //use PnrAddMultiElementsTrait;
 
-    use PnrAddMultiElementsFinalTrait;
+    //use PnrAddMultiElementsFinalTrait;
 
     //Create ticket
-    use TicketCreateTrait;
+    //use TicketCreateTrait;
 
     /**
      * Is session open
@@ -54,6 +55,21 @@ abstract class Client
      * @var \Monolog\Logger
      */
     private $_logger;
+
+    /**
+     * Should set $price commission
+     *
+     * @param FlightSegmentCollection $segments
+     * @param string $validatingCarrier
+     * @param SimpleSearchRequest $searchRequest
+     * @return AgentCommissions
+     */
+    abstract function getCommissions(FlightSegmentCollection $segments, $validatingCarrier, SimpleSearchRequest $searchRequest);
+
+    /**
+     * @return string
+     */
+    public abstract function getId();
 
     /**
      * Constructor
@@ -81,6 +97,22 @@ abstract class Client
     }
 
     /**
+     * Search for tickets
+     *
+     * @param SimpleSearchRequest $searchRequest
+     * @return models\Recommendation[]
+     * @throws \Exception
+     */
+    public function searchTickets(SimpleSearchRequest $searchRequest)
+    {
+        $request = new Fare_MasterPricerTravelBoardSearchRequest();
+        $request->setSearchRequest($searchRequest);
+        $response = $request->send($this);
+
+        return $response->getRecommendations();
+    }
+
+    /**
      * Open new amadeus session
      * @param string $officeId
      * @param string $originator
@@ -94,65 +126,12 @@ abstract class Client
     }
 
     /**
-     * Used to iterate std classed
-     * Will return multiple subobjects for iterable std and one if non-iterable
-     * @param $std
-     * @return \Generator
-     */
-    protected function iterateStd($std)
-    {
-        if (is_array($std)) {
-            foreach ($std as $obj)
-                yield $obj;
-        } else
-            yield $std;
-    }
-
-    /**
      * Close amadeus session
      */
     protected function closeSession()
     {
         $this->_ws->securitySignout();
         $this->_isSessionOpen = false;
-    }
-
-    /**
-     * Convert amadeus date format (010515) to DateTime
-     * @param string $date
-     * @return \DateTime date
-     */
-    protected function convertAmadeusDate($date)
-    {
-        return \DateTime::createFromFormat('dmy', $date);
-    }
-
-    /**
-     * Convert amadeus time format (2240) to 22:40
-     * @param string $time
-     * @return string
-     */
-    protected function convertAmadeusTime($time)
-    {
-        if (strlen($time) == 2) {
-            $hours = substr($time, 0, 1);
-            $minutes = substr($time, 1, 1);
-        } else {
-            $minutes = substr($time, -2);
-            $hours = substr($time, 0, strlen($time) - 2);
-        }
-
-        return $hours . ":" . $minutes;
-    }
-
-    /**
-     * Convert from 0130 to 90 minutes
-     * @param string $duration
-     * @return int minutes
-     */
-    protected function convertAmadeusDurationToMinutes($duration)
-    {
-        return intval($duration / 100) * 60 + $duration % 100;
     }
 
     /**
@@ -164,17 +143,27 @@ abstract class Client
      */
     public function prepareBooking(OrderFlow $orderFlow)
     {
-        //Check bookingability + add segment details
-        $orderFlow = $this->sellFromRecommendation($orderFlow);
+        //Sell from recommendation - Check bookingability + add segment details
+        $sellFromRecommendationReply = Air_SellFromRecommendationRequest::createFromOrderFlow($orderFlow)->send($this);
 
-        //Who knows what for :)
-        $this->pricePnrWithBookingClass($orderFlow);
+        if (!$sellFromRecommendationReply->isSuccess())
+            throw new UnableToSellException("Seats availability not confirmed");
+
+        $sellFromRecommendationReply->copyDataToOrderFlow($orderFlow);
+
+        //Get bagagge + booking class
+        $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
+        $pricePnrWithBookingClassRequest->setCurrency($orderFlow->getSearchRequest()->getCurrency());
+        $pricePnrWithBookingClassReply = $pricePnrWithBookingClassRequest->send($this);
+        $pricePnrWithBookingClassReply->copyDataToOrderFlow($orderFlow);
 
         //Get proper fares
-        $orderFlow = $this->informativePricingWithoutPnr($orderFlow);
+        $informativePricingWithoutPnrReply = Fare_InformativePricingWithoutPNRRequest::createFromOrderFlow($orderFlow)->send($this);
+        $informativePricingWithoutPnrReply->copyDataToOrderFlow($orderFlow);
 
         //Set fare rules
-        $orderFlow->setRules($this->getFareRules());
+        $fareCheckRulesReply = (new Fare_CheckRulesRequest())->send($this);
+        $orderFlow->setRules($fareCheckRulesReply->getText());
 
         $this->closeSession();
 
