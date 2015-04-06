@@ -145,4 +145,21 @@ class Price
         return $this->getFare()->add($this->getTax())->add($this->getMarkup())->add($this->getCommission());
     }
 
+    /**
+     * Return all price parts
+     *
+     * @return Money[]
+     * @throws \Exception
+     */
+    public function getDetailedPrice()
+    {
+        return [
+            'fare' => $this->getFare(),
+            'tax' => $this->getTax(),
+            'commission' => $this->getCommission(),
+            'markup' => $this->getMarkup(),
+            'fee' => $this->getFee()
+        ];
+    }
+
 }
