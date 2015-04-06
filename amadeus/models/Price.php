@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models;
+namespace Amadeus\models;
 
 use SebastianBergmann\Money\Money;
 

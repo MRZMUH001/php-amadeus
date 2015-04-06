@@ -2,9 +2,7 @@
 
 namespace Amadeus\models;
 
-use common\models\Price;
 use DateTime;
-use SebastianBergmann\Money\Money;
 
 class Recommendation
 {

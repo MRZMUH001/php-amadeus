@@ -3,9 +3,6 @@
 namespace Amadeus\models;
 
 
-use common\models\Price;
-use SebastianBergmann\Money\Money;
-
 class OrderFlow
 {
 

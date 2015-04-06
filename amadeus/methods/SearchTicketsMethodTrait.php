@@ -4,9 +4,9 @@ namespace Amadeus\Methods;
 
 use Amadeus\models\FlightSegment;
 use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\Price;
 use Amadeus\models\Recommendation;
 use Amadeus\models\SimpleSearchRequest;
-use common\models\Price;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 use SimpleXMLElement;
