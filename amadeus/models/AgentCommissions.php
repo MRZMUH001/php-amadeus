@@ -2,7 +2,6 @@
 
 namespace Amadeus\models;
 
-
 use SebastianBergmann\Money\Money;
 
 class AgentCommissions
@@ -63,12 +62,12 @@ class AgentCommissions
     public function apply(&$price, SimpleSearchRequest $searchRequest)
     {
         $fare = $price->getFare();
-        $commission = new Money(0, $fare->getCurrency());
-        $commission->add($fare->multiply($this->getCommissionAdult()));
+
+        $commission = $fare->multiply($this->getCommissionAdult()/100);
 
         //TODO: Calculate properly
 
-        $price->setCommission($commission);
+        $price->setCommission($commission->multiply(-1));
     }
 
 }

@@ -15,7 +15,6 @@ use Amadeus\models\AgentCommissions;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\Passenger;
 use Amadeus\models\PassengerCollection;
-use Amadeus\models\TicketDetails;
 use Monolog\Logger;
 
 /**
@@ -236,7 +235,6 @@ class InnerClient
         }
 
         if ($travellers['I'] > 0) {
-            $k = 0;
             $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['ptc'] = 'INF';
             for ($i = 1; $i <= $travellers['I']; $i++)
                 $params['Fare_MasterPricerTravelBoardSearch']['paxReference'][$j]['traveller'][] = ['ref' => $i, 'infantIndicator' => 1];
@@ -805,7 +803,16 @@ class InnerClient
         return $this->soapCall("Fare_InformativePricingWithoutPNR", $params);
     }
 
-    private function soapCall($name, $params)
+    /**
+     * Sends request
+     *
+     * @param string $name
+     * @param array $params
+     * @return string
+     * @throws AmadeusException
+     * @throws \Exception
+     */
+    public function soapCall($name, $params)
     {
         $this->_logger->info('Amadeus method called: ' . $name);
 
@@ -824,7 +831,7 @@ class InnerClient
         if (isset($data->errorMessage))
             throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error . ' - ' . $data->errorMessage->errorMessageText->description);
 
-        return $data;
+        return $this->_client->__getLastResponse();
     }
 
     /**
