@@ -2,6 +2,7 @@
 
 namespace Amadeus\replies;
 
+use Amadeus\models\FaresPerPassengers;
 use Amadeus\models\FlightSegment;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\Price;
@@ -100,7 +101,23 @@ class Fare_MasterPricerTravelBoardSearchReply extends Reply
             $fareBasis = [];
             $publishedFare = true;
 
+            $faresPerPassengers = new FaresPerPassengers();
+
             foreach ($this->iterateStd($recommendation->paxFareProduct) as $fp) {
+
+                $fare = (string)$fp->paxFareDetail->totalFareAmount;
+                switch ((string)$fp->paxReference->ptc) {
+                    case 'ADT':
+                        $faresPerPassengers->setAdultsFare(Money::fromString($fare, new Currency($currency)));
+                        break;
+                    case 'CH':
+                        $faresPerPassengers->setChildrenFare(Money::fromString($fare, new Currency($currency)));
+                        break;
+                    case 'INF':
+                        $faresPerPassengers->setInfantsFare(Money::fromString($fare, new Currency($currency)));
+                        break;
+                }
+
                 if ((string) $fp->paxReference->ptc == 'ADT') {
                     foreach ($this->iterateStd($fp->fareDetails->groupOfFares) as $fare) {
                         $cabins[] = (string) $fare->productInformation->cabinProduct->cabin;
@@ -172,12 +189,15 @@ class Fare_MasterPricerTravelBoardSearchReply extends Reply
 
             $price = new Price($priceFare, $priceTax);
 
+            //Find commission
             $commissions = $this->getClient()->getCommissions($segments, $validatingCarrierIata, $this->getRequest()->getSearchRequest());
             if ($commissions == null) {
                 continue;
             }
 
-            $commissions->apply($price, $this->getRequest()->getSearchRequest());
+            //Calculate absolute commission
+            $commission = $faresPerPassengers->calculateCommission($commissions);
+            $price->setCommission($commission);
 
             $recommendation = new Recommendation(
                 $blankCount,
