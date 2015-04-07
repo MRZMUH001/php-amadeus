@@ -208,10 +208,15 @@ class PNR_AddMultiElementsRequest extends Request
 
         $params = [];
 
+        # Option codes:
+        # 0 - Save and close PNR
+        # ET => 10 - Save and leave open
+        # ER => 11 - Different types of save with notification in segments status change
+
         if ($this->_finalize) {
-            $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
+            $params['pnrActions']['optionCode'] = 11;
         } else {
-            $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 0;
+            $params['pnrActions']['optionCode'] = 10;
 
             foreach ($this->_passengers->getAdults() as $adult) {
                 $adultData = [
@@ -259,7 +264,7 @@ class PNR_AddMultiElementsRequest extends Request
                     ];
                 }
 
-                $params['PNR_AddMultiElements']['travellerInfo'][] = $adultData;
+                $params['travellerInfo'][] = $adultData;
             }
 
             foreach ($this->_passengers->getChildren() as $child) {
@@ -290,14 +295,14 @@ class PNR_AddMultiElementsRequest extends Request
                     ],
                 ];
 
-                $params['PNR_AddMultiElements']['travellerInfo'][] = $childData;
+                $params['travellerInfo'][] = $childData;
             }
 
             //Additional details
-            $params['PNR_AddMultiElements']['dataElementsMaster']['marker1'] = null;
+            $params['dataElementsMaster']['marker1'] = null;
 
             //Unknown
-            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            $params['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
                     'segmentName' => 'RF',
                 ],
@@ -307,7 +312,7 @@ class PNR_AddMultiElementsRequest extends Request
             ];
 
             //TK
-            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            $params['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
                     'segmentName' => 'TK',
                 ],
@@ -322,7 +327,7 @@ class PNR_AddMultiElementsRequest extends Request
             ];
 
             //Validating carrier
-            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            $params['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
                     'segmentName' => 'FV',
                 ],
@@ -335,7 +340,7 @@ class PNR_AddMultiElementsRequest extends Request
 
             //Phone number
             if ($this->_phoneNumber != null) {
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                $params['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
                         'segmentName' => 'AP'
                     ],
@@ -347,7 +352,7 @@ class PNR_AddMultiElementsRequest extends Request
                         'longFreetext' => $this->_phoneNumber
                     ]
                 ];
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                $params['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
                         'segmentName' => 'OS'
                     ],
@@ -364,7 +369,7 @@ class PNR_AddMultiElementsRequest extends Request
 
             //Email
             if ($this->_email != null) {
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                $params['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
                         'segmentName' => 'AP'
                     ],
@@ -379,7 +384,7 @@ class PNR_AddMultiElementsRequest extends Request
             }
 
             //Form of payment = cash
-            $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+            $params['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
                     'segmentName' => 'FP',
                 ],
@@ -392,7 +397,7 @@ class PNR_AddMultiElementsRequest extends Request
 
             //Remarks
             foreach ($this->_remarks as $remark) {
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                $params['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
                         'segmentName' => 'RM'
                     ],
@@ -406,24 +411,25 @@ class PNR_AddMultiElementsRequest extends Request
             }
 
             //Agent commission
-            if ($agentCommission != null) {
-                $data = [
-                    'elementManagementData' => [
-                        'segmentName' => 'FM',
-                    ],
-                    'commission' => [
-                        'commissionInfo' => [],
-                    ],
-                ];
-
-                if ($agentCommission->isPercentage()) {
-                    $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent() . '%';
-                } else {
-                    $data['commission']['commissionInfo']['amount'] = $agentCommission->getAmount();
-                }
-
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = $data;
-            }
+            //TODO: Add by passenger
+//            if ($agentCommission != null) {
+//                $data = [
+//                    'elementManagementData' => [
+//                        'segmentName' => 'FM',
+//                    ],
+//                    'commission' => [
+//                        'commissionInfo' => [],
+//                    ],
+//                ];
+//
+//                if ($agentCommission->isPercentage()) {
+//                    $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent() . '%';
+//                } else {
+//                    $data['commission']['commissionInfo']['amount'] = $agentCommission->getAmount();
+//                }
+//
+//                $params['dataElementsMaster']['dataElementsIndiv'][] = $data;
+//            }
 
             foreach (array_merge($this->_passengers->getAdults(), $this->_passengers->getChildren()) as $passenger) {
                 /* @var Passenger $passenger */
@@ -456,10 +462,10 @@ class PNR_AddMultiElementsRequest extends Request
                     ];
                 }
 
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = $dataElement;
+                $params['dataElementsMaster']['dataElementsIndiv'][] = $dataElement;
 
                 //FOID
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                $params['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
                         'segmentName' => 'SSR'
                     ],
@@ -480,7 +486,7 @@ class PNR_AddMultiElementsRequest extends Request
                     ]
                 ];
 
-                $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                $params['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
                         'segmentName' => 'FE'
                     ],
@@ -497,7 +503,7 @@ class PNR_AddMultiElementsRequest extends Request
                 ];
 
                 if ($infant = $passenger->getAssociatedInfant()) {
-                    $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                    $params['dataElementsMaster']['dataElementsIndiv'][] = [
                         'elementManagementData' => [
                             'segmentName' => 'SSR',
                         ],
@@ -518,7 +524,7 @@ class PNR_AddMultiElementsRequest extends Request
                         ],
                     ];
 
-                    $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
+                    $params['dataElementsMaster']['dataElementsIndiv'][] = [
                         'elementManagementData' => [
                             'segmentName' => 'FE',
                         ],

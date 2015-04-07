@@ -206,6 +206,37 @@ abstract class Client
 
         $pnrAddMultiElementsReply->copyDataToOrderFlow($orderFlow);
 
+        //Set commissions
+        $passengers = $pnrAddMultiElementsReply->getPassengerNumbers();
+        $passengerCommissions = [];
+
+        //Try to find passenger type
+        foreach ($passengers as $number => $passenger) {
+            $passengerType = null;
+            foreach ($orderFlow->getPassengers()->getPassengers() as $p)
+                if (
+                    strtoupper($p->getFirstNameWithCode()) == $passenger['first'] &&
+                    strtoupper($p->getLastName() == $passenger['last'])
+                ) {
+                    $passengerType = $p->getType();
+                    break;
+                }
+
+            $commission = null;
+            if ($passengerType == 'A')
+                $commission = $orderFlow->getCommissions()->getCommissionAdult();
+            if ($passengerType == 'C')
+                $commission = $orderFlow->getCommissions()->getCommissionChild();
+            if ($passengerType == 'I')
+                $commission = $orderFlow->getCommissions()->getCommissionInfant();
+
+            if ($commission == null)
+                throw new \Exception("Unable to find passenger type");
+
+            $passengerCommissions[$number] = $commission;
+        }
+        //TODO: Send commissions to Amadeus
+
         //Price PNR
         $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
         $pricePnrWithBookingClassRequest->setCurrency($orderFlow->getSearchRequest()->getCurrency());
@@ -216,7 +247,6 @@ abstract class Client
         $pnrAddMultiElementsRequest->setFinalize(true);
         $pnrAddMultiElementsReplyFinal = $pnrAddMultiElementsRequest->send($this);
         $pnrAddMultiElementsReplyFinal->copyDataToOrderFlow($orderFlow);
-
 
         $this->closeSession();
 

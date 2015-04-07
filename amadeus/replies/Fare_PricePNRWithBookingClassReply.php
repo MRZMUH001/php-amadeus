@@ -13,22 +13,6 @@ use SebastianBergmann\Money\Money;
 class Fare_PricePNRWithBookingClassReply extends Reply
 {
 
-    /**
-     * Return fare by booking class
-     *
-     * @param string $bookingClass
-     * @return Fare
-     */
-    public function getFare($bookingClass)
-    {
-        return $this->getFares()[$bookingClass];
-    }
-
-    /**
-     * Return all available fares
-     *
-     * @return Fare[]
-     */
     public function getFares()
     {
         $data = $this->xml();
@@ -136,9 +120,9 @@ class Fare_PricePNRWithBookingClassReply extends Reply
             throw new \Exception("No commissions found");
         }
 
-        $commissions->apply($price, $orderFlow->getSearchRequest());
+        //$commissions->apply($price, $orderFlow->getSearchRequest());
 
-        $orderFlow->setPrice($price);
+        //$orderFlow->setPrice($price);
         $orderFlow->setCommissions($commissions);
 
         $orderFlow->setLastTktDate($lastTktDate);

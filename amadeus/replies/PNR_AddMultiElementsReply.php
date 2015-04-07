@@ -16,6 +16,30 @@ class PNR_AddMultiElementsReply extends Reply
     }
 
     /**
+     * Return passenger numbers
+     *
+     * @return array number=>[first=>'',last=>'']
+     */
+    public function getPassengerNumbers()
+    {
+        $travellers = [];
+        foreach ($this->iterateStd($this->xml()->travellerInfo) as $traveller) {
+            //PT-number
+            $number = (string)$traveller->elementManagementPassenger->reference->number;
+
+            $firstNameWithCode = $traveller->passengerData->travellerInformation->passenger->firstName;
+            $lastName = $traveller->passengerData->travellerInformation->traveller->surname;
+
+            $travellers[$number] = [
+                'first' => $firstNameWithCode,
+                'last' => $lastName
+            ];
+        }
+
+        return $travellers;
+    }
+
+    /**
      * Get errors if they exists
      *
      * @return string[]|null
