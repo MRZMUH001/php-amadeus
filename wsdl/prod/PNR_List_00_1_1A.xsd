@@ -240,12 +240,12 @@
     <xs:sequence>
       <xs:element name="companyId" type="AlphaNumericString_Length1To3">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Company identification - 1A for amadeus</xs:documentation>
+          <xs:documentation xml:lang="en">Company identification - 1A for Amadeus</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="controlNumber" type="AlphaNumericString_Length1To20">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Reservation control number - amadeus record locator of the requested PNR</xs:documentation>
+          <xs:documentation xml:lang="en">Reservation control number - Amadeus record locator of the requested PNR</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>

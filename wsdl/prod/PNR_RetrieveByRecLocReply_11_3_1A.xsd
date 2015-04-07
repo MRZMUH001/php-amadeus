@@ -29,7 +29,7 @@ Conveys the PNR image.</xs:documentation>
         </xs:element>
         <xs:element name="securityInformation" minOccurs="0" type="ReservationSecurityInformationType">
           <xs:annotation>
-            <xs:documentation xml:lang="en">specify the amadeus PNR record locator security information for different pnr elements .</xs:documentation>
+            <xs:documentation xml:lang="en">specify the Amadeus PNR record locator security information for different pnr elements .</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="queueInformations" minOccurs="0" type="QueueType">
@@ -83,7 +83,7 @@ Conveys the PNR image.</xs:documentation>
         </xs:element>
         <xs:element name="historyData" minOccurs="0" maxOccurs="999" type="PnrHistoryDataType_6022S">
           <xs:annotation>
-            <xs:documentation xml:lang="en">specify an amadeus PNR history data</xs:documentation>
+            <xs:documentation xml:lang="en">specify an Amadeus PNR history data</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="sbrPOSDetails" type="POSGroupType">
@@ -958,12 +958,12 @@ Conveys the PNR image.</xs:documentation>
                     </xs:element>
                     <xs:element name="pnrSecurity" minOccurs="0" type="IndividualPnrSecurityInformationType">
                       <xs:annotation>
-                        <xs:documentation xml:lang="en">specify the amadeus PNR individual security element</xs:documentation>
+                        <xs:documentation xml:lang="en">specify the Amadeus PNR individual security element</xs:documentation>
                       </xs:annotation>
                     </xs:element>
                     <xs:element name="accounting" minOccurs="0" type="AccountingInformationElementType">
                       <xs:annotation>
-                        <xs:documentation xml:lang="en">Specify the amadeus accounting information</xs:documentation>
+                        <xs:documentation xml:lang="en">Specify the Amadeus accounting information</xs:documentation>
                       </xs:annotation>
                     </xs:element>
                     <xs:element name="miscellaneousRemarks" minOccurs="0" type="MiscellaneousRemarksType_211S">
@@ -1060,7 +1060,7 @@ Conveys the PNR image.</xs:documentation>
                     </xs:element>
                     <xs:element name="ticketElement" minOccurs="0" type="TicketElementType">
                       <xs:annotation>
-                        <xs:documentation xml:lang="en">specify an amadeus PNR ticket element</xs:documentation>
+                        <xs:documentation xml:lang="en">specify an Amadeus PNR ticket element</xs:documentation>
                       </xs:annotation>
                     </xs:element>
                     <xs:element name="referencedRecord" minOccurs="0">
@@ -1076,7 +1076,7 @@ Conveys the PNR image.</xs:documentation>
                           </xs:element>
                           <xs:element name="securityInformation" type="ReservationSecurityInformationType_167761S">
                             <xs:annotation>
-                              <xs:documentation xml:lang="en">specify the amadeus PNR record locator security information for different pnr elements .</xs:documentation>
+                              <xs:documentation xml:lang="en">specify the Amadeus PNR record locator security information for different pnr elements .</xs:documentation>
                             </xs:annotation>
                           </xs:element>
                         </xs:sequence>
@@ -1816,7 +1816,7 @@ Conveys the PNR image.</xs:documentation>
       </xs:element>
       <xs:element name="responsibleAgency" type="AlphaNumericString_Length1To3">
         <xs:annotation>
-          <xs:documentation xml:lang="en">3 for IATA   UN for UN  1A for AMADEUS</xs:documentation>
+          <xs:documentation xml:lang="en">3 for IATA   UN for UN  1A for Amadeus</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -3272,7 +3272,7 @@ Conveys the PNR image.</xs:documentation>
       </xs:element>
       <xs:element name="localDateTime" minOccurs="0" maxOccurs="3" type="StructuredDateTimeInformationType_94516S">
         <xs:annotation>
-          <xs:documentation xml:lang="en">This segment conveys date and time information.  You can specify the time mode used (GMT, UTC or Local)and what for it refers.  - Transmission date and time This contains the date and time the request was submitted to the link (Visa, Nedbank...field 7). GMT can be used.  - Local transaction date and time Date and time when Amadeus builds the authorization message (local according to the point of sale)(Visa, Nedbank...field 12/13)  - Transaction receipt date and time date and time when amadeus receives the authorization message.</xs:documentation>
+          <xs:documentation xml:lang="en">This segment conveys date and time information.  You can specify the time mode used (GMT, UTC or Local)and what for it refers.  - Transmission date and time This contains the date and time the request was submitted to the link (Visa, Nedbank...field 7). GMT can be used.  - Local transaction date and time Date and time when Amadeus builds the authorization message (local according to the point of sale)(Visa, Nedbank...field 12/13)  - Transaction receipt date and time date and time when Amadeus receives the authorization message.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="authorisationInformation" minOccurs="0" type="TransactionInformationForTicketingType">
@@ -14595,7 +14595,7 @@ Conveys the PNR image.</xs:documentation>
   </xs:simpleType>
   <xs:simpleType name="AMA_EDICodesetType_Length1to3">
     <xs:annotation>
-      <xs:documentation xml:lang="en">Used for codes in the AMADEUS code tables. Code Length is three alphanumeric characters.</xs:documentation>
+      <xs:documentation xml:lang="en">Used for codes in the Amadeus code tables. Code Length is three alphanumeric characters.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9A-Z]{1,3}" />

@@ -1,6 +1,6 @@
 <?php
 
-namespace amadeus\methods;
+namespace Amadeus\methods;
 
 trait PnrAddMultiElementsFinalTrait
 {

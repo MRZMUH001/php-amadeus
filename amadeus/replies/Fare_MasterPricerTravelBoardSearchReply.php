@@ -1,12 +1,12 @@
 <?php
 
-namespace amadeus\replies;
+namespace Amadeus\replies;
 
-use amadeus\models\FlightSegment;
-use amadeus\models\FlightSegmentCollection;
-use amadeus\models\Price;
-use amadeus\models\Recommendation;
-use amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
+use Amadeus\models\FlightSegment;
+use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\Price;
+use Amadeus\models\Recommendation;
+use Amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 use SimpleXMLElement;

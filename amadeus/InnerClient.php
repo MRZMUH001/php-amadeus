@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace amadeus;
+namespace Amadeus;
 
-use amadeus\exceptions\AmadeusException;
-use amadeus\models\AgentCommissions;
-use amadeus\models\FlightSegmentCollection;
-use amadeus\models\Passenger;
-use amadeus\models\PassengerCollection;
+use Amadeus\exceptions\AmadeusException;
+use Amadeus\models\AgentCommissions;
+use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\Passenger;
+use Amadeus\models\PassengerCollection;
 use Monolog\Logger;
 
 /**

@@ -1,10 +1,10 @@
 <?php
 
-namespace amadeus\methods;
+namespace Amadeus\methods;
 
-use amadeus\exceptions\UnableToSellException;
-use amadeus\models\FlightSegment;
-use amadeus\models\OrderFlow;
+use Amadeus\exceptions\UnableToSellException;
+use Amadeus\models\FlightSegment;
+use Amadeus\models\OrderFlow;
 
 trait SellFromRecommendationTrait
 {

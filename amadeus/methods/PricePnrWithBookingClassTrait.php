@@ -1,10 +1,10 @@
 <?php
 
-namespace amadeus\methods;
+namespace Amadeus\methods;
 
-use amadeus\models\BagAllowance;
-use amadeus\models\OrderFlow;
-use amadeus\models\Price;
+use Amadeus\models\BagAllowance;
+use Amadeus\models\OrderFlow;
+use Amadeus\models\Price;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 

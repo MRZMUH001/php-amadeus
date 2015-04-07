@@ -512,7 +512,7 @@
       </xs:element>
       <xs:element name="inHouseIdentification1" minOccurs="0" type="AlphaNumericString_Length1To9">
         <xs:annotation>
-          <xs:documentation xml:lang="en">First In-House Identifier. Office/Agency code assigned by the reservation system. Office Id in AMAdeus.</xs:documentation>
+          <xs:documentation xml:lang="en">First In-House Identifier. Office/Agency code assigned by the reservation system. Office Id in Amadeus.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="inHouseIdentification2" minOccurs="0" type="AlphaNumericString_Length1To9">

@@ -1,8 +1,8 @@
 <?php
 
-namespace amadeus\models;
+namespace Amadeus\models;
 
-use amadeus\exceptions\ValidationException;
+use Amadeus\exceptions\ValidationException;
 use DateTime;
 use Respect\Validation\Validator as v;
 

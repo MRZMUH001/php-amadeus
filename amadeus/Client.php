@@ -1,18 +1,18 @@
 <?php
 
-namespace amadeus;
+namespace Amadeus;
 
-use amadeus\exceptions\UnableToSellException;
-use amadeus\models\AgentCommissions;
-use amadeus\models\FlightSegmentCollection;
-use amadeus\models\OrderFlow;
-use amadeus\models\SimpleSearchRequest;
-use amadeus\models\TicketDetails;
-use amadeus\requests\Air_SellFromRecommendationRequest;
-use amadeus\requests\Fare_CheckRulesRequest;
-use amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
-use amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
-use amadeus\requests\Fare_PricePNRWithBookingClassRequest;
+use Amadeus\exceptions\UnableToSellException;
+use Amadeus\models\AgentCommissions;
+use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\OrderFlow;
+use Amadeus\models\SimpleSearchRequest;
+use Amadeus\models\TicketDetails;
+use Amadeus\requests\Air_SellFromRecommendationRequest;
+use Amadeus\requests\Fare_CheckRulesRequest;
+use Amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
+use Amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
+use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;
 use Monolog\Logger;
 
 abstract class Client
@@ -118,7 +118,7 @@ abstract class Client
     }
 
     /**
-     * Open new amadeus session.
+     * Open new Amadeus session.
      *
      * @param string $officeId
      * @param string $originator
@@ -132,7 +132,7 @@ abstract class Client
     }
 
     /**
-     * Close amadeus session.
+     * Close Amadeus session.
      */
     protected function closeSession()
     {

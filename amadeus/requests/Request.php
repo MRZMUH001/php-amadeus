@@ -1,9 +1,9 @@
 <?php
 
-namespace amadeus\requests;
+namespace Amadeus\requests;
 
-use amadeus\Client;
-use amadeus\replies\Reply;
+use Amadeus\Client;
+use Amadeus\replies\Reply;
 
 abstract class Request
 {

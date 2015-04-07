@@ -1,9 +1,9 @@
 <?php
 
-namespace amadeus\requests;
+namespace Amadeus\requests;
 
-use amadeus\Client;
-use amadeus\replies\Fare_CheckRulesReply;
+use Amadeus\Client;
+use Amadeus\replies\Fare_CheckRulesReply;
 
 class Fare_CheckRulesRequest extends Request
 {

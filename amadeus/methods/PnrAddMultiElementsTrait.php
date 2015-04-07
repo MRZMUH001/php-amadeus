@@ -1,8 +1,8 @@
 <?php
 
-namespace amadeus\methods;
+namespace Amadeus\methods;
 
-use amadeus\models\OrderFlow;
+use Amadeus\models\OrderFlow;
 
 trait PnrAddMultiElementsTrait
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace amadeus\methods;
+namespace Amadeus\methods;
 
-use amadeus\InnerClient;
-use amadeus\models\AgentCommissions;
-use amadeus\models\FlightSegmentCollection;
-use amadeus\models\SimpleSearchRequest;
+use Amadeus\InnerClient;
+use Amadeus\models\AgentCommissions;
+use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\SimpleSearchRequest;
 
 trait BasicMethodsTrait
 {
@@ -25,7 +25,7 @@ trait BasicMethodsTrait
     abstract protected function iterateStd($std);
 
     /**
-     * Convert amadeus date format (010515) to DateTime.
+     * Convert Amadeus date format (010515) to DateTime.
      *
      * @param string $date
      *
@@ -34,7 +34,7 @@ trait BasicMethodsTrait
     abstract protected function convertAmadeusDate($date);
 
     /**
-     * Convert amadeus time format (2240) to 22:40.
+     * Convert Amadeus time format (2240) to 22:40.
      *
      * @param string $time
      *

@@ -1,9 +1,9 @@
 <?php
 
-namespace amadeus\replies;
+namespace Amadeus\replies;
 
-use amadeus\Client;
-use amadeus\requests\Request;
+use Amadeus\Client;
+use Amadeus\requests\Request;
 
 abstract class Reply
 {
@@ -63,7 +63,7 @@ abstract class Reply
 
 
     /**
-     * Convert amadeus date format (010515) to DateTime.
+     * Convert Amadeus date format (010515) to DateTime.
      *
      * @param string $date
      *
@@ -75,7 +75,7 @@ abstract class Reply
     }
 
     /**
-     * Convert amadeus time format (2240) to 22:40.
+     * Convert Amadeus time format (2240) to 22:40.
      *
      * @param string $time
      *

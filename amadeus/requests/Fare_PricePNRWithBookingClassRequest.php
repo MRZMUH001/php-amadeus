@@ -1,9 +1,9 @@
 <?php
 
-namespace amadeus\requests;
+namespace Amadeus\requests;
 
-use amadeus\Client;
-use amadeus\replies\Fare_PricePNRWithBookingClassReply;
+use Amadeus\Client;
+use Amadeus\replies\Fare_PricePNRWithBookingClassReply;
 
 class Fare_PricePNRWithBookingClassRequest extends Request
 {

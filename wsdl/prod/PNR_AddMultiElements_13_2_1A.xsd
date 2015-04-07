@@ -169,7 +169,7 @@
                     </xs:element>
                     <xs:element name="accounting" minOccurs="0" type="AccountingInformationElementType">
                       <xs:annotation>
-                        <xs:documentation xml:lang="en">specify amadeus accounting informations</xs:documentation>
+                        <xs:documentation xml:lang="en">specify Amadeus accounting informations</xs:documentation>
                       </xs:annotation>
                     </xs:element>
                     <xs:element name="miscellaneousRemark" minOccurs="0" type="MiscellaneousRemarksType">

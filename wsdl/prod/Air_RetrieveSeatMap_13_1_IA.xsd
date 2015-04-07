@@ -576,7 +576,7 @@
   </xs:simpleType>
   <xs:simpleType name="AMA_EDICodesetType_Length1to2">
     <xs:annotation>
-      <xs:documentation xml:lang="en">Used for codes in the AMADEUS code tables. Code Length is two alphanumeric characters.</xs:documentation>
+      <xs:documentation xml:lang="en">Used for codes in the Amadeus code tables. Code Length is two alphanumeric characters.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9A-Z]{1,2}" />

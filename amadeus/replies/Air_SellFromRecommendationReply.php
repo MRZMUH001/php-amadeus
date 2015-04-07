@@ -1,10 +1,10 @@
 <?php
 
-namespace amadeus\replies;
+namespace Amadeus\replies;
 
-use amadeus\models\FlightSegment;
-use amadeus\models\OrderFlow;
-use amadeus\requests\Air_SellFromRecommendationRequest;
+use Amadeus\models\FlightSegment;
+use Amadeus\models\OrderFlow;
+use Amadeus\requests\Air_SellFromRecommendationRequest;
 
 class Air_SellFromRecommendationReply extends Reply
 {

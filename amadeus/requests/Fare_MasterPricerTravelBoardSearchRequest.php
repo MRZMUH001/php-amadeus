@@ -1,10 +1,10 @@
 <?php
 
-namespace amadeus\requests;
+namespace Amadeus\requests;
 
-use amadeus\Client;
-use amadeus\models\SimpleSearchRequest;
-use amadeus\replies\Fare_MasterPricerTravelBoardSearchReply;
+use Amadeus\Client;
+use Amadeus\models\SimpleSearchRequest;
+use Amadeus\replies\Fare_MasterPricerTravelBoardSearchReply;
 
 class Fare_MasterPricerTravelBoardSearchRequest extends Request
 {

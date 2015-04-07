@@ -647,7 +647,7 @@
     <xs:sequence>
       <xs:element name="code" minOccurs="0" type="AMA_EDICodesetType_Length1to3">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Only 2 codes supported by AMADEUS:  'E' for Entertainment  'M' for Meal Service</xs:documentation>
+          <xs:documentation xml:lang="en">Only 2 codes supported by Amadeus:  'E' for Entertainment  'M' for Meal Service</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="description" minOccurs="0" type="AlphaNumericString_Length1To70">
@@ -1308,7 +1308,7 @@
   </xs:simpleType>
   <xs:simpleType name="AMA_EDICodesetType_Length1to2">
     <xs:annotation>
-      <xs:documentation xml:lang="en">Used for codes in the AMADEUS code tables. Code Length is two alphanumeric characters.</xs:documentation>
+      <xs:documentation xml:lang="en">Used for codes in the Amadeus code tables. Code Length is two alphanumeric characters.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9A-Z]{1,2}" />
@@ -1332,7 +1332,7 @@
   </xs:simpleType>
   <xs:simpleType name="AMA_EDICodesetType_Length1to3">
     <xs:annotation>
-      <xs:documentation xml:lang="en">Used for codes in the AMADEUS code tables. Code Length is three alphanumeric characters.</xs:documentation>
+      <xs:documentation xml:lang="en">Used for codes in the Amadeus code tables. Code Length is three alphanumeric characters.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9A-Z]{1,3}" />

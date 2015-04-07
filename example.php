@@ -4,7 +4,7 @@
  */
 include 'src/Amadeus/Client.php';
 
-use amadeus\Client;
+use Amadeus\Client;
 
 // Instantiate the Amadeus class (Debug enabled)
 $ws = new Client('AmadeusWebServices.wsdl', true);

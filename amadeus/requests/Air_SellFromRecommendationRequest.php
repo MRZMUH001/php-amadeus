@@ -1,12 +1,12 @@
 <?php
 
-namespace amadeus\requests;
+namespace Amadeus\requests;
 
-use amadeus\Client;
-use amadeus\models\FlightSegmentCollection;
-use amadeus\models\OrderFlow;
-use amadeus\models\SimpleSearchRequest;
-use amadeus\replies\Air_SellFromRecommendationReply;
+use Amadeus\Client;
+use Amadeus\models\FlightSegmentCollection;
+use Amadeus\models\OrderFlow;
+use Amadeus\models\SimpleSearchRequest;
+use Amadeus\replies\Air_SellFromRecommendationReply;
 
 class Air_SellFromRecommendationRequest extends Request
 {

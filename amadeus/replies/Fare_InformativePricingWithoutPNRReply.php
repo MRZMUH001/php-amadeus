@@ -1,11 +1,11 @@
 <?php
 
-namespace amadeus\replies;
+namespace Amadeus\replies;
 
-use amadeus\models\BagAllowance;
-use amadeus\models\OrderFlow;
-use amadeus\models\Price;
-use amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
+use Amadeus\models\BagAllowance;
+use Amadeus\models\OrderFlow;
+use Amadeus\models\Price;
+use Amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 
