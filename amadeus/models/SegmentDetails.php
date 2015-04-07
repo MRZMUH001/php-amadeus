@@ -1,9 +1,9 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
-class SegmentDetails {
-
+class SegmentDetails
+{
     /** @var string */
     private $_classOfService;
 
@@ -12,7 +12,7 @@ class SegmentDetails {
      */
     private $_baggageAllowance;
 
-    function __construct($classOfService, $baggageAllowance)
+    public function __construct($classOfService, $baggageAllowance)
     {
         $this->_classOfService = $classOfService;
         $this->_baggageAllowance = $baggageAllowance;
@@ -33,5 +33,4 @@ class SegmentDetails {
     {
         return $this->_baggageAllowance;
     }
-
 }

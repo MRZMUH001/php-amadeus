@@ -1,6 +1,6 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
 use DateTime;
 
@@ -17,25 +17,29 @@ class Recommendation
     protected $_price;
 
     /**
-     * Flight segments
+     * Flight segments.
+     *
      * @var FlightSegmentCollection
      */
     protected $_segments;
 
     /**
-     * Validating carrier IATA
+     * Validating carrier IATA.
+     *
      * @var string
      */
     private $_validatingCarrierIata;
 
     /**
-     * Marketing carrier IATAs
+     * Marketing carrier IATAs.
+     *
      * @var string[]
      */
     private $_suggestedMarketingCarrierIatas;
 
     /**
-     * Some additional info
+     * Some additional info.
+     *
      * @var string
      */
     private $_additionalInfo = '';
@@ -52,6 +56,7 @@ class Recommendation
 
     /**
      * Published fare?
+     *
      * @var boolean
      */
     private $_isPublishedFare;
@@ -60,21 +65,22 @@ class Recommendation
     private $_provider;
 
     /**
-     * Create ticket price
-     * @param int $blankCount
-     * @param Price $price
+     * Create ticket price.
+     *
+     * @param int                     $blankCount
+     * @param Price                   $price
      * @param FlightSegmentCollection $segments
-     * @param string $validatingCarrierIata
-     * @param string $suggestedMarketingCarrierIatas
-     * @param string $additionalInfo
+     * @param string                  $validatingCarrierIata
+     * @param string                  $suggestedMarketingCarrierIatas
+     * @param string                  $additionalInfo
      * @param $cabins
      * @param $bookingClasses
      * @param $availabilities
-     * @param DateTime|null $lastTktDate
+     * @param DateTime|null           $lastTktDate
      * @param $fareBasis
-     * @param boolean $isPublishedFare
+     * @param boolean                 $isPublishedFare
      */
-    function __construct($blankCount, $price, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
+    public function __construct($blankCount, $price, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
     {
         $this->_blankCount = $blankCount;
         $this->_price = $price;
@@ -187,7 +193,8 @@ class Recommendation
     }
 
     /**
-     * Return provider name
+     * Return provider name.
+     *
      * @return string
      */
     public function getSource()
@@ -196,7 +203,8 @@ class Recommendation
     }
 
     /**
-     * Departure IATA
+     * Departure IATA.
+     *
      * @return string
      */
     public function getDepartureIata()
@@ -205,7 +213,8 @@ class Recommendation
     }
 
     /**
-     * Arrival IATA
+     * Arrival IATA.
+     *
      * @return string
      */
     public function getArrivalIata()
@@ -268,9 +277,10 @@ class Recommendation
     }
 
     /**
-     * Create ticket offer from recommendation hash
+     * Create ticket offer from recommendation hash.
      *
      * @param string $recommendation
+     *
      * @return Recommendation
      */
     public static function deserialize($recommendation)
@@ -278,8 +288,9 @@ class Recommendation
         list($source, $validatingCarrierIata, $declaredPrice, $bookingClasses, $cabins, $availabilities, $segmentCodes) = explode('.', $recommendation);
 
         $segments = new FlightSegmentCollection();
-        foreach (explode('-', $segmentCodes) as $segmentCode)
+        foreach (explode('-', $segmentCodes) as $segmentCode) {
             $segments->addSegment(FlightSegment::deserialize($segmentCode));
+        }
 
         $recommendation = new Recommendation(
             1,

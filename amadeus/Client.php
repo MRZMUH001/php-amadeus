@@ -1,6 +1,6 @@
 <?php
 
-namespace Amadeus;
+namespace amadeus;
 
 use Amadeus\exceptions\UnableToSellException;
 use Amadeus\models\AgentCommissions;
@@ -40,13 +40,15 @@ abstract class Client
     //use TicketCreateTrait;
 
     /**
-     * Is session open
+     * Is session open.
+     *
      * @var bool
      */
     private $_isSessionOpen = false;
 
     /**
-     * Amadeus Soap client
+     * Amadeus Soap client.
+     *
      * @var InnerClient
      */
     private $_ws = null;
@@ -57,29 +59,30 @@ abstract class Client
     private $_logger;
 
     /**
-     * Should set $price commission
+     * Should set $price commission.
      *
      * @param FlightSegmentCollection $segments
-     * @param string $validatingCarrier
-     * @param SimpleSearchRequest $searchRequest
+     * @param string                  $validatingCarrier
+     * @param SimpleSearchRequest     $searchRequest
+     *
      * @return AgentCommissions
      */
-    abstract function getCommissions(FlightSegmentCollection $segments, $validatingCarrier, SimpleSearchRequest $searchRequest);
+    abstract public function getCommissions(FlightSegmentCollection $segments, $validatingCarrier, SimpleSearchRequest $searchRequest);
 
     /**
      * @return string
      */
-    public abstract function getId();
+    abstract public function getId();
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $env
-     * @param bool $debug Echo debug information
+     * @param bool   $debug Echo debug information
      */
     public function __construct($env = 'prod', $debug = true)
     {
-        $path = realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . 'prod' . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl';
+        $path = realpath(dirname(__FILE__)).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'wsdl'.DIRECTORY_SEPARATOR.'prod'.DIRECTORY_SEPARATOR.'AmadeusWebServices.wsdl';
 
         //Create logger
         $this->_logger = new Logger('main');
@@ -97,10 +100,12 @@ abstract class Client
     }
 
     /**
-     * Search for tickets
+     * Search for tickets.
      *
      * @param SimpleSearchRequest $searchRequest
+     *
      * @return models\Recommendation[]
+     *
      * @throws \Exception
      */
     public function searchTickets(SimpleSearchRequest $searchRequest)
@@ -113,7 +118,8 @@ abstract class Client
     }
 
     /**
-     * Open new amadeus session
+     * Open new amadeus session.
+     *
      * @param string $officeId
      * @param string $originator
      * @param string $organization
@@ -126,7 +132,7 @@ abstract class Client
     }
 
     /**
-     * Close amadeus session
+     * Close amadeus session.
      */
     protected function closeSession()
     {
@@ -135,10 +141,12 @@ abstract class Client
     }
 
     /**
-     * Prepare everything for booking page
+     * Prepare everything for booking page.
      *
      * @param OrderFlow $orderFlow
+     *
      * @return OrderFlow
+     *
      * @throws exceptions\UnableToSellException
      */
     public function prepareBooking(OrderFlow $orderFlow)
@@ -146,8 +154,9 @@ abstract class Client
         //Sell from recommendation - Check bookingability + add segment details
         $sellFromRecommendationReply = Air_SellFromRecommendationRequest::createFromOrderFlow($orderFlow)->send($this);
 
-        if (!$sellFromRecommendationReply->isSuccess())
+        if (!$sellFromRecommendationReply->isSuccess()) {
             throw new UnableToSellException("Seats availability not confirmed");
+        }
 
         $sellFromRecommendationReply->copyDataToOrderFlow($orderFlow);
 
@@ -171,10 +180,12 @@ abstract class Client
     }
 
     /**
-     * Create PNR
+     * Create PNR.
      *
      * @param OrderFlow $orderFlow
+     *
      * @return array
+     *
      * @throws exceptions\UnableToSellException
      */
     public function createPnr(OrderFlow $orderFlow)
@@ -208,5 +219,4 @@ abstract class Client
     {
         return $this->_logger;
     }
-
 }

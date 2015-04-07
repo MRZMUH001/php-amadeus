@@ -1,64 +1,62 @@
 <?php
 
-namespace Amadeus\models;
-
+namespace amadeus\models;
 
 use DateTime;
 
 class Passenger
 {
-
     /**
-     * Passenger type (A - adult, C - child, I - infant)
+     * Passenger type (A - adult, C - child, I - infant).
      *
      * @var string
      */
     private $_type = 'A';
 
     /**
-     * First name
+     * First name.
      *
      * @var string
      */
     private $_firstName;
 
     /**
-     * Last name
+     * Last name.
      *
      * @var string
      */
     private $_lastName;
 
     /**
-     * Sex (m/f)
+     * Sex (m/f).
      *
      * @var string
      */
     private $_sex;
 
     /**
-     * 3-char nationality code
+     * 3-char nationality code.
      *
      * @var string
      */
     private $_nationalityCode;
 
     /**
-     * Passport number
+     * Passport number.
      *
      * @var string
      */
     private $_passport;
 
     /**
-     * Birthday
+     * Birthday.
      *
      * @var DateTime
      */
     private $_birthday;
 
     /**
-     * Document expiration date
+     * Document expiration date.
      *
      * @var DateTime
      */
@@ -74,7 +72,7 @@ class Passenger
      */
     private $_associatedInfant;
 
-    function __construct($type, $firstName, $lastName, $sex, $nationalityCode, $passport, $birthday, $documentExpiration)
+    public function __construct($type, $firstName, $lastName, $sex, $nationalityCode, $passport, $birthday, $documentExpiration)
     {
         //TODO: Validate everything
         //Nationality - 3 char
@@ -157,16 +155,17 @@ class Passenger
     }
 
     /**
-     * Return name with code (MR/MRS)
+     * Return name with code (MR/MRS).
      *
      * @return string
      */
     public function getFirstNameWithCode()
     {
-        if ($this->getType() == 'A')
-            return $this->getFirstName() . ' ' . ($this->getSex() == 'F' ? 'MRS' : 'MR');
-        else
+        if ($this->getType() == 'A') {
+            return $this->getFirstName().' '.($this->getSex() == 'F' ? 'MRS' : 'MR');
+        } else {
             return $this->getFirstName();
+        }
     }
 
     /**
@@ -212,25 +211,25 @@ class Passenger
             $this->clearedPassport(),
             $this->getNationalityCode(),
             strtoupper($this->getBirthday()->format('dMy')),
-            strtoupper($this->getSex()) . ($this->getType() == 'I' ? 'I' : ''),
+            strtoupper($this->getSex()).($this->getType() == 'I' ? 'I' : ''),
             strtoupper($this->getDocumentExpiration()->format('dMy')),
             $this->getLastName(),
             $this->getFirstName(),
-            "H"
+            "H",
         ];
 
-        return join("-", $data);
+        return implode("-", $data);
     }
 
     /**
-     * Cleared passport number
+     * Cleared passport number.
      *
      * @return mixed
      */
     public function clearedPassport()
     {
         $translit = iconv('UTF-8', 'ASCII//TRANSLIT', transliterator_transliterate('Cyrillic-Latin', $this->getPassport()));
+
         return preg_replace('/[^a-zA-Z\dà-ÿÀ-ß]+/', '', $translit);
     }
-
 }

@@ -1,18 +1,19 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
 class FlightSegmentCollection
 {
-
     /**
-     * Flight segments
+     * Flight segments.
+     *
      * @var FlightSegment[]
      */
     private $_segments = [];
 
     /**
-     * Estimated flight price
+     * Estimated flight price.
+     *
      * @var int
      */
     private $_estimatedFlightTime;
@@ -26,7 +27,8 @@ class FlightSegmentCollection
     }
 
     /**
-     * Add one more segment
+     * Add one more segment.
+     *
      * @param FlightSegment $segment
      */
     public function addSegment(FlightSegment $segment)
@@ -35,7 +37,8 @@ class FlightSegmentCollection
     }
 
     /**
-     * Flight time in minutes
+     * Flight time in minutes.
+     *
      * @return int
      */
     public function getEstimatedFlightTime()
@@ -69,6 +72,7 @@ class FlightSegmentCollection
 
     /**
      * @param int $i index
+     *
      * @return FlightSegment
      */
     public function getSegment($i)
@@ -77,12 +81,11 @@ class FlightSegmentCollection
     }
 
     /**
-     * @param int $i
+     * @param int           $i
      * @param FlightSegment $segment
      */
     public function updateSegment($i, $segment)
     {
         $this->_segments[$i] = $segment;
     }
-
 }

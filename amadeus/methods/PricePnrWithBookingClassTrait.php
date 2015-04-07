@@ -1,6 +1,6 @@
 <?php
 
-namespace Amadeus\Methods;
+namespace amadeus\methods;
 
 use Amadeus\models\BagAllowance;
 use Amadeus\models\OrderFlow;
@@ -10,14 +10,15 @@ use SebastianBergmann\Money\Money;
 
 trait PricePnrWithBookingClassTrait
 {
-
     use BasicMethodsTrait;
 
     /**
-     * Show details on price & baggage
+     * Show details on price & baggage.
      *
      * @param OrderFlow $orderFlow
+     *
      * @return OrderFlow
+     *
      * @throws \Exception
      */
     public function pricePnrWithBookingClass($orderFlow)
@@ -26,26 +27,27 @@ trait PricePnrWithBookingClassTrait
 
         $fareList = [];
         foreach ($this->iterateStd($data->fareList->fareDataInformation->fareDataSupInformation) as $f) {
-            if (isset($f->fareAmount))
-                $fareList[(string)$f->fareDataQualifier] = Money::fromString(
-                    (string)$f->fareAmount,
-                    new Currency((string)$f->fareCurrency)
+            if (isset($f->fareAmount)) {
+                $fareList[(string) $f->fareDataQualifier] = Money::fromString(
+                    (string) $f->fareAmount,
+                    new Currency((string) $f->fareCurrency)
                 );
+            }
         }
 
         $taxesList = [];
         foreach ($this->iterateStd($data->fareList->taxInformation) as $t) {
             $taxesList[] = Money::fromString(
-                (string)$t->amountDetails->fareDataMainInformation->fareAmount,
-                new Currency((string)$t->amountDetails->fareDataMainInformation->fareCurrency)
+                (string) $t->amountDetails->fareDataMainInformation->fareAmount,
+                new Currency((string) $t->amountDetails->fareDataMainInformation->fareCurrency)
             );
         }
 
         $lastTktDate = \DateTime::createFromFormat('d-m-Y',
-            join('-', [
+            implode('-', [
                 $data->fareList->lastTktDate->dateTime->day,
                 $data->fareList->lastTktDate->dateTime->month,
-                $data->fareList->lastTktDate->dateTime->year
+                $data->fareList->lastTktDate->dateTime->year,
             ])
         );
 
@@ -57,10 +59,10 @@ trait PricePnrWithBookingClassTrait
             $classOfService = $s->segDetails->segmentDetail->classOfService;
             $bagAllowanceInformation = $s->bagAllowanceInformation->bagAllowanceDetails;
             $bagAllowance = new BagAllowance(
-                isset($bagAllowanceInformation->baggageWeight) ? (string)$bagAllowanceInformation->baggageWeight : null,
-                (string)$bagAllowanceInformation->baggageType,
-                isset($bagAllowanceInformation->measureUnit) ? (string)$bagAllowanceInformation->measureUnit : null,
-                isset($bagAllowanceInformation->baggageQuantity) ? (string)$bagAllowanceInformation->baggageQuantity : null
+                isset($bagAllowanceInformation->baggageWeight) ? (string) $bagAllowanceInformation->baggageWeight : null,
+                (string) $bagAllowanceInformation->baggageType,
+                isset($bagAllowanceInformation->measureUnit) ? (string) $bagAllowanceInformation->measureUnit : null,
+                isset($bagAllowanceInformation->baggageQuantity) ? (string) $bagAllowanceInformation->baggageQuantity : null
             );
             $oldSegment->setBookingClass($classOfService);
             $oldSegment->setBagAllowance($bagAllowance);
@@ -82,8 +84,9 @@ trait PricePnrWithBookingClassTrait
 
         //Set commission
         $commissions = $this->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest());
-        if ($commissions == null)
+        if ($commissions == null) {
             throw new \Exception("No commissions found");
+        }
 
         $commissions->apply($price, $orderFlow->getSearchRequest());
 
@@ -94,5 +97,4 @@ trait PricePnrWithBookingClassTrait
 
         return $orderFlow;
     }
-
 }

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Amadeus;
+namespace amadeus;
 
 use Amadeus\exceptions\AmadeusException;
 use Amadeus\models\AgentCommissions;
@@ -23,24 +23,24 @@ use Monolog\Logger;
 class InnerClient
 {
     /**
-     * The main Amadeus WS namespace
+     * The main Amadeus WS namespace.
      *
      * @var string
      */
     const AMD_HEAD_NAMESPACE = 'http://xml.amadeus.com/ws/2009/01/WBS_Session-2.0.xsd';
 
     /**
-     * Response data
+     * Response data.
      */
     private $_data = null;
 
     /**
-     * Response headers
+     * Response headers.
      */
     private $_headers = null;
 
     /**
-     * Hold the client object
+     * Hold the client object.
      */
     private $_client = null;
 
@@ -58,8 +58,9 @@ class InnerClient
     {
         $this->_logger = $logger;
         $endpoint = 'https://test.webservices.amadeus.com';
-        if ($env == 'prod')
+        if ($env == 'prod') {
             $endpoint = 'https://production.webservices.amadeus.com';
+        }
         $this->_client = new \SoapClient($wsdl, ['trace' => true, 'location' => $endpoint, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP]);
     }
 
@@ -81,13 +82,14 @@ class InnerClient
 
     /**
      * Security_Authenticate
-     * Autheticates with Amadeus
+     * Autheticates with Amadeus.
      *
-     * @param string $source sourceOffice string
-     * @param string $origin originator string
-     * @param string $password password binaryData
-     * @param integer $passlen length of binaryData
-     * @param string $org organizationId string
+     * @param string  $source   sourceOffice string
+     * @param string  $origin   originator string
+     * @param string  $password password binaryData
+     * @param integer $passlen  length of binaryData
+     * @param string  $org      organizationId string
+     *
      * @return Object
      */
     public function securityAuthenticate($source, $origin, $password, $passlen, $org)
@@ -108,7 +110,7 @@ class InnerClient
 
     /**
      * Security_SignOut
-     * Signs out from Amadeus
+     * Signs out from Amadeus.
      */
     public function securitySignout()
     {
@@ -119,9 +121,10 @@ class InnerClient
     }
 
     /**
-     * Command_Cryptic
+     * Command_Cryptic.
      *
      * @param string $string The string to be sent
+     *
      * @return Object
      */
     public function commandCryptic($string)
@@ -134,7 +137,7 @@ class InnerClient
     }
 
     /**
-     * Return fare rules
+     * Return fare rules.
      *
      * @return Object
      */
@@ -150,14 +153,15 @@ class InnerClient
 
     /**
      * Air_MultiAvailability
-     * Check airline availability by Flight
+     * Check airline availability by Flight.
      *
      * @param string $deprt_date Departure date
-     * @param string $deprt_loc Departure location
+     * @param string $deprt_loc  Departure location
      * @param string $arrive_loc Arrival location
-     * @param string $service Class of service
-     * @param string $air_code Airline code
-     * @param string $air_num Airline number
+     * @param string $service    Class of service
+     * @param string $air_code   Airline code
+     * @param string $air_num    Airline number
+     *
      * @return Object
      */
     public function airFlightAvailability($deprt_date, $deprt_loc, $arrive_loc, $service, $air_code, $air_num)
@@ -177,14 +181,15 @@ class InnerClient
 
     /**
      * Air_MultiAvailability
-     * Check airline availability by Service
+     * Check airline availability by Service.
      *
      * @param string $deprt_date Departure date
-     * @param string $deprt_loc Departure location
+     * @param string $deprt_loc  Departure location
      * @param string $arrive_loc Arrival location
-     * @param string $service Class of service
-     * @param string $air_code Airline code
-     * @param string $air_num Airline number
+     * @param string $service    Class of service
+     * @param string $air_code   Airline code
+     * @param string $air_num    Airline number
+     *
      * @return Object
      */
     public function airServiceAvailability($deprt_date, $deprt_loc, $arrive_loc, $service)
@@ -202,21 +207,23 @@ class InnerClient
 
     /**
      * pnrAddMultiElements
-     * Make reservation call
+     * Make reservation call.
      *
-     * @param PassengerCollection $travellers
+     * @param PassengerCollection     $travellers
      * @param FlightSegmentCollection $segments
-     * @param string $validatingCarrier
-     * @param string $phoneNumber
-     * @param string $email
-     * @param AgentCommissions $agentCommission
+     * @param string                  $validatingCarrier
+     * @param string                  $phoneNumber
+     * @param string                  $email
+     * @param AgentCommissions        $agentCommission
+     *
      * @return Object
+     *
      * @throws AmadeusException
      */
     public function pnrAddMultiElements($travellers, $segments, $validatingCarrier, $phoneNumber = null, $email = null, $agentCommission = null)
     {
         $params = [];
-        /**
+        /*
          * 0 - save and close PNR
          * 10 - save and leave PNR open,
          * 11 - different save types with notification on segment status changes
@@ -228,21 +235,21 @@ class InnerClient
                 'elementManagementPassenger' => [
                     'reference' => [
                         'qualifier' => 'PR',
-                        'number' => $adult->getIndex()
+                        'number' => $adult->getIndex(),
                     ],
-                    'segmentName' => 'NM'
+                    'segmentName' => 'NM',
                 ],
                 'passengerData' => [
                     'travellerInformation' => [
                         'traveller' => [
                             'quantity' => $adult->getAssociatedInfant() == null ? 1 : 2,
-                            'surname' => $adult->getLastName()
+                            'surname' => $adult->getLastName(),
                         ],
                         'passenger' => [
-                            'firstName' => $adult->getFirstNameWithCode()
-                        ]
-                    ]
-                ]
+                            'firstName' => $adult->getFirstNameWithCode(),
+                        ],
+                    ],
+                ],
             ];
 
             if ($adult->getAssociatedInfant() != null) {
@@ -253,19 +260,19 @@ class InnerClient
                     [
                         'travellerInformation' => [
                             'traveller' => [
-                                'surname' => $infant->getLastName()
+                                'surname' => $infant->getLastName(),
                             ],
                             'passenger' => [
                                 'firstName' => $infant->getFirstNameWithCode(),
-                                'type' => 'INF'
-                            ]
+                                'type' => 'INF',
+                            ],
                         ],
                         'dateOfBirth' => [
                             'dateAndTimeDetails' => [
-                                'date' => strtoupper($infant->getBirthday()->format('dMy'))
-                            ]
-                        ]
-                    ]
+                                'date' => strtoupper($infant->getBirthday()->format('dMy')),
+                            ],
+                        ],
+                    ],
                 ];
             }
 
@@ -277,27 +284,27 @@ class InnerClient
                 'elementManagementPassenger' => [
                     'reference' => [
                         'qualifier' => 'PR',
-                        'number' => $child->getIndex()
+                        'number' => $child->getIndex(),
                     ],
-                    'segmentName' => 'NM'
+                    'segmentName' => 'NM',
                 ],
                 'passengerData' => [
                     'travellerInformation' => [
                         'traveller' => [
                             'quantity' => 1,
-                            'surname' => $child->getLastName()
+                            'surname' => $child->getLastName(),
                         ],
                         'passenger' => [
                             'firstName' => $child->getFirstNameWithCode(),
-                            'type' => 'CHD'
-                        ]
+                            'type' => 'CHD',
+                        ],
                     ],
                     'dateOfBirth' => [
                         'dateAndTimeDetails' => [
-                            'date' => strtoupper($child->getBirthday()->format('dMy'))
-                        ]
-                    ]
-                ]
+                            'date' => strtoupper($child->getBirthday()->format('dMy')),
+                        ],
+                    ],
+                ],
             ];
 
             $params['PNR_AddMultiElements']['travellerInfo'][] = $childData;
@@ -309,133 +316,135 @@ class InnerClient
         //Unknown
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
             'elementManagementData' => [
-                'segmentName' => 'RF'
+                'segmentName' => 'RF',
             ],
             'freetextData' => [
-                'longFreetext' => 'WS'
-            ]
+                'longFreetext' => 'WS',
+            ],
         ];
 
         //TK
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
             'elementManagementData' => [
-                'segmentName' => 'TK'
+                'segmentName' => 'TK',
             ],
             'ticketElement' => [
                 'passengerType' => 'PAX',
                 'ticket' => [
                     'indicator' => 'XL',
                     'date' => $segments->getFirstSegment()->getDepartureDate()->format('dmy'),
-                    'time' => str_replace(':', '', $segments->getFirstSegment()->getDepartureTime())
-                ]
-            ]
+                    'time' => str_replace(':', '', $segments->getFirstSegment()->getDepartureTime()),
+                ],
+            ],
         ];
 
         //Validating carrier
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
             'elementManagementData' => [
-                'segmentName' => 'FV'
+                'segmentName' => 'FV',
             ],
             'ticketingCarrier' => [
                 'carrier' => [
-                    'airlineCode' => $validatingCarrier
-                ]
-            ]
+                    'airlineCode' => $validatingCarrier,
+                ],
+            ],
         ];
 
         //Phone number
         if ($phoneNumber != null) {
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
-                    'segmentName' => 'AP'
+                    'segmentName' => 'AP',
                 ],
                 'freetextData' => [
                     'freetextDetail' => [
                         'subjectQualifier' => 3,
-                        'type' => 3
+                        'type' => 3,
                     ],
-                    'longFreetext' => $phoneNumber
-                ]
+                    'longFreetext' => $phoneNumber,
+                ],
             ];
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
-                    'segmentName' => 'OS'
+                    'segmentName' => 'OS',
                 ],
                 'freetextData' => [
                     'freetextDetail' => [
                         'subjectQualifier' => 3,
                         'type' => 28,
-                        'companyId' => 'YY'
+                        'companyId' => 'YY',
                     ],
-                    'longFreetext' => 'CTCP' . preg_replace('/\D/', '', $phoneNumber) . '-M'
-                ]
+                    'longFreetext' => 'CTCP'.preg_replace('/\D/', '', $phoneNumber).'-M',
+                ],
             ];
         }
 
         //Email
-        if ($email != null)
+        if ($email != null) {
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
-                    'segmentName' => 'AP'
+                    'segmentName' => 'AP',
                 ],
                 'freetextData' => [
                     'freetextDetail' => [
                         'subjectQualifier' => 3,
-                        'type' => 'P02'
+                        'type' => 'P02',
                     ],
-                    'longFreetext' => $email
-                ]
+                    'longFreetext' => $email,
+                ],
             ];
+        }
 
         //Form of payment = cash
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
             'elementManagementData' => [
-                'segmentName' => 'FP'
+                'segmentName' => 'FP',
             ],
             'formOfPayment' => [
                 'fop' => [
-                    'identification' => 'CA'
-                ]
-            ]
+                    'identification' => 'CA',
+                ],
+            ],
         ];
 
         //Internet-booking remark
         $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
             'elementManagementData' => [
-                'segmentName' => 'RM'
+                'segmentName' => 'RM',
             ],
             'miscellaneousRemark' => [
                 'remarks' => [
                     'type' => 'RM',
-                    'freetext' => 'INTERNET BOOKING'
-                ]
-            ]
+                    'freetext' => 'INTERNET BOOKING',
+                ],
+            ],
         ];
 
         //Agent commission
         if ($agentCommission != null) {
             $data = [
                 'elementManagementData' => [
-                    'segmentName' => 'FM'
+                    'segmentName' => 'FM',
                 ],
                 'commission' => [
-                    'commissionInfo' => []
-                ]
+                    'commissionInfo' => [],
+                ],
             ];
 
-            if ($agentCommission->isPercentage())
-                $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent() . '%';
-            else
+            if ($agentCommission->isPercentage()) {
+                $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent().'%';
+            } else {
                 $data['commission']['commissionInfo']['amount'] = $agentCommission->getAmount();
+            }
 
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = $data;
         }
 
         foreach (array_merge($travellers->getAdults(), $travellers->getChildren()) as $passenger) {
-            /** @var Passenger $passenger */
+            /* @var Passenger $passenger */
             $dataElement = [
                 'elementManagementData' => [
-                    'segmentName' => 'SSR'
+                    'segmentName' => 'SSR',
                 ],
                 'serviceRequest' => [
                     'ssr' => [
@@ -443,31 +452,31 @@ class InnerClient
                         'status' => 'HK',
                         'quantity' => 1,
                         'companyId' => 'YY',
-                        'freetext' => substr($passenger->ssrDocsText(), 0, 70)
-                    ]
+                        'freetext' => substr($passenger->ssrDocsText(), 0, 70),
+                    ],
                 ],
                 'referenceForDataElement' => [
                     'reference' => [
                         'qualifier' => 'PR',
-                        'number' => $passenger->getIndex()
-                    ]
-                ]
+                        'number' => $passenger->getIndex(),
+                    ],
+                ],
             ];
 
             //Long ssr
-            if (strlen($passenger->ssrDocsText()) > 70)
+            if (strlen($passenger->ssrDocsText()) > 70) {
                 $dataElement['serviceRequest']['ssr']['freetext'] = [
                     substr($passenger->ssrDocsText(), 0, 70),
-                    substr($passenger->ssrDocsText(), 70, 70)
+                    substr($passenger->ssrDocsText(), 70, 70),
                 ];
+            }
 
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = $dataElement;
-
 
             //FOID
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
-                    'segmentName' => 'SSR'
+                    'segmentName' => 'SSR',
                 ],
                 'serviceRequest' => [
                     'ssr' => [
@@ -475,37 +484,37 @@ class InnerClient
                         'status' => 'HK',
                         'quantity' => 1,
                         'companyId' => $validatingCarrier,
-                        'freetext' => 'PP' . $passenger->clearedPassport()
-                    ]
+                        'freetext' => 'PP'.$passenger->clearedPassport(),
+                    ],
                 ],
                 'referenceForDataElement' => [
                     'reference' => [
                         'qualifier' => 'PR',
-                        'number' => $passenger->getIndex()
-                    ]
-                ]
+                        'number' => $passenger->getIndex(),
+                    ],
+                ],
             ];
 
             $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                 'elementManagementData' => [
-                    'segmentName' => 'FE'
+                    'segmentName' => 'FE',
                 ],
                 'fareElement' => [
                     'generalIndicator' => 'E',
-                    'freetextLong' => $validatingCarrier . " ONLY PSPT " . $passenger->clearedPassport(),
+                    'freetextLong' => $validatingCarrier." ONLY PSPT ".$passenger->clearedPassport(),
                 ],
                 'referenceForDataElement' => [
                     'reference' => [
                         'qualifier' => 'PR',
-                        'number' => $passenger->getIndex()
-                    ]
-                ]
+                        'number' => $passenger->getIndex(),
+                    ],
+                ],
             ];
 
             if ($infant = $passenger->getAssociatedInfant()) {
                 $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
-                        'segmentName' => 'SSR'
+                        'segmentName' => 'SSR',
                     ],
                     'serviceRequest' => [
                         'ssr' => [
@@ -513,32 +522,32 @@ class InnerClient
                             'status' => 'HK',
                             'quantity' => 1,
                             'companyId' => 'YY',
-                            'freetext' => substr($infant->ssrDocsText(), 0, 70)
-                        ]
+                            'freetext' => substr($infant->ssrDocsText(), 0, 70),
+                        ],
                     ],
                     'referenceForDataElement' => [
                         'reference' => [
                             'qualifier' => 'PR',
-                            'number' => $passenger->getIndex()
-                        ]
-                    ]
+                            'number' => $passenger->getIndex(),
+                        ],
+                    ],
                 ];
 
                 $params['PNR_AddMultiElements']['dataElementsMaster']['dataElementsIndiv'][] = [
                     'elementManagementData' => [
-                        'segmentName' => 'FE'
+                        'segmentName' => 'FE',
                     ],
                     'fareElement' => [
                         'generalIndicator' => 'E',
                         'passengerType' => 'INF',
-                        'freetextLong' => $validatingCarrier . " ONLY PSPT " . $infant->clearedPassport(),
+                        'freetextLong' => $validatingCarrier." ONLY PSPT ".$infant->clearedPassport(),
                     ],
                     'referenceForDataElement' => [
                         'reference' => [
                             'qualifier' => 'PR',
-                            'number' => $passenger->getIndex()
-                        ]
-                    ]
+                            'number' => $passenger->getIndex(),
+                        ],
+                    ],
                 ];
             }
         }
@@ -548,11 +557,12 @@ class InnerClient
 
     /**
      * Air_SellFromRecommendation
-     * Set travel segments
+     * Set travel segments.
      *
-     * @param string $from Boarding point
-     * @param string $to Destination
-     * @param array $segments Travel Segments
+     * @param string $from     Boarding point
+     * @param string $to       Destination
+     * @param array  $segments Travel Segments
+     *
      * @return Object
      */
     public function airSellFromRecommendation($from, $to, $segments)
@@ -581,9 +591,10 @@ class InnerClient
     }
 
     /**
-     * Fare_PricePNRWithBookingClass
+     * Fare_PricePNRWithBookingClass.
      *
      * @param string $currency Currency
+     *
      * @return Object
      */
     public function farePricePNRWithBookingClass($currency)
@@ -593,14 +604,14 @@ class InnerClient
         //Currency override
         $params['Fare_PricePNRWithBookingClass']['pricingOptionGroup'][0] = [
             'pricingOptionKey' => [
-                'pricingOptionKey' => 'FCO'
+                'pricingOptionKey' => 'FCO',
             ],
             'currency' => [
                 'firstCurrencyDetails' => [
                     'currencyQualifier' => 'FCO',
-                    'currencyIsoCode' => $currency
-                ]
-            ]
+                    'currencyIsoCode' => $currency,
+                ],
+            ],
         ];
 
         //Published fares
@@ -613,13 +624,12 @@ class InnerClient
     }
 
     /**
-     *
-     *
      * @param FlightSegmentCollection $segments
-     * @param int $adults
-     * @param int $infants
-     * @param int $children
-     * @param string $currency
+     * @param int                     $adults
+     * @param int                     $infants
+     * @param int                     $children
+     * @param string                  $currency
+     *
      * @return array
      */
     public function fareInformativePricingWithoutPnr($segments, $adults, $infants, $children, $currency)
@@ -630,10 +640,11 @@ class InnerClient
         $passengerGroups = [];
         $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
             'quantity' => 1,
-            'numberOfUnits' => $adults
+            'numberOfUnits' => $adults,
         ];
-        for ($i = 1; $i < $adults; $i++)
+        for ($i = 1; $i < $adults; $i++) {
             $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
+        }
         $passengerGroups[] = $passengerGroup;
         $passengerGroup = [];
 
@@ -641,13 +652,14 @@ class InnerClient
         if ($infants > 0) {
             $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
                 'quantity' => 2,
-                'numberOfUnits' => $infants
+                'numberOfUnits' => $infants,
             ];
-            for ($i = 1; $i <= $infants; $i++)
+            for ($i = 1; $i <= $infants; $i++) {
                 $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
+            }
             $passengerGroup['discountPtc'] = [
                 'valueQualifier' => 'INF',
-                'fareDetails' => ['qualifier' => 766]
+                'fareDetails' => ['qualifier' => 766],
             ];
             $passengerGroups[] = $passengerGroup;
             $passengerGroup = [];
@@ -657,12 +669,13 @@ class InnerClient
         if ($children > 0) {
             $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
                 'quantity' => 3,
-                'numberOfUnits' => $children
+                'numberOfUnits' => $children,
             ];
-            for ($i = 1; $i <= $children; $i++)
+            for ($i = 1; $i <= $children; $i++) {
                 $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i + $adults;
+            }
             $passengerGroup['discountPtc'] = [
-                'valueQualifier' => 'CH'
+                'valueQualifier' => 'CH',
             ];
             $passengerGroups[] = $passengerGroup;
         }
@@ -679,27 +692,27 @@ class InnerClient
                         'departureDate' => $segment->getDepartureDate()->format('dmy'),
                         'departureTime' => str_replace(':', '', $segment->getDepartureTime()),
                         'arrivalDate' => $segment->getArrivalDate()->format('dmy'),
-                        'arrivalTime' => str_replace(':', '', $segment->getArrivalTime())
+                        'arrivalTime' => str_replace(':', '', $segment->getArrivalTime()),
                     ],
                     'boardPointDetails' => [
-                        'trueLocationId' => $segment->getDepartureIata()
+                        'trueLocationId' => $segment->getDepartureIata(),
                     ],
                     'offpointDetails' => [
-                        'trueLocationId' => $segment->getArrivalIata()
+                        'trueLocationId' => $segment->getArrivalIata(),
                     ],
                     'companyDetails' => [
                         'marketingCompany' => $segment->getMarketingCarrierIata(),
-                        'operatingCompany' => $segment->getOperatingCarrierIata()
+                        'operatingCompany' => $segment->getOperatingCarrierIata(),
                     ],
                     'flightIdentification' => [
                         'flightNumber' => $segment->getFlightNumber(),
-                        'bookingClass' => $segment->getBookingClass()
+                        'bookingClass' => $segment->getBookingClass(),
                     ],
                     'flightTypeDetails' => [
-                        'flightIndicator' => 0
+                        'flightIndicator' => 0,
                     ],
-                    'itemNumber' => $i++
-                ]
+                    'itemNumber' => $i++,
+                ],
             ];
         }
         $params['Fare_InformativePricingWithoutPNR']['segmentGroup'] = $segmentsD;
@@ -708,14 +721,14 @@ class InnerClient
         //Currency override
         $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][0] = [
             'pricingOptionKey' => [
-                'pricingOptionKey' => 'FCO'
+                'pricingOptionKey' => 'FCO',
             ],
             'currency' => [
                 'firstCurrencyDetails' => [
                     'currencyQualifier' => 'FCO',
-                    'currencyIsoCode' => $currency
-                ]
-            ]
+                    'currencyIsoCode' => $currency,
+                ],
+            ],
         ];
 
         //Published fares
@@ -728,17 +741,19 @@ class InnerClient
     }
 
     /**
-     * Sends request
+     * Sends request.
      *
      * @param string $name
-     * @param array $params
+     * @param array  $params
+     *
      * @return string
+     *
      * @throws AmadeusException
      * @throws \Exception
      */
     public function soapCall($name, $params)
     {
-        $this->_logger->info('Amadeus method called: ' . $name);
+        $this->_logger->info('Amadeus method called: '.$name);
 
         $exc = null;
         try {
@@ -749,19 +764,22 @@ class InnerClient
 
         $this->log($params, null);
 
-        if ($exc != null)
+        if ($exc != null) {
             throw $exc;
+        }
 
-        if (isset($data->errorMessage))
-            throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error . ' - ' . $data->errorMessage->errorMessageText->description);
+        if (isset($data->errorMessage)) {
+            throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error.' - '.$data->errorMessage->errorMessageText->description);
+        }
 
         return $this->_client->__getLastResponse();
     }
 
     /**
-     * Ticket_CreateTSTFromPricing
+     * Ticket_CreateTSTFromPricing.
      *
      * @param integer $types Number of passenger types
+     *
      * @return Object
      */
     public function ticketCreateTSTFromPricing($types)
@@ -778,7 +796,7 @@ class InnerClient
 
     /**
      * PNR_AddMultiElements
-     * Final save operation
+     * Final save operation.
      */
     public function pnrAddMultiElementsFinal()
     {
@@ -790,9 +808,10 @@ class InnerClient
 
     /**
      * PNR_Retrieve
-     * Get PNR by id
+     * Get PNR by id.
      *
      * @param string $pnr_id PNR ID
+     *
      * @return Object
      */
     public function pnrRetrieve($pnr_id)
@@ -805,34 +824,35 @@ class InnerClient
     }
 
     /**
-     * Recusively dump the variable
+     * Recusively dump the variable.
      *
      * @param string $varname Name of the variable
-     * @param mixed $varval Vriable to be dumped
+     * @param mixed  $varval  Vriable to be dumped
      */
     private function dumpVariable($varname, $varval)
     {
         if (!is_array($varval) && !is_object($varval)) {
-            print $varname . ' = ' . $varval . "<br>\n";
+            print $varname.' = '.$varval."<br>\n";
         } else {
-            print $varname . " = data()<br>\n";
+            print $varname." = data()<br>\n";
             foreach ($varval as $key => $val) {
-                $this->dumpVariable($varname . "['" . $key . "']", $val);
+                $this->dumpVariable($varname."['".$key."']", $val);
             }
         }
     }
 
     /**
-     * Save to log
+     * Save to log.
      *
      * @param array $params The parameters used
-     * @param array $data The response data
+     * @param array $data   The response data
+     *
      * @return Object
      */
     private function log($params, $data)
     {
-        $this->_logger->debug("Request Trace: " . $this->_client->__getLastRequest());
-        $this->_logger->debug("Response Trace: " . $this->_client->__getLastResponse());
+        $this->_logger->debug("Request Trace: ".$this->_client->__getLastRequest());
+        $this->_logger->debug("Response Trace: ".$this->_client->__getLastResponse());
     }
 
     /**
@@ -840,9 +860,11 @@ class InnerClient
      */
     private function getHeader()
     {
-        if (isset($this->_headers['Session']))
-            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'Session', $this->_headers['Session']); else
+        if (isset($this->_headers['Session'])) {
+            $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'Session', $this->_headers['Session']);
+        } else {
             $soapHeader = new \SoapHeader(InnerClient::AMD_HEAD_NAMESPACE, 'SessionId', $this->_headers['SessionId']);
+        }
 
         return $soapHeader;
     }

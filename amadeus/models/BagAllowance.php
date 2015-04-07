@@ -1,25 +1,24 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
-
-class BagAllowance {
-
+class BagAllowance
+{
     /**
-     * Number of measurement units
+     * Number of measurement units.
      *
      * @var float
      */
     private $_freeAllowance;
 
     /**
-     * N(number of bags)/700
+     * N(number of bags)/700.
      *
      * @var string
      */
     private $_quantityCode;
 
-    function __construct($freeAllowance, $quantityCode)
+    public function __construct($freeAllowance, $quantityCode)
     {
         $this->_freeAllowance = $freeAllowance;
         $this->_quantityCode = $quantityCode;
@@ -40,5 +39,4 @@ class BagAllowance {
     {
         return $this->_quantityCode;
     }
-
 }

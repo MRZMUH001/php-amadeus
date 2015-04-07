@@ -1,18 +1,17 @@
 <?php
 
-namespace Amadeus\models;
-
+namespace amadeus\models;
 
 class PassengerCollection
 {
-
     /**
      * @var Passenger[]
      */
     private $_passengers = [];
 
     /**
-     * Maximum current index
+     * Maximum current index.
+     *
      * @var int
      */
     private $_maxIndex = 1;
@@ -31,16 +30,18 @@ class PassengerCollection
     public function addPassenger($passenger)
     {
         //Set index
-        if ($passenger->getType() != 'I')
+        if ($passenger->getType() != 'I') {
             $passenger->setIndex($this->_maxIndex++);
+        }
 
         //If infant, attach him to some adult
         if ($passenger->getType() == 'I') {
-            foreach ($this->getAdults() as $adult)
+            foreach ($this->getAdults() as $adult) {
                 if ($adult->getAssociatedInfant() == null) {
                     $adult->setAssociatedInfant($passenger);
                     break;
                 }
+            }
         }
 
         $this->_passengers[] = $passenger;
@@ -65,5 +66,4 @@ class PassengerCollection
             return $passenger->getType() == 'C';
         });
     }
-
 }

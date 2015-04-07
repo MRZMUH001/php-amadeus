@@ -1,12 +1,11 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
 use SebastianBergmann\Money\Money;
 
 class AgentCommissions
 {
-
     /** @var  float */
     private $_commissionAdult;
 
@@ -18,6 +17,7 @@ class AgentCommissions
 
     /**
      * AgentCommissions constructor.
+     *
      * @param float $commissionAdult
      * @param float $commissionChild
      * @param float $commissionInfant
@@ -54,9 +54,11 @@ class AgentCommissions
     }
 
     /**
-     * Applies commission to price
-     * @param Price $price
+     * Applies commission to price.
+     *
+     * @param Price               $price
      * @param SimpleSearchRequest $searchRequest
+     *
      * @return Money
      */
     public function apply(&$price, SimpleSearchRequest $searchRequest)
@@ -69,5 +71,4 @@ class AgentCommissions
 
         $price->setCommission($commission->multiply(-1));
     }
-
 }

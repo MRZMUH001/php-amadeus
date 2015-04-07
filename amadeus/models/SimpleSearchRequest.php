@@ -1,6 +1,6 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
 use Amadeus\exceptions\ValidationException;
 use DateTime;
@@ -26,20 +26,22 @@ class SimpleSearchRequest
     private $_limit = 20;
 
     /**
-     * Create request
-     * @param DateTime $date Flight date
-     * @param string $origin Origin IATA
-     * @param string $destination Destination IATA
-     * @param int $adults Number of adults
-     * @param int $children Number of children
-     * @param int $infants Number of infants
-     * @param DateTime $dateReturn Date of return flight
-     * @param string $currency Currency of prices
-     * @param string $cabin Type of cabin
-     * @param int $limit Number of tickets
+     * Create request.
+     *
+     * @param DateTime $date        Flight date
+     * @param string   $origin      Origin IATA
+     * @param string   $destination Destination IATA
+     * @param int      $adults      Number of adults
+     * @param int      $children    Number of children
+     * @param int      $infants     Number of infants
+     * @param DateTime $dateReturn  Date of return flight
+     * @param string   $currency    Currency of prices
+     * @param string   $cabin       Type of cabin
+     * @param int      $limit       Number of tickets
+     *
      * @throws ValidationException
      */
-    function __construct(DateTime $date, $origin, $destination, $adults, $children = 0, $infants = 0, DateTime $dateReturn = null, $currency = 'USD', $cabin = "Y", $limit = 20)
+    public function __construct(DateTime $date, $origin, $destination, $adults, $children = 0, $infants = 0, DateTime $dateReturn = null, $currency = 'USD', $cabin = "Y", $limit = 20)
     {
         //Create validators
         $iataValidator = v::alnum()->noWhitespace()->length(3, 4);
@@ -47,16 +49,20 @@ class SimpleSearchRequest
         $returnDateValidator = v::oneOf(v::nullValue(), v::date()->between($date, null, true));
 
         //Validate dates
-        if (!$dateValidator->validate($date))
+        if (!$dateValidator->validate($date)) {
             throw new ValidationException("Please specify flight date");
-        if (!$returnDateValidator->validate($dateReturn))
+        }
+        if (!$returnDateValidator->validate($dateReturn)) {
             throw new ValidationException("Return date should be null or later than today");
+        }
 
         //Validate iatas
-        if (!$iataValidator->validate($origin))
+        if (!$iataValidator->validate($origin)) {
             throw new ValidationException("Origin should be 3-4 char IATA code");
-        if (!$iataValidator->validate($destination))
+        }
+        if (!$iataValidator->validate($destination)) {
             throw new ValidationException("Destination should be 3-4 char IATA code");
+        }
 
         //TODO: Add more validation
         $this->_adults = $adults;
@@ -72,7 +78,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Number of adults
+     * Number of adults.
      *
      * @return int
      */
@@ -82,7 +88,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Number of children
+     * Number of children.
      *
      * @return int
      */
@@ -92,7 +98,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Number of infants
+     * Number of infants.
      *
      * @return int
      */
@@ -102,7 +108,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Number of occupied seats
+     * Number of occupied seats.
      *
      * @return int
      */
@@ -112,7 +118,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Date of flight
+     * Date of flight.
      *
      * @return DateTime
      */
@@ -122,7 +128,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Origin IATA
+     * Origin IATA.
      *
      * @return string
      */
@@ -132,7 +138,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Destination IATA
+     * Destination IATA.
      *
      * @return string
      */
@@ -142,7 +148,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Date of return flight or null if one-way
+     * Date of return flight or null if one-way.
      *
      * @return DateTime|null
      */
@@ -152,7 +158,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * One way flight request
+     * One way flight request.
      *
      * @return bool
      */
@@ -162,7 +168,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Currency of price request
+     * Currency of price request.
      *
      * @return string
      */
@@ -172,7 +178,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Type of cabin, Y-economy, C-business
+     * Type of cabin, Y-economy, C-business.
      *
      * @return string
      */
@@ -182,7 +188,7 @@ class SimpleSearchRequest
     }
 
     /**
-     * Number of tickets to fetch
+     * Number of tickets to fetch.
      *
      * @return int
      */
@@ -214,5 +220,4 @@ class SimpleSearchRequest
     {
         $this->_infants = $infants;
     }
-
 }

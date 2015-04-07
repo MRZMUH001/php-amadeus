@@ -1,20 +1,18 @@
 <?php
 
-namespace Amadeus\Methods;
-
+namespace amadeus\methods;
 
 trait PnrAddMultiElementsFinalTrait
 {
-
     use BasicMethodsTrait;
 
     public function pnrAddMultiElementsFinal()
     {
         $data = $this->getClient()->pnrAddMultiElementsFinal();
-        if (isset($data->pnrHeader->reservationInfo->reservation->controlNumber))
-            return (string)$data->pnrHeader->reservationInfo->reservation->controlNumber;
+        if (isset($data->pnrHeader->reservationInfo->reservation->controlNumber)) {
+            return (string) $data->pnrHeader->reservationInfo->reservation->controlNumber;
+        }
 
-        return null;
+        return;
     }
-
 }

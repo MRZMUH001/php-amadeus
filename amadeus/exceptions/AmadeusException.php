@@ -1,7 +1,7 @@
 <?php
 
-namespace Amadeus\exceptions;
+namespace amadeus\exceptions;
 
-class AmadeusException extends \Exception{
-
+class AmadeusException extends \Exception
+{
 }

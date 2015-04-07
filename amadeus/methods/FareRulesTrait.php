@@ -1,15 +1,13 @@
 <?php
 
-namespace Amadeus\Methods;
-
+namespace amadeus\methods;
 
 trait FareRulesTrait
 {
-
     use BasicMethodsTrait;
 
     /**
-     * Return rules text
+     * Return rules text.
      *
      * @return string
      */
@@ -17,10 +15,10 @@ trait FareRulesTrait
     {
         $rulesData = $this->getClient()->checkRules();
         $rules = [];
-        foreach ($this->iterateStd($rulesData->tariffInfo->fareRuleText) as $item)
-            $rules[] = (string)$item->freeText;
+        foreach ($this->iterateStd($rulesData->tariffInfo->fareRuleText) as $item) {
+            $rules[] = (string) $item->freeText;
+        }
 
-        return join("\n", $rules);
+        return implode("\n", $rules);
     }
-
 }

@@ -1,7 +1,7 @@
 <?php
 
-namespace Amadeus\exceptions;
+namespace amadeus\exceptions;
 
-class ValidationException extends \Exception {
-
+class ValidationException extends \Exception
+{
 }

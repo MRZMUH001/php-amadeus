@@ -1,25 +1,23 @@
 <?php
 
-namespace Amadeus\Methods;
+namespace amadeus\methods;
 
 use Amadeus\exceptions\UnableToSellException;
 use Amadeus\models\FlightSegment;
-use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\OrderFlow;
-use Amadeus\models\TicketDetails;
 
 trait SellFromRecommendationTrait
 {
-
     use BasicMethodsTrait;
 
     /**
-     * Checks if all segments are confirmed and return segments data
+     * Checks if all segments are confirmed and return segments data.
      *
      * @param OrderFlow $orderFlow
-     * @return OrderFlow
-     * @throws UnableToSellException
      *
+     * @return OrderFlow
+     *
+     * @throws UnableToSellException
      */
     public function sellFromRecommendation(OrderFlow $orderFlow)
     {
@@ -34,7 +32,7 @@ trait SellFromRecommendationTrait
                 'company' => $segment->getMarketingCarrierIata(),
                 'flight_no' => $segment->getFlightNumber(),
                 'class' => $segment->getBookingClass(),
-                'passengers' => $orderFlow->getSearchRequest()->getSeats()
+                'passengers' => $orderFlow->getSearchRequest()->getSeats(),
             ];
             $i++;
         }
@@ -45,8 +43,9 @@ trait SellFromRecommendationTrait
             $segments
         );
 
-        if (isset($data->errorAtMessageLevel->errorSegment->errorDetails->errorCode) && $data->errorAtMessageLevel->errorSegment->errorDetails->errorCode == '288')
+        if (isset($data->errorAtMessageLevel->errorSegment->errorDetails->errorCode) && $data->errorAtMessageLevel->errorSegment->errorDetails->errorCode == '288') {
             throw new UnableToSellException("Not all segments are confirmed");
+        }
 
         $i = 0;
 
@@ -68,11 +67,12 @@ trait SellFromRecommendationTrait
                 $this->convertAmadeusTime((string)$fi->flightDate->departureTime)
             );*/
 
-            $oldSegmentData->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string)$s->apdSegment->legDetails->numberOfStops : 0);
-            $oldSegmentData->setEquipmentTypeIata((string)$s->apdSegment->legDetails->equipment);
-            if (isset($s->apdSegment->arrivalStationInfo->terminal))
-                $oldSegmentData->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);
-            $oldSegmentData->setBookingClass((string)$fi->flightIdentification->bookingClass);
+            $oldSegmentData->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string) $s->apdSegment->legDetails->numberOfStops : 0);
+            $oldSegmentData->setEquipmentTypeIata((string) $s->apdSegment->legDetails->equipment);
+            if (isset($s->apdSegment->arrivalStationInfo->terminal)) {
+                $oldSegmentData->setArrivalTerm((string) $s->apdSegment->arrivalStationInfo->terminal);
+            }
+            $oldSegmentData->setBookingClass((string) $fi->flightIdentification->bookingClass);
 
             //Save updated details
             $orderFlow->getSegments()->updateSegment($i++, $oldSegmentData);
@@ -80,5 +80,4 @@ trait SellFromRecommendationTrait
 
         return $orderFlow;
     }
-
 }

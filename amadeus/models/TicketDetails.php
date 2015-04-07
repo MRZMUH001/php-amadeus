@@ -1,15 +1,13 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
 use DateTime;
 use SebastianBergmann\Money\Money;
 
 /**
  * Class TicketDetails
- * Contains all ticket data
- *
- * @package Amadeus\models
+ * Contains all ticket data.
  */
 class TicketDetails
 {
@@ -39,33 +37,33 @@ class TicketDetails
     private $_lastTicketingDate = null;
 
     /**
-     * Fare rules
+     * Fare rules.
      *
      * @var string
      */
     private $_rules = '';
 
     /**
-     * Is published fare
+     * Is published fare.
      *
      * @var bool
      */
     private $_isPublishedFare;
 
-    function __construct()
+    public function __construct()
     {
         $this->_segments = new FlightSegmentCollection();
     }
 
     /**
-     * Return total tax
+     * Return total tax.
      *
      * @return Money
      */
     public function getTotalTaxes()
     {
 
-        /**
+        /*
          * $tax = Money::fromString('0', $this->_taxes[0]->getCurrency());
          *
          * foreach ($this->_taxes as $t)
@@ -76,7 +74,7 @@ class TicketDetails
     }
 
     /**
-     * Return basic fare
+     * Return basic fare.
      *
      * @return Money
      */
@@ -180,5 +178,4 @@ class TicketDetails
     {
         $this->_isPublishedFare = $isPublishedFare;
     }
-
 }

@@ -1,21 +1,18 @@
 <?php
 
-namespace Amadeus\Methods;
-
+namespace amadeus\methods;
 
 use Amadeus\models\OrderFlow;
-use Amadeus\models\PassengerCollection;
-use Amadeus\models\TicketDetails;
 
 trait PnrAddMultiElementsTrait
 {
-
     use BasicMethodsTrait;
 
     /**
-     * Add passenger details
+     * Add passenger details.
      *
      * @param OrderFlow $orderFlow
+     *
      * @return Object
      */
     public function pnrAddMultiElements(OrderFlow $orderFlow)
@@ -29,7 +26,6 @@ trait PnrAddMultiElementsTrait
             $orderFlow->getCommissions()
         );
 
-        return null;
+        return;
     }
-
 }

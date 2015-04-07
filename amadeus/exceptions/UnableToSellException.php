@@ -1,7 +1,7 @@
 <?php
 
-namespace Amadeus\exceptions;
+namespace amadeus\exceptions;
 
-class UnableToSellException extends \Exception{
-
+class UnableToSellException extends \Exception
+{
 }

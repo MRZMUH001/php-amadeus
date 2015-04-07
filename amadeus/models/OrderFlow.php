@@ -1,11 +1,9 @@
 <?php
 
-namespace Amadeus\models;
-
+namespace amadeus\models;
 
 class OrderFlow
 {
-
     /** @var FlightSegmentCollection */
     private $_segments;
 
@@ -232,5 +230,4 @@ class OrderFlow
     {
         $this->_commissions = $commissions;
     }
-
 }

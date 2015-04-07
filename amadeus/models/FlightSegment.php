@@ -1,87 +1,98 @@
 <?php
 
-namespace Amadeus\models;
-
+namespace amadeus\models;
 
 use DateTime;
 
 class FlightSegment
 {
-
     /**
-     * Operating carrier IATA
+     * Operating carrier IATA.
+     *
      * @var string
      */
     private $_operatingCarrierIata;
 
     /**
-     * Marketing carrier IATA
+     * Marketing carrier IATA.
+     *
      * @var string
      */
     private $_marketingCarrierIata;
 
     /**
-     * Departure airport IATA
+     * Departure airport IATA.
+     *
      * @var string
      */
     private $_departureIata;
 
     /**
-     * Departure terminal
+     * Departure terminal.
+     *
      * @var null|string
      */
     private $_departureTerm = null;
 
     /**
-     * Arrival airport IATA
+     * Arrival airport IATA.
+     *
      * @var string
      */
     private $_arrivalIata;
 
     /**
-     * Arrival terminal
+     * Arrival terminal.
+     *
      * @var null|string
      */
     private $_arrivalTerm = null;
 
     /**
-     * Flight number
+     * Flight number.
+     *
      * @var string
      */
     private $_flightNumber;
 
     /**
-     * Arrival date
+     * Arrival date.
+     *
      * @var DateTime
      */
     private $_arrivalDate;
 
     /**
-     * Arrival time (H:m)
+     * Arrival time (H:m).
+     *
      * @var string
      */
     private $_arrivalTime;
 
     /**
-     * Departure date
+     * Departure date.
+     *
      * @var DateTime
      */
     private $_departureDate;
 
     /**
-     * Departure time (H:m)
+     * Departure time (H:m).
+     *
      * @var string
      */
     private $_departureTime;
 
     /**
-     * Plane type
+     * Plane type.
+     *
      * @var null|string
      */
     private $_equipmentTypeIata;
 
     /**
-     * Booking class
+     * Booking class.
+     *
      * @var null
      */
     private $_bookingClass = null;
@@ -97,17 +108,17 @@ class FlightSegment
     private $_bagAllowance;
 
     /**
-     * @param string $operatingCarrierIata
-     * @param string $marketingCarrierIata
-     * @param string $departureIata
-     * @param string $arrivalIata
-     * @param string $flightNumber
+     * @param string   $operatingCarrierIata
+     * @param string   $marketingCarrierIata
+     * @param string   $departureIata
+     * @param string   $arrivalIata
+     * @param string   $flightNumber
      * @param DateTime $arrivalDate
-     * @param string $arrivalTime
+     * @param string   $arrivalTime
      * @param DateTime $departureDate
-     * @param string $departureTime
+     * @param string   $departureTime
      */
-    function __construct($operatingCarrierIata, $marketingCarrierIata, $departureIata, $arrivalIata, $flightNumber, $arrivalDate = null, $arrivalTime = null, $departureDate = null, $departureTime = null)
+    public function __construct($operatingCarrierIata, $marketingCarrierIata, $departureIata, $arrivalIata, $flightNumber, $arrivalDate = null, $arrivalTime = null, $departureDate = null, $departureTime = null)
     {
         $this->_operatingCarrierIata = $operatingCarrierIata;
         $this->_marketingCarrierIata = $marketingCarrierIata;
@@ -209,7 +220,7 @@ class FlightSegment
     }
 
     /**
-     * Arrival time (H:m)
+     * Arrival time (H:m).
      *
      * @return string
      */
@@ -227,7 +238,7 @@ class FlightSegment
     }
 
     /**
-     * Departure time (H:m)
+     * Departure time (H:m).
      *
      * @return string
      */
@@ -236,13 +247,15 @@ class FlightSegment
         $time = $this->_departureTime;
         if (strlen($time) < 5) {
             list($hour, $minutes) = explode(':', $time);
+
             return sprintf('%02d:%02d', $hour, $minutes);
         }
+
         return $time;
     }
 
     /**
-     * Plane type IATA
+     * Plane type IATA.
      *
      * @return null|string
      */
@@ -252,27 +265,27 @@ class FlightSegment
     }
 
     /**
-     * "4U:LH" in case 4U operates, just "LH" in case it's not codeshare
+     * "4U:LH" in case 4U operates, just "LH" in case it's not codeshare.
      *
      * @return string
      */
     public function getCarrierPair()
     {
-        return join(':', array_unique([$this->getOperatingCarrierIata(), $this->getMarketingCarrierIata()]));
+        return implode(':', array_unique([$this->getOperatingCarrierIata(), $this->getMarketingCarrierIata()]));
     }
 
     /**
-     * Return flight number: SU712
+     * Return flight number: SU712.
      *
      * @return string
      */
     public function getFullFlightNumber()
     {
-        return $this->getCarrierPair() . $this->getFlightNumber();
+        return $this->getCarrierPair().$this->getFlightNumber();
     }
 
     /**
-     * Serialized flight hash
+     * Serialized flight hash.
      *
      * @return string
      */
@@ -282,16 +295,17 @@ class FlightSegment
             $this->getFullFlightNumber(),
             $this->getDepartureIata(),
             $this->getArrivalIata(),
-            $this->getDepartureDate()->format('dmy')
+            $this->getDepartureDate()->format('dmy'),
         ];
 
-        return join('_', $params);
+        return implode('_', $params);
     }
 
     /**
-     * Deserialize flight segment
+     * Deserialize flight segment.
      *
      * @param string $code
+     *
      * @return FlightSegment
      */
     public static function deserialize($code)
@@ -313,9 +327,10 @@ class FlightSegment
     }
 
     /**
-     * Departure DateTime with timezone
+     * Departure DateTime with timezone.
      *
      * @param callable $timezoneResolver Function resolving IATA to timezone string
+     *
      * @return DateTime
      */
     public function getDepartureDateTime($timezoneResolver)
@@ -332,9 +347,10 @@ class FlightSegment
     }
 
     /**
-     * Arrival DateTime with timezone
+     * Arrival DateTime with timezone.
      *
      * @param callable $timezoneResolver Function resolving IATA to timezone string
+     *
      * @return DateTime
      */
     public function getArrivalDateTime($timezoneResolver)
@@ -351,9 +367,10 @@ class FlightSegment
     }
 
     /**
-     * Return segment duration in minutes
+     * Return segment duration in minutes.
      *
      * @param callable $timezoneResolver
+     *
      * @return int
      */
     public function getDurationInMinutes($timezoneResolver)
@@ -364,7 +381,6 @@ class FlightSegment
     }
 
     /**
-     * @return null
      */
     public function getBookingClass()
     {
@@ -426,5 +442,4 @@ class FlightSegment
     {
         $this->_bagAllowance = $bagAllowance;
     }
-
 }

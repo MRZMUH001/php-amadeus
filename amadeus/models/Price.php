@@ -1,12 +1,11 @@
 <?php
 
-namespace Amadeus\models;
+namespace amadeus\models;
 
 use SebastianBergmann\Money\Money;
 
 class Price
 {
-
     /** @var Money */
     private $_fare;
 
@@ -26,7 +25,7 @@ class Price
      * @param Money $fare
      * @param Money $tax
      */
-    function __construct($fare, $tax)
+    public function __construct($fare, $tax)
     {
         $this->_fare = $fare;
         $this->_tax = $tax;
@@ -66,12 +65,14 @@ class Price
 
     /**
      * @return Money
+     *
      * @throws \Exception
      */
     public function getCommission()
     {
-        if ($this->_commission == null)
+        if ($this->_commission == null) {
             throw new \Exception("Commission not set");
+        }
 
         return $this->_commission;
     }
@@ -89,8 +90,9 @@ class Price
      */
     public function getMarkup()
     {
-        if ($this->_markup == null)
+        if ($this->_markup == null) {
             return new Money(0, $this->_fare->getCurrency());
+        }
 
         return $this->_markup;
     }
@@ -105,12 +107,14 @@ class Price
 
     /**
      * @return Money
+     *
      * @throws \Exception
      */
     public function getFee()
     {
-        if ($this->_fee == null)
+        if ($this->_fee == null) {
             throw new \Exception("Payment fee is not set");
+        }
 
         return $this->_fee;
     }
@@ -124,9 +128,10 @@ class Price
     }
 
     /**
-     * Total price
+     * Total price.
      *
      * @return Money
+     *
      * @throws \Exception
      */
     public function getTotalPrice()
@@ -135,9 +140,10 @@ class Price
     }
 
     /**
-     * Total price without fee
+     * Total price without fee.
      *
      * @return Money
+     *
      * @throws \Exception
      */
     public function getTotalPriceWithoutFee()
@@ -146,9 +152,10 @@ class Price
     }
 
     /**
-     * Return all price parts
+     * Return all price parts.
      *
      * @return Money[]
+     *
      * @throws \Exception
      */
     public function getDetailedPrice()
@@ -158,8 +165,7 @@ class Price
             'tax' => $this->getTax(),
             'commission' => $this->getCommission(),
             'markup' => $this->getMarkup(),
-            'fee' => $this->getFee()
+            'fee' => $this->getFee(),
         ];
     }
-
 }
