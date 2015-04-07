@@ -51,6 +51,25 @@ class OrderFlow
     /** @var  string */
     private $_locale;
 
+    /** @var  string Unique id */
+    private $_orderReference;
+
+    /**
+     * @return string
+     */
+    public function getOrderReference()
+    {
+        return $this->_orderReference;
+    }
+
+    /**
+     * @param string $orderReference
+     */
+    public function setOrderReference($orderReference)
+    {
+        $this->_orderReference = $orderReference;
+    }
+
     /**
      * @return string
      */
