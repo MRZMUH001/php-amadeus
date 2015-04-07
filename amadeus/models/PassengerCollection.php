@@ -66,4 +66,12 @@ class PassengerCollection
             return $passenger->getType() == 'C';
         });
     }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->_passengers);
+    }
 }
