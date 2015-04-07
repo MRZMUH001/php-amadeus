@@ -1,9 +1,9 @@
 <?php
 
-namespace Amadeus\replies;
+namespace amadeus\replies;
 
-use Amadeus\Client;
-use Amadeus\requests\Request;
+use amadeus\Client;
+use amadeus\requests\Request;
 
 abstract class Reply
 {
@@ -18,9 +18,10 @@ abstract class Reply
 
     /**
      * Response constructor.
-     * @param Client $client
+     *
+     * @param Client  $client
      * @param Request $request
-     * @param string $answer
+     * @param string  $answer
      */
     public function __construct(Client $client, $request, $answer)
     {
@@ -30,7 +31,7 @@ abstract class Reply
         $answer = str_replace('soap:', '', $answer);
 
         //Get class name
-        $classParts = explode('\\',get_called_class());
+        $classParts = explode('\\', get_called_class());
         $className = end($classParts);
 
         $xml = simplexml_load_string($answer);
@@ -56,14 +57,16 @@ abstract class Reply
     /**
      * @return Request
      */
-    abstract function getRequest();
+    abstract public function getRequest();
 
     //Helpers ----------------------------------------------------------------------------------------------------------
 
 
     /**
-     * Convert amadeus date format (010515) to DateTime
+     * Convert amadeus date format (010515) to DateTime.
+     *
      * @param string $date
+     *
      * @return \DateTime date
      */
     protected function convertAmadeusDate($date)
@@ -72,8 +75,10 @@ abstract class Reply
     }
 
     /**
-     * Convert amadeus time format (2240) to 22:40
+     * Convert amadeus time format (2240) to 22:40.
+     *
      * @param string $time
+     *
      * @return string
      */
     protected function convertAmadeusTime($time)
@@ -86,12 +91,14 @@ abstract class Reply
             $hours = substr($time, 0, strlen($time) - 2);
         }
 
-        return $hours . ":" . $minutes;
+        return $hours.":".$minutes;
     }
 
     /**
-     * Convert from 0130 to 90 minutes
+     * Convert from 0130 to 90 minutes.
+     *
      * @param string $duration
+     *
      * @return int minutes
      */
     protected function convertAmadeusDurationToMinutes($duration)
@@ -101,17 +108,20 @@ abstract class Reply
 
     /**
      * Used to iterate std classed
-     * Will return multiple subobjects for iterable std and one if non-iterable
+     * Will return multiple subobjects for iterable std and one if non-iterable.
+     *
      * @param $std
+     *
      * @return \Generator
      */
     protected function iterateStd($std)
     {
         if (is_array($std)) {
-            foreach ($std as $obj)
+            foreach ($std as $obj) {
                 yield $obj;
-        } else
+            }
+        } else {
             yield $std;
+        }
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace amadeus\methods;
 
-use Amadeus\models\OrderFlow;
+use amadeus\models\OrderFlow;
 
 trait PnrAddMultiElementsTrait
 {

@@ -2,10 +2,10 @@
 
 namespace amadeus\methods;
 
-use Amadeus\InnerClient;
-use Amadeus\models\AgentCommissions;
-use Amadeus\models\FlightSegmentCollection;
-use Amadeus\models\SimpleSearchRequest;
+use amadeus\InnerClient;
+use amadeus\models\AgentCommissions;
+use amadeus\models\FlightSegmentCollection;
+use amadeus\models\SimpleSearchRequest;
 
 trait BasicMethodsTrait
 {

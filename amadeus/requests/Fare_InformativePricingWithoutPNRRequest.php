@@ -1,17 +1,15 @@
 <?php
 
-namespace Amadeus\requests;
+namespace amadeus\requests;
 
-
-use Amadeus\Client;
-use Amadeus\models\FlightSegmentCollection;
-use Amadeus\models\OrderFlow;
-use Amadeus\models\SimpleSearchRequest;
-use Amadeus\replies\Fare_InformativePricingWithoutPNRReply;
+use amadeus\Client;
+use amadeus\models\FlightSegmentCollection;
+use amadeus\models\OrderFlow;
+use amadeus\models\SimpleSearchRequest;
+use amadeus\replies\Fare_InformativePricingWithoutPNRReply;
 
 class Fare_InformativePricingWithoutPNRRequest extends Request
 {
-
     /** @var  FlightSegmentCollection */
     private $_segments;
 
@@ -34,16 +32,16 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         $this->_searchRequest = $searchRequest;
     }
 
-
     /**
-     * Create from orderflow
+     * Create from orderflow.
      *
      * @param OrderFlow $orderFlow
+     *
      * @return Air_SellFromRecommendationRequest
      */
     public static function createFromOrderFlow(OrderFlow $orderFlow)
     {
-        $request = new self;
+        $request = new self();
         $request->setSearchRequest($orderFlow->getSearchRequest());
         $request->setSegments($orderFlow->getSegments());
 
@@ -52,16 +50,20 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
 
     /**
      * @param Client $client
+     *
      * @return Fare_InformativePricingWithoutPNRReply
+     *
      * @throws \Exception
      */
-    function send(Client $client)
+    public function send(Client $client)
     {
-        if ($this->_segments == null)
+        if ($this->_segments == null) {
             throw new \Exception("Segments not set");
+        }
 
-        if ($this->_searchRequest == null)
+        if ($this->_searchRequest == null) {
             throw new \Exception("Search request not set");
+        }
 
         $sr = $this->_searchRequest;
 
@@ -71,10 +73,11 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         $passengerGroups = [];
         $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
             'quantity' => 1,
-            'numberOfUnits' => $sr->getAdults()
+            'numberOfUnits' => $sr->getAdults(),
         ];
-        for ($i = 1; $i < $sr->getAdults(); $i++)
+        for ($i = 1; $i < $sr->getAdults(); $i++) {
             $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
+        }
         $passengerGroups[] = $passengerGroup;
         $passengerGroup = [];
 
@@ -82,13 +85,14 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         if ($sr->getInfants() > 0) {
             $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
                 'quantity' => 2,
-                'numberOfUnits' => $sr->getInfants()
+                'numberOfUnits' => $sr->getInfants(),
             ];
-            for ($i = 1; $i <= $sr->getInfants(); $i++)
+            for ($i = 1; $i <= $sr->getInfants(); $i++) {
                 $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
+            }
             $passengerGroup['discountPtc'] = [
                 'valueQualifier' => 'INF',
-                'fareDetails' => ['qualifier' => 766]
+                'fareDetails' => ['qualifier' => 766],
             ];
             $passengerGroups[] = $passengerGroup;
             $passengerGroup = [];
@@ -98,12 +102,13 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         if ($sr->getChildren() > 0) {
             $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
                 'quantity' => 3,
-                'numberOfUnits' => $sr->getChildren()
+                'numberOfUnits' => $sr->getChildren(),
             ];
-            for ($i = 1; $i <= $sr->getChildren(); $i++)
+            for ($i = 1; $i <= $sr->getChildren(); $i++) {
                 $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i + $sr->getAdults();
+            }
             $passengerGroup['discountPtc'] = [
-                'valueQualifier' => 'CH'
+                'valueQualifier' => 'CH',
             ];
             $passengerGroups[] = $passengerGroup;
         }
@@ -120,27 +125,27 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
                         'departureDate' => $segment->getDepartureDate()->format('dmy'),
                         'departureTime' => str_replace(':', '', $segment->getDepartureTime()),
                         'arrivalDate' => $segment->getArrivalDate()->format('dmy'),
-                        'arrivalTime' => str_replace(':', '', $segment->getArrivalTime())
+                        'arrivalTime' => str_replace(':', '', $segment->getArrivalTime()),
                     ],
                     'boardPointDetails' => [
-                        'trueLocationId' => $segment->getDepartureIata()
+                        'trueLocationId' => $segment->getDepartureIata(),
                     ],
                     'offpointDetails' => [
-                        'trueLocationId' => $segment->getArrivalIata()
+                        'trueLocationId' => $segment->getArrivalIata(),
                     ],
                     'companyDetails' => [
                         'marketingCompany' => $segment->getMarketingCarrierIata(),
-                        'operatingCompany' => $segment->getOperatingCarrierIata()
+                        'operatingCompany' => $segment->getOperatingCarrierIata(),
                     ],
                     'flightIdentification' => [
                         'flightNumber' => $segment->getFlightNumber(),
-                        'bookingClass' => $segment->getBookingClass()
+                        'bookingClass' => $segment->getBookingClass(),
                     ],
                     'flightTypeDetails' => [
-                        'flightIndicator' => 0
+                        'flightIndicator' => 0,
                     ],
-                    'itemNumber' => $i++
-                ]
+                    'itemNumber' => $i++,
+                ],
             ];
         }
         $params['Fare_InformativePricingWithoutPNR']['segmentGroup'] = $segmentsD;
@@ -149,14 +154,14 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         //Currency override
         $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][0] = [
             'pricingOptionKey' => [
-                'pricingOptionKey' => 'FCO'
+                'pricingOptionKey' => 'FCO',
             ],
             'currency' => [
                 'firstCurrencyDetails' => [
                     'currencyQualifier' => 'FCO',
-                    'currencyIsoCode' => $this->_searchRequest->getCurrency()
-                ]
-            ]
+                    'currencyIsoCode' => $this->_searchRequest->getCurrency(),
+                ],
+            ],
         ];
 
         //Published fares

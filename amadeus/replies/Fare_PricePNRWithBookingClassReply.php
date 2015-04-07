@@ -1,44 +1,43 @@
 <?php
 
-namespace Amadeus\replies;
+namespace amadeus\replies;
 
-
-use Amadeus\models\BagAllowance;
-use Amadeus\models\OrderFlow;
-use Amadeus\models\Price;
-use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;
+use amadeus\models\BagAllowance;
+use amadeus\models\OrderFlow;
+use amadeus\models\Price;
+use amadeus\requests\Fare_PricePNRWithBookingClassRequest;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 
 class Fare_PricePNRWithBookingClassReply extends Reply
 {
-
     public function copyDataToOrderFlow(OrderFlow &$orderFlow)
     {
         $data = $this->xml();
 
         $fareList = [];
         foreach ($this->iterateStd($data->fareList->fareDataInformation->fareDataSupInformation) as $f) {
-            if (isset($f->fareAmount))
-                $fareList[(string)$f->fareDataQualifier] = Money::fromString(
-                    (string)$f->fareAmount,
-                    new Currency((string)$f->fareCurrency)
+            if (isset($f->fareAmount)) {
+                $fareList[(string) $f->fareDataQualifier] = Money::fromString(
+                    (string) $f->fareAmount,
+                    new Currency((string) $f->fareCurrency)
                 );
+            }
         }
 
         $taxesList = [];
         foreach ($this->iterateStd($data->fareList->taxInformation) as $t) {
             $taxesList[] = Money::fromString(
-                (string)$t->amountDetails->fareDataMainInformation->fareAmount,
-                new Currency((string)$t->amountDetails->fareDataMainInformation->fareCurrency)
+                (string) $t->amountDetails->fareDataMainInformation->fareAmount,
+                new Currency((string) $t->amountDetails->fareDataMainInformation->fareCurrency)
             );
         }
 
         $lastTktDate = \DateTime::createFromFormat('d-m-Y',
-            join('-', [
+            implode('-', [
                 $data->fareList->lastTktDate->dateTime->day,
                 $data->fareList->lastTktDate->dateTime->month,
-                $data->fareList->lastTktDate->dateTime->year
+                $data->fareList->lastTktDate->dateTime->year,
             ])
         );
 
@@ -50,10 +49,10 @@ class Fare_PricePNRWithBookingClassReply extends Reply
             $classOfService = $s->segDetails->segmentDetail->classOfService;
             $bagAllowanceInformation = $s->bagAllowanceInformation->bagAllowanceDetails;
             $bagAllowance = new BagAllowance(
-                isset($bagAllowanceInformation->baggageWeight) ? (string)$bagAllowanceInformation->baggageWeight : null,
-                (string)$bagAllowanceInformation->baggageType,
-                isset($bagAllowanceInformation->measureUnit) ? (string)$bagAllowanceInformation->measureUnit : null,
-                isset($bagAllowanceInformation->baggageQuantity) ? (string)$bagAllowanceInformation->baggageQuantity : null
+                isset($bagAllowanceInformation->baggageWeight) ? (string) $bagAllowanceInformation->baggageWeight : null,
+                (string) $bagAllowanceInformation->baggageType,
+                isset($bagAllowanceInformation->measureUnit) ? (string) $bagAllowanceInformation->measureUnit : null,
+                isset($bagAllowanceInformation->baggageQuantity) ? (string) $bagAllowanceInformation->baggageQuantity : null
             );
             $oldSegment->setBookingClass($classOfService);
             $oldSegment->setBagAllowance($bagAllowance);
@@ -75,8 +74,9 @@ class Fare_PricePNRWithBookingClassReply extends Reply
 
         //Set commission
         $commissions = $this->getClient()->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest());
-        if ($commissions == null)
+        if ($commissions == null) {
             throw new \Exception("No commissions found");
+        }
 
         $commissions->apply($price, $orderFlow->getSearchRequest());
 
@@ -89,7 +89,7 @@ class Fare_PricePNRWithBookingClassReply extends Reply
     /**
      * @return Fare_PricePNRWithBookingClassRequest
      */
-    function getRequest()
+    public function getRequest()
     {
         return $this->_request;
     }

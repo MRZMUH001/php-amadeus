@@ -1,20 +1,18 @@
 <?php
 
-namespace Amadeus\requests;
+namespace amadeus\requests;
 
-
-use Amadeus\Client;
-use Amadeus\replies\Fare_CheckRulesReply;
+use amadeus\Client;
+use amadeus\replies\Fare_CheckRulesReply;
 
 class Fare_CheckRulesRequest extends Request
 {
-
     /**
      * @param Client $client
      *
      * @return Fare_CheckRulesReply
      */
-    function send(Client $client)
+    public function send(Client $client)
     {
         $params = [];
         $params['msgType']['messageFunctionDetails']['messageFunction'] = 712;

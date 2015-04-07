@@ -1,21 +1,20 @@
 <?php
 
-namespace Amadeus\requests;
+namespace amadeus\requests;
 
-use Amadeus\Client;
-use Amadeus\replies\Reply;
+use amadeus\Client;
+use amadeus\replies\Reply;
 
 abstract class Request
 {
-
-    abstract function send(Client $client);
+    abstract public function send(Client $client);
 
     /**
-     * Sends request and returns response object
+     * Sends request and returns response object.
      *
      * @param Client $client
      * @param string $actionName
-     * @param array $params
+     * @param array  $params
      * @param string $class
      *
      * @return Reply
@@ -28,6 +27,4 @@ abstract class Request
 
         return $result;
     }
-
-
 }

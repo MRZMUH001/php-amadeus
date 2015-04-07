@@ -1,31 +1,30 @@
 <?php
 
-namespace Amadeus\replies;
+namespace amadeus\replies;
 
-
-use Amadeus\requests\Fare_CheckRulesRequest;
+use amadeus\requests\Fare_CheckRulesRequest;
 
 class Fare_CheckRulesReply extends Reply
 {
-
     /**
-     * Rules text
+     * Rules text.
      *
      * @return string
      */
     public function getText()
     {
         $rules = [];
-        foreach ($this->iterateStd($this->xml()->tariffInfo->fareRuleText) as $item)
-            $rules[] = (string)$item->freeText;
+        foreach ($this->iterateStd($this->xml()->tariffInfo->fareRuleText) as $item) {
+            $rules[] = (string) $item->freeText;
+        }
 
-        return join("\n", $rules);
+        return implode("\n", $rules);
     }
 
     /**
      * @return Fare_CheckRulesRequest
      */
-    function getRequest()
+    public function getRequest()
     {
         return $this->_request;
     }

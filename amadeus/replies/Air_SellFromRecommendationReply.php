@@ -1,30 +1,30 @@
 <?php
 
-namespace Amadeus\replies;
+namespace amadeus\replies;
 
-use Amadeus\models\FlightSegment;
-use Amadeus\models\OrderFlow;
-use Amadeus\requests\Air_SellFromRecommendationRequest;
+use amadeus\models\FlightSegment;
+use amadeus\models\OrderFlow;
+use amadeus\requests\Air_SellFromRecommendationRequest;
 
 class Air_SellFromRecommendationReply extends Reply
 {
-
     /**
-     * Check if seats availability confirmed
+     * Check if seats availability confirmed.
      *
      * @return bool
      */
     public function isSuccess()
     {
         $data = $this->xml();
-        if (isset($data->errorAtMessageLevel->errorSegment->errorDetails->errorCode) && (string)$data->errorAtMessageLevel->errorSegment->errorDetails->errorCode == '288')
+        if (isset($data->errorAtMessageLevel->errorSegment->errorDetails->errorCode) && (string) $data->errorAtMessageLevel->errorSegment->errorDetails->errorCode == '288') {
             return false;
+        }
 
         return true;
     }
 
     /**
-     * Copy data to order flow
+     * Copy data to order flow.
      *
      * @param OrderFlow $orderFlow
      */
@@ -51,11 +51,12 @@ class Air_SellFromRecommendationReply extends Reply
                 $this->convertAmadeusTime((string)$fi->flightDate->departureTime)
             );*/
 
-            $oldSegmentData->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string)$s->apdSegment->legDetails->numberOfStops : 0);
-            $oldSegmentData->setEquipmentTypeIata((string)$s->apdSegment->legDetails->equipment);
-            if (isset($s->apdSegment->arrivalStationInfo->terminal))
-                $oldSegmentData->setArrivalTerm((string)$s->apdSegment->arrivalStationInfo->terminal);
-            $oldSegmentData->setBookingClass((string)$fi->flightIdentification->bookingClass);
+            $oldSegmentData->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string) $s->apdSegment->legDetails->numberOfStops : 0);
+            $oldSegmentData->setEquipmentTypeIata((string) $s->apdSegment->legDetails->equipment);
+            if (isset($s->apdSegment->arrivalStationInfo->terminal)) {
+                $oldSegmentData->setArrivalTerm((string) $s->apdSegment->arrivalStationInfo->terminal);
+            }
+            $oldSegmentData->setBookingClass((string) $fi->flightIdentification->bookingClass);
 
             //Save updated details
             $orderFlow->getSegments()->updateSegment($i++, $oldSegmentData);
@@ -65,7 +66,7 @@ class Air_SellFromRecommendationReply extends Reply
     /**
      * @return Air_SellFromRecommendationRequest
      */
-    function getRequest()
+    public function getRequest()
     {
         return $this->_request;
     }

@@ -1,11 +1,10 @@
 <?php
 /**
- * Amadeus Sample client
+ * Amadeus Sample client.
  */
-
 include 'src/Amadeus/Client.php';
 
-use Amadeus\Client;
+use amadeus\Client;
 
 // Instantiate the Amadeus class (Debug enabled)
 $ws = new Client('AmadeusWebServices.wsdl', true);
@@ -41,18 +40,18 @@ $segments[] = array(
 $travellers['A'] = array(
   array(
     'surname' => 'DOE',
-    'first_name' => 'JOHN'
+    'first_name' => 'JOHN',
   ),
 );
 $travellers['C'] = array(
   array(
     'surname' => 'DWYNE',
-    'first_name' => 'JOHNSON'
+    'first_name' => 'JOHNSON',
   ),
 );
 $travellers['I'] = array(
   array(
-    'first_name' => 'JANE'
+    'first_name' => 'JANE',
   ),
 );
 

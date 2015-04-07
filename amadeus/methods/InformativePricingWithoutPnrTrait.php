@@ -2,10 +2,10 @@
 
 namespace amadeus\methods;
 
-use Amadeus\models\BagAllowance;
-use Amadeus\models\OrderFlow;
-use Amadeus\models\Price;
-use Amadeus\models\SegmentDetails;
+use amadeus\models\BagAllowance;
+use amadeus\models\OrderFlow;
+use amadeus\models\Price;
+use amadeus\models\SegmentDetails;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 

@@ -2,9 +2,9 @@
 
 namespace amadeus\methods;
 
-use Amadeus\exceptions\UnableToSellException;
-use Amadeus\models\FlightSegment;
-use Amadeus\models\OrderFlow;
+use amadeus\exceptions\UnableToSellException;
+use amadeus\models\FlightSegment;
+use amadeus\models\OrderFlow;
 
 trait SellFromRecommendationTrait
 {

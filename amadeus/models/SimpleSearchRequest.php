@@ -2,7 +2,7 @@
 
 namespace amadeus\models;
 
-use Amadeus\exceptions\ValidationException;
+use amadeus\exceptions\ValidationException;
 use DateTime;
 use Respect\Validation\Validator as v;
 

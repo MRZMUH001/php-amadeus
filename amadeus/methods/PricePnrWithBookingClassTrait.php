@@ -2,9 +2,9 @@
 
 namespace amadeus\methods;
 
-use Amadeus\models\BagAllowance;
-use Amadeus\models\OrderFlow;
-use Amadeus\models\Price;
+use amadeus\models\BagAllowance;
+use amadeus\models\OrderFlow;
+use amadeus\models\Price;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 

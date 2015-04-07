@@ -1,18 +1,16 @@
 <?php
 
-namespace Amadeus\replies;
+namespace amadeus\replies;
 
-
-use Amadeus\models\BagAllowance;
-use Amadeus\models\OrderFlow;
-use Amadeus\models\Price;
-use Amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
+use amadeus\models\BagAllowance;
+use amadeus\models\OrderFlow;
+use amadeus\models\Price;
+use amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 
 class Fare_InformativePricingWithoutPNRReply extends Reply
 {
-
     public function copyDataToOrderFlow(OrderFlow &$orderFlow)
     {
         $data = $this->xml();
@@ -29,16 +27,17 @@ class Fare_InformativePricingWithoutPNRReply extends Reply
 
             //Fares
             foreach ($g->fareInfoGroup->fareAmount as $d) {
-                $fare = Money::fromString((string)(floatval((string)$d->amount) * $personsCount), new Currency((string)$d->currency));
-                $totalFares[(string)$d->typeQualifier] = isset($totalFares[(string)$d->typeQualifier]) ? $fare->add($totalFares[(string)$d->typeQualifier]) : $fare;
+                $fare = Money::fromString((string) (floatval((string) $d->amount) * $personsCount), new Currency((string) $d->currency));
+                $totalFares[(string) $d->typeQualifier] = isset($totalFares[(string) $d->typeQualifier]) ? $fare->add($totalFares[(string) $d->typeQualifier]) : $fare;
             }
 
             //Taxes
-            if (isset($g->fareInfoGroup->surchargesGroup->taxesAmount) && isset($g->fareInfoGroup->surchargesGroup->taxesAmount->taxDetails))
+            if (isset($g->fareInfoGroup->surchargesGroup->taxesAmount) && isset($g->fareInfoGroup->surchargesGroup->taxesAmount->taxDetails)) {
                 foreach ($this->iterateStd($g->fareInfoGroup->surchargesGroup->taxesAmount->taxDetails) as $d) {
-                    $tax = Money::fromString((string)(floatval((string)$d->rate) * $personsCount), new Currency($request->getCurrency()));
-                    $totalTaxes[(string)$d->type] = isset($totalTaxes[(string)$d->type]) ? $tax->add($totalTaxes[(string)$d->type]) : $tax;
+                    $tax = Money::fromString((string) (floatval((string) $d->rate) * $personsCount), new Currency($request->getCurrency()));
+                    $totalTaxes[(string) $d->type] = isset($totalTaxes[(string) $d->type]) ? $tax->add($totalTaxes[(string) $d->type]) : $tax;
                 }
+            }
 
             //Iterate segments for first passenger group TODO: Find out the right way
             //Maybe skipt it, because pricePNR does that
@@ -69,8 +68,9 @@ class Fare_InformativePricingWithoutPNRReply extends Reply
 
         //Set commission
         $commissions = $this->getClient()->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest());
-        if ($commissions == null)
+        if ($commissions == null) {
             throw new \Exception("No commissions found");
+        }
 
         $commissions->apply($price, $orderFlow->getSearchRequest());
 
@@ -83,7 +83,7 @@ class Fare_InformativePricingWithoutPNRReply extends Reply
     /**
      * @return Fare_InformativePricingWithoutPNRRequest
      */
-    function getRequest()
+    public function getRequest()
     {
         return $this->_request;
     }

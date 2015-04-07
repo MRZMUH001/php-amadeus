@@ -1,16 +1,15 @@
 <?php
 
-namespace Amadeus\requests;
+namespace amadeus\requests;
 
-use Amadeus\Client;
-use Amadeus\models\FlightSegmentCollection;
-use Amadeus\models\OrderFlow;
-use Amadeus\models\SimpleSearchRequest;
-use Amadeus\replies\Air_SellFromRecommendationReply;
+use amadeus\Client;
+use amadeus\models\FlightSegmentCollection;
+use amadeus\models\OrderFlow;
+use amadeus\models\SimpleSearchRequest;
+use amadeus\replies\Air_SellFromRecommendationReply;
 
 class Air_SellFromRecommendationRequest extends Request
 {
-
     /** @var  FlightSegmentCollection */
     private $_segments;
 
@@ -34,14 +33,15 @@ class Air_SellFromRecommendationRequest extends Request
     }
 
     /**
-     * Create from orderflow
+     * Create from orderflow.
      *
      * @param OrderFlow $orderFlow
+     *
      * @return Air_SellFromRecommendationRequest
      */
     public static function createFromOrderFlow(OrderFlow $orderFlow)
     {
-        $request = new self;
+        $request = new self();
         $request->setSearchRequest($orderFlow->getSearchRequest());
         $request->setSegments($orderFlow->getSegments());
 
@@ -50,16 +50,20 @@ class Air_SellFromRecommendationRequest extends Request
 
     /**
      * @param Client $client
+     *
      * @return Air_SellFromRecommendationReply
+     *
      * @throws \Exception
      */
-    function send(Client $client)
+    public function send(Client $client)
     {
-        if ($this->_segments == null)
+        if ($this->_segments == null) {
             throw new \Exception("Segments not set");
+        }
 
-        if ($this->_searchRequest == null)
+        if ($this->_searchRequest == null) {
             throw new \Exception("Search request not set");
+        }
 
         $s = $this->_segments;
 
@@ -72,8 +76,9 @@ class Air_SellFromRecommendationRequest extends Request
 
         $i = 0;
         foreach ($s->getSegments() as $segment) {
-            if ($segment->getBookingClass() == null)
+            if ($segment->getBookingClass() == null) {
                 throw new \Exception("Segment booking class not set");
+            }
 
             $params['itineraryDetails']['segmentInformation'][$i]['travelProductInformation']['flightDate']['departureDate'] = $segment->getDepartureDate()->format('dmy');
             $params['itineraryDetails']['segmentInformation'][$i]['travelProductInformation']['boardPointDetails']['trueLocationId'] = $segment->getDepartureIata();

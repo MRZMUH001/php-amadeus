@@ -1,14 +1,13 @@
 <?php
 
-namespace Amadeus\requests;
+namespace amadeus\requests;
 
-use Amadeus\Client;
-use Amadeus\models\SimpleSearchRequest;
-use Amadeus\replies\Fare_MasterPricerTravelBoardSearchReply;
+use amadeus\Client;
+use amadeus\models\SimpleSearchRequest;
+use amadeus\replies\Fare_MasterPricerTravelBoardSearchReply;
 
 class Fare_MasterPricerTravelBoardSearchRequest extends Request
 {
-
     /** @var  SimpleSearchRequest */
     private $_searchRequest;
 
@@ -30,13 +29,16 @@ class Fare_MasterPricerTravelBoardSearchRequest extends Request
 
     /**
      * @param Client $client
+     *
      * @return Fare_MasterPricerTravelBoardSearchReply
+     *
      * @throws \Exception
      */
     public function send(Client $client)
     {
-        if ($this->_searchRequest == null)
+        if ($this->_searchRequest == null) {
             throw new \Exception("Search request not set");
+        }
 
         $r = $this->_searchRequest;
 
@@ -47,21 +49,24 @@ class Fare_MasterPricerTravelBoardSearchRequest extends Request
         $params['numberOfUnit']['unitNumberDetail'][1]['typeOfUnit'] = 'RC';
 
         $params['paxReference'][0]['ptc'] = 'ADT';
-        for ($i = 1; $i <= $r->getAdults(); $i++)
+        for ($i = 1; $i <= $r->getAdults(); $i++) {
             $params['paxReference'][0]['traveller'][]['ref'] = $i;
+        }
 
         $j = 1;
         if ($r->getChildren() > 0) {
             $params['paxReference'][$j]['ptc'] = 'CH';
-            for ($i = 1; $i <= $r->getChildren(); $i++)
+            for ($i = 1; $i <= $r->getChildren(); $i++) {
                 $params['paxReference'][$j]['traveller'][]['ref'] = $i + $r->getAdults();
+            }
             $j++;
         }
 
         if ($r->getInfants() > 0) {
             $params['paxReference'][$j]['ptc'] = 'INF';
-            for ($i = 1; $i <= $r->getInfants(); $i++)
+            for ($i = 1; $i <= $r->getInfants(); $i++) {
                 $params['paxReference'][$j]['traveller'][] = ['ref' => $i, 'infantIndicator' => 1];
+            }
         }
 
         $params['fareOptions']['pricingTickInfo']['pricingTicketing']['priceType'] = [
@@ -76,14 +81,13 @@ class Fare_MasterPricerTravelBoardSearchRequest extends Request
             # no slice and dice (we don't know how to book it yet)
             'NSD',
             # ticket-ability check
-            'TAC'
+            'TAC',
         ];
 
         $params['fareOptions']['feeIdDescription']['feeId'] = ['feeType' => 'SORT', 'feeIdNumber' => 'FEE'];
 
         $params['fareOptions']['conversionRate']['conversionRateDetail'] = ['currency' => $r->getCurrency()];
         $params['travelFlightInfo']['cabinId'] = ['cabinQualifier' => 'MC', 'cabin' => $r->getCabin()];
-
 
         $params['itinerary'][0]['requestedSegmentRef']['segRef'] = 1;
         $params['itinerary'][0]['departureLocalization']['depMultiCity']['locationId'] = $r->getOrigin();
@@ -99,5 +103,4 @@ class Fare_MasterPricerTravelBoardSearchRequest extends Request
 
         return $this->innerSend($client, 'Fare_MasterPricerTravelBoardSearch', $params, Fare_MasterPricerTravelBoardSearchReply::class);
     }
-
 }
