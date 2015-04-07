@@ -3,7 +3,6 @@
 namespace Amadeus\replies;
 
 use Amadeus\models\BagAllowance;
-use Amadeus\models\Fare;
 use Amadeus\models\OrderFlow;
 use Amadeus\models\Price;
 use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;

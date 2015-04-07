@@ -53,22 +53,4 @@ class AgentCommissions
         return $this->_commissionInfant;
     }
 
-    /**
-     * Applies commission to price.
-     *
-     * @param Price               $price
-     * @param SimpleSearchRequest $searchRequest
-     *
-     * @return Money
-     */
-    public function apply(&$price, SimpleSearchRequest $searchRequest)
-    {
-        $fare = $price->getFare();
-
-        $commission = $fare->multiply($this->getCommissionAdult()/100);
-
-        //TODO: Calculate properly
-
-        $price->setCommission($commission->multiply(-1));
-    }
 }

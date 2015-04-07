@@ -19,9 +19,9 @@ abstract class Reply
     /**
      * Response constructor.
      *
-     * @param Client  $client
+     * @param Client $client
      * @param Request $request
-     * @param string  $answer
+     * @param string $answer
      */
     public function __construct(Client $client, $request, $answer)
     {
@@ -91,7 +91,7 @@ abstract class Reply
             $hours = substr($time, 0, strlen($time) - 2);
         }
 
-        return $hours.":".$minutes;
+        return $hours . ":" . $minutes;
     }
 
     /**
@@ -114,12 +114,12 @@ abstract class Reply
      *
      * @return \Generator
      */
-    protected function iterateStd($std)
+    protected function iterateStd(&$std)
     {
-        if (is_array($std)) {
-            foreach ($std as $obj) {
-                yield $obj;
-            }
+        if (isset($std[0])) {
+            $i = 0;
+            while (isset($std[$i]))
+                yield $std[$i++];
         } else {
             yield $std;
         }

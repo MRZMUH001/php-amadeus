@@ -119,10 +119,6 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         $i = 1;
         $segmentsD = [];
         foreach ($this->_segments->getSegments() as $segment) {
-            if ($segment->getBookingClass() == null) {
-                throw new \Exception("Segment booking class not set");
-            }
-
             $segmentsD[] = [
                 'segmentInformation' => [
                     'flightDate' => [
@@ -143,7 +139,7 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
                     ],
                     'flightIdentification' => [
                         'flightNumber' => $segment->getFlightNumber(),
-                        'bookingClass' => $segment->getBookingClass()
+                        'bookingClass' => $segment->getBookingClass(),
                     ],
                     'flightTypeDetails' => [
                         'flightIndicator' => 0,
