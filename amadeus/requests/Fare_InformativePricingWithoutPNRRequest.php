@@ -37,7 +37,7 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
      *
      * @param OrderFlow $orderFlow
      *
-     * @return Air_SellFromRecommendationRequest
+     * @return Fare_InformativePricingWithoutPNRRequest
      */
     public static function createFromOrderFlow(OrderFlow $orderFlow)
     {
@@ -73,7 +73,7 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         $passengerGroups = [];
         $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
             'quantity' => 1,
-            'numberOfUnits' => $sr->getAdults(),
+            'numberOfUnits' => $sr->getAdults()
         ];
         for ($i = 1; $i < $sr->getAdults(); $i++) {
             $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
@@ -85,14 +85,14 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         if ($sr->getInfants() > 0) {
             $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
                 'quantity' => 2,
-                'numberOfUnits' => $sr->getInfants(),
+                'numberOfUnits' => $sr->getInfants()
             ];
             for ($i = 1; $i <= $sr->getInfants(); $i++) {
                 $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i;
             }
             $passengerGroup['discountPtc'] = [
                 'valueQualifier' => 'INF',
-                'fareDetails' => ['qualifier' => 766],
+                'fareDetails' => ['qualifier' => 766]
             ];
             $passengerGroups[] = $passengerGroup;
             $passengerGroup = [];
@@ -102,18 +102,18 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
         if ($sr->getChildren() > 0) {
             $passengerGroup['segmentRepetitionControl']['segmentControlDetails'] = [
                 'quantity' => 3,
-                'numberOfUnits' => $sr->getChildren(),
+                'numberOfUnits' => $sr->getChildren()
             ];
             for ($i = 1; $i <= $sr->getChildren(); $i++) {
                 $passengerGroup['travellersID'][]['travellerDetails']['measurementValue'] = $i + $sr->getAdults();
             }
             $passengerGroup['discountPtc'] = [
-                'valueQualifier' => 'CH',
+                'valueQualifier' => 'CH'
             ];
             $passengerGroups[] = $passengerGroup;
         }
 
-        $params['Fare_InformativePricingWithoutPNR']['passengersGroup'] = $passengerGroups;
+        $params['passengersGroup'] = $passengerGroups;
 
         //Segments
         $i = 1;
@@ -148,27 +148,35 @@ class Fare_InformativePricingWithoutPNRRequest extends Request
                 ],
             ];
         }
-        $params['Fare_InformativePricingWithoutPNR']['segmentGroup'] = $segmentsD;
+        $params['segmentGroup'] = $segmentsD;
 
         //Pricing
         //Currency override
-        $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][0] = [
+        $params['pricingOptionGroup'][0] = [
             'pricingOptionKey' => [
-                'pricingOptionKey' => 'FCO',
+                'pricingOptionKey' => 'FCO'
             ],
             'currency' => [
                 'firstCurrencyDetails' => [
                     'currencyQualifier' => 'FCO',
-                    'currencyIsoCode' => $this->_searchRequest->getCurrency(),
-                ],
-            ],
+                    'currencyIsoCode' => $this->_searchRequest->getCurrency()
+                ]
+            ]
         ];
 
         //Published fares
-        $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][1]['pricingOptionKey']['pricingOptionKey'] = 'RP';
+        $params['pricingOptionGroup'][1] = [
+            'pricingOptionKey' => [
+                'pricingOptionKey' => 'RP'
+            ]
+        ];
 
         //Unifares
-        $params['Fare_InformativePricingWithoutPNR']['pricingOptionGroup'][2]['pricingOptionKey']['pricingOptionKey'] = 'RU';
+        $params['pricingOptionGroup'][2] = [
+            'pricingOptionKey' => [
+                'pricingOptionKey' => 'RU'
+            ]
+        ];
 
         return $this->innerSend($client, 'Fare_InformativePricingWithoutPNR', $params, Fare_InformativePricingWithoutPNRReply::class);
     }

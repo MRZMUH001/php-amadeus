@@ -3,6 +3,7 @@
 namespace Amadeus\replies;
 
 use Amadeus\models\BagAllowance;
+use Amadeus\models\Fare;
 use Amadeus\models\OrderFlow;
 use Amadeus\models\Price;
 use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;
@@ -11,6 +12,23 @@ use SebastianBergmann\Money\Money;
 
 class Fare_PricePNRWithBookingClassReply extends Reply
 {
+
+    /**
+     * Return fare by booking class
+     *
+     * @param string $bookingClass
+     * @return Fare
+     */
+    public function getFare($bookingClass)
+    {
+        return $this->getFares()[$bookingClass];
+    }
+
+    /**
+     * Return all available fares
+     *
+     * @return Fare[]
+     */
     public function getFares()
     {
         $data = $this->xml();

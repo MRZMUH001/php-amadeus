@@ -2,7 +2,7 @@
 
 namespace Amadeus\replies;
 
-use Amadeus\models\BagAllowance;
+use Amadeus\models\FaresPerPassengers;
 use Amadeus\models\OrderFlow;
 use Amadeus\models\Price;
 use Amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
@@ -20,22 +20,43 @@ class Fare_InformativePricingWithoutPNRReply extends Reply
         $segmentDetails = [];
         $isPublishedFare = $data->mainGroup->generalIndicatorsGroup->generalIndicators->priceTicketDetails->indicators == 'I';
 
+        $faresPerPassengers = new FaresPerPassengers();
+
         //Iterate via passenger groups
         $groupNumber = 0;
         foreach ($this->iterateStd($data->mainGroup->pricingGroupLevelGroup) as $g) {
-            $personsCount = $g->numberOfPax->segmentControlDetails->numberOfUnits;
+
+            $personsType = (string)$g->fareInfoGroup->segmentLevelGroup[0]->ptcSegment->quantityDetails->unitQualifier;
+            $personsCount = (string)$g->numberOfPax->segmentControlDetails->numberOfUnits;
 
             //Fares
-            foreach ($g->fareInfoGroup->fareAmount as $d) {
-                $fare = Money::fromString((string) (floatval((string) $d->amount) * $personsCount), new Currency((string) $d->currency));
-                $totalFares[(string) $d->typeQualifier] = isset($totalFares[(string) $d->typeQualifier]) ? $fare->add($totalFares[(string) $d->typeQualifier]) : $fare;
+            /** @var Money[] $totalFares */
+            $fares = [];
+            foreach ($g->fareInfoGroup->fareAmount->children() as $d) {
+                $fare = Money::fromString((string)(floatval((string)$d->amount) * $personsCount), new Currency((string)$d->currency));
+                $typeQualifier = (string)$d->typeQualifier;
+                $fares[$typeQualifier] = $fare;
+                $totalFares[$typeQualifier] = isset($totalFares[$typeQualifier]) ? $fare->add($totalFares[$typeQualifier]) : $fare;
+            }
+
+            switch ($personsType) {
+                case 'ADT':
+                    $faresPerPassengers->setAdultsFare($fares['B']);
+                    break;
+                case 'IN':
+                    $faresPerPassengers->setInfantsFare($fares['B']);
+                    break;
+                case 'CH':
+                    $faresPerPassengers->setChildrenFare($fares['B']);
+                    break;
             }
 
             //Taxes
+            /** @var Money[] $totalTaxes */
             if (isset($g->fareInfoGroup->surchargesGroup->taxesAmount) && isset($g->fareInfoGroup->surchargesGroup->taxesAmount->taxDetails)) {
                 foreach ($this->iterateStd($g->fareInfoGroup->surchargesGroup->taxesAmount->taxDetails) as $d) {
-                    $tax = Money::fromString((string) (floatval((string) $d->rate) * $personsCount), new Currency($request->getCurrency()));
-                    $totalTaxes[(string) $d->type] = isset($totalTaxes[(string) $d->type]) ? $tax->add($totalTaxes[(string) $d->type]) : $tax;
+                    $tax = Money::fromString((string)(floatval((string)$d->rate) * $personsCount), $totalFares[712]->getCurrency());
+                    $totalTaxes[(string)$d->type] = isset($totalTaxes[(string)$d->type]) ? $tax->add($totalTaxes[(string)$d->type]) : $tax;
                 }
             }
 
@@ -66,13 +87,15 @@ class Fare_InformativePricingWithoutPNRReply extends Reply
 
         $price = new Price($baseFare, $tax);
 
-        //Set commission
+        //Find commissions
         $commissions = $this->getClient()->getCommissions($orderFlow->getSegments(), $orderFlow->getValidatingCarrier(), $orderFlow->getSearchRequest());
         if ($commissions == null) {
             throw new \Exception("No commissions found");
         }
 
-        $commissions->apply($price, $orderFlow->getSearchRequest());
+        //Calculate
+        $commission = $faresPerPassengers->calculateCommission($commissions);
+        $price->setCommission($commission);
 
         $orderFlow->setPrice($price);
         $orderFlow->setCommissions($commissions);

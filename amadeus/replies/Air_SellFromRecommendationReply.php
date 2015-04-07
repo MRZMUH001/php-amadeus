@@ -39,17 +39,14 @@ class Air_SellFromRecommendationReply extends Reply
             /** @var FlightSegment $oldSegmentData */
             $oldSegmentData = $orderFlow->getSegments()->getSegments()[$i];
 
-            /*$segment = new FlightSegment(
-                (string)$fi->companyDetails->marketingCompany,//TODO: Not really right, need to find operating carrier
-                (string)$fi->companyDetails->marketingCompany,
-                (string)$fi->boardPointDetails->trueLocationId,
-                (string)$fi->offpointDetails->trueLocationId,
-                (string)$fi->flightIdentification->flightNumber,
-                $this->convertAmadeusDate(isset($fi->flightDate->arrivalDate) ? (string)$fi->flightDate->arrivalDate : (string)$fi->flightDate->departureDate),
-                $this->convertAmadeusTime((string)$fi->flightDate->arrivalTime),
-                $this->convertAmadeusDate((string)$fi->flightDate->departureDate),
-                $this->convertAmadeusTime((string)$fi->flightDate->departureTime)
-            );*/
+            $oldSegmentData->setDepartureIata((string)$fi->boardPointDetails->trueLocationId);
+            $oldSegmentData->setArrivalIata((string)$fi->offpointDetails->trueLocationId);
+            $oldSegmentData->setFlightNumber((string)$fi->flightIdentification->flightNumber);
+
+            $oldSegmentData->setDepartureDate($this->convertAmadeusDate((string)$fi->flightDate->departureDate));
+            $oldSegmentData->setDepartureTime($this->convertAmadeusTime((string)$fi->flightDate->departureTime));
+            $oldSegmentData->setArrivalDate($this->convertAmadeusDate(isset($fi->flightDate->arrivalDate) ? (string)$fi->flightDate->arrivalDate : (string)$fi->flightDate->departureDate));
+            $oldSegmentData->setArrivalTime($this->convertAmadeusTime((string)$fi->flightDate->arrivalTime));
 
             $oldSegmentData->setTechnicalStopsCount(isset($s->apdSegment->legDetails->numberOfStops) ? (string) $s->apdSegment->legDetails->numberOfStops : 0);
             $oldSegmentData->setEquipmentTypeIata((string) $s->apdSegment->legDetails->equipment);

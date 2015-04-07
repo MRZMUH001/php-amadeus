@@ -442,4 +442,60 @@ class FlightSegment
     {
         $this->_bagAllowance = $bagAllowance;
     }
+
+    /**
+     * @param string $departureIata
+     */
+    public function setDepartureIata($departureIata)
+    {
+        $this->_departureIata = $departureIata;
+    }
+
+    /**
+     * @param string $arrivalIata
+     */
+    public function setArrivalIata($arrivalIata)
+    {
+        $this->_arrivalIata = $arrivalIata;
+    }
+
+    /**
+     * @param string $flightNumber
+     */
+    public function setFlightNumber($flightNumber)
+    {
+        $this->_flightNumber = $flightNumber;
+    }
+
+    /**
+     * @param DateTime $arrivalDate
+     */
+    public function setArrivalDate($arrivalDate)
+    {
+        $this->_arrivalDate = $arrivalDate;
+    }
+
+    /**
+     * @param string $arrivalTime
+     */
+    public function setArrivalTime($arrivalTime)
+    {
+        $this->_arrivalTime = $arrivalTime;
+    }
+
+    /**
+     * @param DateTime $departureDate
+     */
+    public function setDepartureDate($departureDate)
+    {
+        $this->_departureDate = $departureDate;
+    }
+
+    /**
+     * @param string $departureTime
+     */
+    public function setDepartureTime($departureTime)
+    {
+        $this->_departureTime = $departureTime;
+    }
 }

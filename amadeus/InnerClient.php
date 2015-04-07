@@ -84,11 +84,11 @@ class InnerClient
      * Security_Authenticate
      * Autheticates with Amadeus.
      *
-     * @param string  $source   sourceOffice string
-     * @param string  $origin   originator string
-     * @param string  $password password binaryData
-     * @param integer $passlen  length of binaryData
-     * @param string  $org      organizationId string
+     * @param string $source sourceOffice string
+     * @param string $origin originator string
+     * @param string $password password binaryData
+     * @param integer $passlen length of binaryData
+     * @param string $org organizationId string
      *
      * @return Object
      */
@@ -115,7 +115,12 @@ class InnerClient
     public function securitySignout()
     {
         $params = [];
-        $params['Security_SignOut']['SessionId'] = $this->_headers['SessionId'];
+
+        if (isset($this->_headers['Session'])) {
+            $params['Security_SignOut']['Session'] = $this->_headers['Session'];
+        } else {
+            $params['Security_SignOut']['SessionId'] = $this->_headers['SessionId'];
+        }
 
         return $this->soapCall('Security_SignOut', $params);
     }
@@ -156,11 +161,11 @@ class InnerClient
      * Check airline availability by Flight.
      *
      * @param string $deprt_date Departure date
-     * @param string $deprt_loc  Departure location
+     * @param string $deprt_loc Departure location
      * @param string $arrive_loc Arrival location
-     * @param string $service    Class of service
-     * @param string $air_code   Airline code
-     * @param string $air_num    Airline number
+     * @param string $service Class of service
+     * @param string $air_code Airline code
+     * @param string $air_num Airline number
      *
      * @return Object
      */
@@ -184,11 +189,11 @@ class InnerClient
      * Check airline availability by Service.
      *
      * @param string $deprt_date Departure date
-     * @param string $deprt_loc  Departure location
+     * @param string $deprt_loc Departure location
      * @param string $arrive_loc Arrival location
-     * @param string $service    Class of service
-     * @param string $air_code   Airline code
-     * @param string $air_num    Airline number
+     * @param string $service Class of service
+     * @param string $air_code Airline code
+     * @param string $air_num Airline number
      *
      * @return Object
      */
@@ -209,12 +214,12 @@ class InnerClient
      * pnrAddMultiElements
      * Make reservation call.
      *
-     * @param PassengerCollection     $travellers
+     * @param PassengerCollection $travellers
      * @param FlightSegmentCollection $segments
-     * @param string                  $validatingCarrier
-     * @param string                  $phoneNumber
-     * @param string                  $email
-     * @param AgentCommissions        $agentCommission
+     * @param string $validatingCarrier
+     * @param string $phoneNumber
+     * @param string $email
+     * @param AgentCommissions $agentCommission
      *
      * @return Object
      *
@@ -374,7 +379,7 @@ class InnerClient
                         'type' => 28,
                         'companyId' => 'YY',
                     ],
-                    'longFreetext' => 'CTCP'.preg_replace('/\D/', '', $phoneNumber).'-M',
+                    'longFreetext' => 'CTCP' . preg_replace('/\D/', '', $phoneNumber) . '-M',
                 ],
             ];
         }
@@ -432,7 +437,7 @@ class InnerClient
             ];
 
             if ($agentCommission->isPercentage()) {
-                $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent().'%';
+                $data['commission']['commissionInfo']['percentage'] = $agentCommission->getPercent() . '%';
             } else {
                 $data['commission']['commissionInfo']['amount'] = $agentCommission->getAmount();
             }
@@ -484,7 +489,7 @@ class InnerClient
                         'status' => 'HK',
                         'quantity' => 1,
                         'companyId' => $validatingCarrier,
-                        'freetext' => 'PP'.$passenger->clearedPassport(),
+                        'freetext' => 'PP' . $passenger->clearedPassport(),
                     ],
                 ],
                 'referenceForDataElement' => [
@@ -501,7 +506,7 @@ class InnerClient
                 ],
                 'fareElement' => [
                     'generalIndicator' => 'E',
-                    'freetextLong' => $validatingCarrier." ONLY PSPT ".$passenger->clearedPassport(),
+                    'freetextLong' => $validatingCarrier . " ONLY PSPT " . $passenger->clearedPassport(),
                 ],
                 'referenceForDataElement' => [
                     'reference' => [
@@ -540,7 +545,7 @@ class InnerClient
                     'fareElement' => [
                         'generalIndicator' => 'E',
                         'passengerType' => 'INF',
-                        'freetextLong' => $validatingCarrier." ONLY PSPT ".$infant->clearedPassport(),
+                        'freetextLong' => $validatingCarrier . " ONLY PSPT " . $infant->clearedPassport(),
                     ],
                     'referenceForDataElement' => [
                         'reference' => [
@@ -559,9 +564,9 @@ class InnerClient
      * Air_SellFromRecommendation
      * Set travel segments.
      *
-     * @param string $from     Boarding point
-     * @param string $to       Destination
-     * @param array  $segments Travel Segments
+     * @param string $from Boarding point
+     * @param string $to Destination
+     * @param array $segments Travel Segments
      *
      * @return Object
      */
@@ -625,10 +630,10 @@ class InnerClient
 
     /**
      * @param FlightSegmentCollection $segments
-     * @param int                     $adults
-     * @param int                     $infants
-     * @param int                     $children
-     * @param string                  $currency
+     * @param int $adults
+     * @param int $infants
+     * @param int $children
+     * @param string $currency
      *
      * @return array
      */
@@ -744,7 +749,7 @@ class InnerClient
      * Sends request.
      *
      * @param string $name
-     * @param array  $params
+     * @param array $params
      *
      * @return string
      *
@@ -753,7 +758,7 @@ class InnerClient
      */
     public function soapCall($name, $params)
     {
-        $this->_logger->info('Amadeus method called: '.$name);
+        $this->_logger->info('Amadeus method called: ' . $name);
 
         $exc = null;
         try {
@@ -768,8 +773,8 @@ class InnerClient
             throw $exc;
         }
 
-        if (isset($data->errorMessage)) {
-            throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error.' - '.$data->errorMessage->errorMessageText->description);
+        if (isset($data) && isset($data->errorMessage)) {
+            throw new AmadeusException($data->errorMessage->applicationError->applicationErrorDetail->error . ' - ' . $data->errorMessage->errorMessageText->description);
         }
 
         return $this->_client->__getLastResponse();
@@ -827,16 +832,16 @@ class InnerClient
      * Recusively dump the variable.
      *
      * @param string $varname Name of the variable
-     * @param mixed  $varval  Vriable to be dumped
+     * @param mixed $varval Vriable to be dumped
      */
     private function dumpVariable($varname, $varval)
     {
         if (!is_array($varval) && !is_object($varval)) {
-            print $varname.' = '.$varval."<br>\n";
+            print $varname . ' = ' . $varval . "<br>\n";
         } else {
-            print $varname." = data()<br>\n";
+            print $varname . " = data()<br>\n";
             foreach ($varval as $key => $val) {
-                $this->dumpVariable($varname."['".$key."']", $val);
+                $this->dumpVariable($varname . "['" . $key . "']", $val);
             }
         }
     }
@@ -845,14 +850,14 @@ class InnerClient
      * Save to log.
      *
      * @param array $params The parameters used
-     * @param array $data   The response data
+     * @param array $data The response data
      *
      * @return Object
      */
     private function log($params, $data)
     {
-        $this->_logger->debug("Request Trace: ".$this->_client->__getLastRequest());
-        $this->_logger->debug("Response Trace: ".$this->_client->__getLastResponse());
+        $this->_logger->debug("Request Trace: " . $this->_client->__getLastRequest());
+        $this->_logger->debug("Response Trace: " . $this->_client->__getLastResponse());
     }
 
     /**
