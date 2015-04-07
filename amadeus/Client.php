@@ -13,6 +13,7 @@ use Amadeus\requests\Fare_CheckRulesRequest;
 use Amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
 use Amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
 use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;
+use Amadeus\requests\PNR_AddMultiElementsRequest;
 use Monolog\Logger;
 
 abstract class Client
@@ -62,8 +63,8 @@ abstract class Client
      * Should set $price commission.
      *
      * @param FlightSegmentCollection $segments
-     * @param string                  $validatingCarrier
-     * @param SimpleSearchRequest     $searchRequest
+     * @param string $validatingCarrier
+     * @param SimpleSearchRequest $searchRequest
      *
      * @return AgentCommissions
      */
@@ -78,11 +79,11 @@ abstract class Client
      * Constructor.
      *
      * @param string $env
-     * @param bool   $debug Echo debug information
+     * @param bool $debug Echo debug information
      */
     public function __construct($env = 'prod', $debug = true)
     {
-        $path = realpath(dirname(__FILE__)).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'wsdl'.DIRECTORY_SEPARATOR.'prod'.DIRECTORY_SEPARATOR.'AmadeusWebServices.wsdl';
+        $path = realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'wsdl' . DIRECTORY_SEPARATOR . 'prod' . DIRECTORY_SEPARATOR . 'AmadeusWebServices.wsdl';
 
         //Create logger
         $this->_logger = new Logger('main');
@@ -164,7 +165,6 @@ abstract class Client
         $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
         $pricePnrWithBookingClassRequest->setCurrency($orderFlow->getSearchRequest()->getCurrency());
         $pricePnrWithBookingClassReply = $pricePnrWithBookingClassRequest->send($this);
-        //$fares = $pricePnrWithBookingClassReply->getFares();
 
         //Get proper fares
         $informativePricingWithoutPnrReply = Fare_InformativePricingWithoutPNRRequest::createFromOrderFlow($orderFlow)->send($this);
@@ -183,23 +183,40 @@ abstract class Client
      * Create PNR.
      *
      * @param OrderFlow $orderFlow
-     *
      * @return array
-     *
-     * @throws exceptions\UnableToSellException
+     * @throws UnableToSellException
+     * @throws \Exception
      */
     public function createPnr(OrderFlow $orderFlow)
     {
-        //Check bookingability + add segment details
-        $orderFlow = $this->sellFromRecommendation($orderFlow);
+        //Sell from recommendation - Check bookingability + add segment details
+        $sellFromRecommendationReply = Air_SellFromRecommendationRequest::createFromOrderFlow($orderFlow)->send($this);
+
+        if (!$sellFromRecommendationReply->isSuccess()) {
+            throw new UnableToSellException("Seats availability not confirmed");
+        }
+
+        $sellFromRecommendationReply->copyDataToOrderFlow($orderFlow);
 
         //Add passenger details
-        //TODO: Check for errors
-        $this->pnrAddMultiElements($orderFlow);
+        $pnrAddMultiElementsReply = PNR_AddMultiElementsRequest::createFromOrderFlow($orderFlow)->send($this);
 
-        $orderFlow = $this->pricePnrWithBookingClass($orderFlow);
+        if ($pnrAddMultiElementsReply->getErrors() != null)
+            throw new \Exception("PNR Creating error");
 
-        $orderFlow->setPnr($this->pnrAddMultiElementsFinal());
+        $pnrAddMultiElementsReply->copyDataToOrderFlow($orderFlow);
+
+        //Price PNR
+        $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
+        $pricePnrWithBookingClassRequest->setCurrency($orderFlow->getSearchRequest()->getCurrency());
+        $pricePnrWithBookingClassReply = $pricePnrWithBookingClassRequest->send($this);
+
+        //Get PNR Number
+        $pnrAddMultiElementsRequest = new PNR_AddMultiElementsRequest();
+        $pnrAddMultiElementsRequest->setFinalize(true);
+        $pnrAddMultiElementsReplyFinal = $pnrAddMultiElementsRequest->send($this);
+        $pnrAddMultiElementsReplyFinal->copyDataToOrderFlow($orderFlow);
+
 
         $this->closeSession();
 
