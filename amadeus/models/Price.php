@@ -128,6 +128,19 @@ class Price
     }
 
     /**
+     * Fare to show for user
+     *
+     * @return Money
+     * @throws \Exception
+     */
+    public function getFareForUser()
+    {
+        return $this->getTotalPrice()
+            ->subtract($this->getFee())
+            ->subtract($this->getTax());
+    }
+
+    /**
      * Total price.
      *
      * @return Money

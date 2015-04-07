@@ -39,6 +39,82 @@ class OrderFlow
     /** @var  AgentCommissions */
     private $_commissions;
 
+    /** @var  string */
+    private $_providerName;
+
+    /** @var  string */
+    private $_partner;
+
+    /** @var  string */
+    private $_marker;
+
+    /** @var  string */
+    private $_locale;
+
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->_locale;
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->_locale = $locale;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPartner()
+    {
+        return $this->_partner;
+    }
+
+    /**
+     * @param string $partner
+     */
+    public function setPartner($partner)
+    {
+        $this->_partner = $partner;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarker()
+    {
+        return $this->_marker;
+    }
+
+    /**
+     * @param string $marker
+     */
+    public function setMarker($marker)
+    {
+        $this->_marker = $marker;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProviderName()
+    {
+        return $this->_providerName;
+    }
+
+    /**
+     * @param string $providerName
+     */
+    public function setProviderName($providerName)
+    {
+        $this->_providerName = $providerName;
+    }
+
     /**
      * @return FlightSegmentCollection
      */

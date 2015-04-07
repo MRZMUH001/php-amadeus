@@ -67,18 +67,18 @@ class Recommendation
     /**
      * Create ticket price.
      *
-     * @param int                     $blankCount
-     * @param Price                   $price
+     * @param int $blankCount
+     * @param Price $price
      * @param FlightSegmentCollection $segments
-     * @param string                  $validatingCarrierIata
-     * @param string                  $suggestedMarketingCarrierIatas
-     * @param string                  $additionalInfo
+     * @param string $validatingCarrierIata
+     * @param string $suggestedMarketingCarrierIatas
+     * @param string $additionalInfo
      * @param $cabins
      * @param $bookingClasses
      * @param $availabilities
-     * @param DateTime|null           $lastTktDate
+     * @param DateTime|null $lastTktDate
      * @param $fareBasis
-     * @param boolean                 $isPublishedFare
+     * @param boolean $isPublishedFare
      */
     public function __construct($blankCount, $price, FlightSegmentCollection $segments, $validatingCarrierIata, $suggestedMarketingCarrierIatas, $additionalInfo, $cabins, $bookingClasses, $availabilities, $lastTktDate, $fareBasis, $isPublishedFare)
     {
@@ -199,7 +199,7 @@ class Recommendation
      */
     public function getSource()
     {
-        return 'amadeus';
+        return $this->_provider;
     }
 
     /**
@@ -288,13 +288,17 @@ class Recommendation
         list($source, $validatingCarrierIata, $declaredPrice, $bookingClasses, $cabins, $availabilities, $segmentCodes) = explode('.', $recommendation);
 
         $segments = new FlightSegmentCollection();
+        $i = 0;
         foreach (explode('-', $segmentCodes) as $segmentCode) {
-            $segments->addSegment(FlightSegment::deserialize($segmentCode));
+            $segment = FlightSegment::deserialize($segmentCode);
+            $segment->setBookingClass($bookingClasses[$i]);
+            $segments->addSegment($segment);
+
+            $i++;
         }
 
         $recommendation = new Recommendation(
             1,
-            null,
             null,
             $segments,
             $validatingCarrierIata,

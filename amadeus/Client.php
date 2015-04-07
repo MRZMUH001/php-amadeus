@@ -164,7 +164,7 @@ abstract class Client
         $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
         $pricePnrWithBookingClassRequest->setCurrency($orderFlow->getSearchRequest()->getCurrency());
         $pricePnrWithBookingClassReply = $pricePnrWithBookingClassRequest->send($this);
-        $pricePnrWithBookingClassReply->copyDataToOrderFlow($orderFlow);
+        $fares = $pricePnrWithBookingClassReply->getFares();
 
         //Get proper fares
         $informativePricingWithoutPnrReply = Fare_InformativePricingWithoutPNRRequest::createFromOrderFlow($orderFlow)->send($this);
