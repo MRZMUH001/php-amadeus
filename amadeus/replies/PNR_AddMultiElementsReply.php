@@ -22,8 +22,10 @@ class PNR_AddMultiElementsReply extends Reply
      */
     public function getPassengerNumbers()
     {
+        $data = $this->xml();
+
         $travellers = [];
-        foreach ($this->iterateStd($this->xml()->travellerInfo) as $traveller) {
+        foreach ($this->iterateStd($data->travellerInfo) as $traveller) {
             //PT-number
             $number = (string)$traveller->elementManagementPassenger->reference->number;
 
