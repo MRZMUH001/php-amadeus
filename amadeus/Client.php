@@ -199,7 +199,7 @@ abstract class Client
         $sellFromRecommendationReply->copyDataToOrderFlow($orderFlow);
 
         //Add passenger details
-        $pnrAddMultiElementsReply = PNR_AddMultiElementsRequest::createFromOrderFlow($orderFlow)->send($this);
+        $pnrAddMultiElementsReply = PNR_AddMultiElementsRequest::createFromOrderFlow($orderFlow)->sendPassengers($this);
 
         if ($pnrAddMultiElementsReply->getErrors() != null)
             throw new \Exception("PNR Creating error");
@@ -235,7 +235,12 @@ abstract class Client
 
             $passengerCommissions[$number] = $commission;
         }
-        //TODO: Send commissions to Amadeus
+
+        //Send commissions to Amadeus
+        $pnrAddMultiElementsRequest = new PNR_AddMultiElementsRequest();
+        $pnrAddMultiElementsRequest->setCommissionPerPassenger($passengerCommissions);
+        $pnrAddMultiElementsReplyFinal = $pnrAddMultiElementsRequest->sendCommissions($this);
+        $pnrAddMultiElementsReplyFinal->copyDataToOrderFlow($orderFlow);
 
         //Price PNR
         $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
@@ -244,8 +249,7 @@ abstract class Client
 
         //Get PNR Number
         $pnrAddMultiElementsRequest = new PNR_AddMultiElementsRequest();
-        $pnrAddMultiElementsRequest->setFinalize(true);
-        $pnrAddMultiElementsReplyFinal = $pnrAddMultiElementsRequest->send($this);
+        $pnrAddMultiElementsReplyFinal =$pnrAddMultiElementsRequest->sendClosePnr($this);
         $pnrAddMultiElementsReplyFinal->copyDataToOrderFlow($orderFlow);
 
         $this->closeSession();
