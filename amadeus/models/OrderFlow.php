@@ -54,6 +54,25 @@ class OrderFlow
     /** @var  string Unique id */
     private $_orderReference;
 
+    /** @var string[] */
+    private $_cabins = [];
+
+    /**
+     * @return \string[]
+     */
+    public function getCabins()
+    {
+        return $this->_cabins;
+    }
+
+    /**
+     * @param \string[] $cabins
+     */
+    public function setCabins($cabins)
+    {
+        $this->_cabins = $cabins;
+    }
+
     /**
      * @return string
      */
