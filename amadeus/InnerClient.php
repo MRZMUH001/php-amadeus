@@ -30,17 +30,14 @@ class InnerClient
     const AMD_HEAD_NAMESPACE = 'http://xml.amadeus.com/ws/2009/01/WBS_Session-2.0.xsd';
 
     /**
-     * Response data.
-     */
-    private $_data = null;
-
-    /**
      * Response headers.
      */
     private $_headers = null;
 
     /**
      * Hold the client object.
+     *
+     * @var \SoapClient
      */
     private $_client = null;
 
@@ -62,22 +59,6 @@ class InnerClient
             $endpoint = 'https://production.webservices.amadeus.com';
         }
         $this->_client = new \SoapClient($wsdl, ['trace' => true, 'location' => $endpoint, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP]);
-    }
-
-    /**
-     * @return Object
-     */
-    public function getData()
-    {
-        return $this->_data;
-    }
-
-    /**
-     * @return Object
-     */
-    public function getHeaders()
-    {
-        return $this->_headers;
     }
 
     /**
@@ -139,21 +120,6 @@ class InnerClient
         $params['Command_Cryptic']['messageAction']['messageFunctionDetails']['messageFunction'] = 'M';
 
         return $this->soapCall('Command_Cryptic', $params);
-    }
-
-    /**
-     * Return fare rules.
-     *
-     * @return Object
-     */
-    public function checkRules()
-    {
-        $params = [];
-        $params['Fare_CheckRules']['msgType']['messageFunctionDetails']['messageFunction'] = 712;
-        $params['Fare_CheckRules']['itemNumber']['itemNumberDetails']['number'] = 1;
-        $params['Fare_CheckRules']['fareRule']['tarifFareRule']['ruleSectionId'] = 'PE';
-
-        return $this->soapCall('Fare_CheckRules', $params);
     }
 
     /**
@@ -232,7 +198,8 @@ class InnerClient
             $exc = $e;
         }
 
-        $this->log($params, null);
+        $this->_logger->debug("Request Trace: " . $this->_client->__getLastRequest());
+        $this->_logger->debug("Response Trace: " . $this->_client->__getLastResponse());
 
         if ($exc != null) {
             throw $exc;
@@ -243,86 +210,6 @@ class InnerClient
         }
 
         return $this->_client->__getLastResponse();
-    }
-
-    /**
-     * Ticket_CreateTSTFromPricing.
-     *
-     * @param integer $types Number of passenger types
-     *
-     * @return Object
-     */
-    public function ticketCreateTSTFromPricing($types)
-    {
-        $params = [];
-
-        for ($i = 0; $i < $types; $i++) {
-            $params['Ticket_CreateTSTFromPricing']['psaList'][$i]['itemReference']['referenceType'] = 'TST';
-            $params['Ticket_CreateTSTFromPricing']['psaList'][$i]['itemReference']['uniqueReference'] = $i + 1;
-        }
-
-        return $this->soapCall('Ticket_CreateTSTFromPricing', $params);
-    }
-
-    /**
-     * PNR_AddMultiElements
-     * Final save operation.
-     */
-    public function pnrAddMultiElementsFinal()
-    {
-        $params = [];
-        $params['PNR_AddMultiElements']['pnrActions']['optionCode'] = 11;
-
-        return $this->soapCall('PNR_AddMultiElements', $params);
-    }
-
-    /**
-     * PNR_Retrieve
-     * Get PNR by id.
-     *
-     * @param string $pnr_id PNR ID
-     *
-     * @return Object
-     */
-    public function pnrRetrieve($pnr_id)
-    {
-        $params = [];
-        $params['PNR_Retrieve']['retrievalFacts']['retrieve']['type'] = 2;
-        $params['PNR_Retrieve']['retrievalFacts']['reservationOrProfileIdentifier']['reservation']['controlNumber'] = $pnr_id;
-
-        return $this->soapCall('PNR_Retrieve', $params);
-    }
-
-    /**
-     * Recusively dump the variable.
-     *
-     * @param string $varname Name of the variable
-     * @param mixed $varval Vriable to be dumped
-     */
-    private function dumpVariable($varname, $varval)
-    {
-        if (!is_array($varval) && !is_object($varval)) {
-            print $varname . ' = ' . $varval . "<br>\n";
-        } else {
-            print $varname . " = data()<br>\n";
-            foreach ($varval as $key => $val) {
-                $this->dumpVariable($varname . "['" . $key . "']", $val);
-            }
-        }
-    }
-
-    /**
-     * Save to log.
-     *
-     * @param array $params The parameters used
-     * @param array $data The response data
-     *
-     * @return Object
-     */
-    private function log($params, $data)
-    {
-        $this->_logger->debug("Request Trace: " . $this->_client->__getLastRequest());
-        $this->_logger->debug("Response Trace: " . $this->_client->__getLastResponse());
     }
 
     /**

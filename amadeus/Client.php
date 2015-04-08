@@ -19,28 +19,6 @@ use Monolog\Logger;
 
 abstract class Client
 {
-    //Tickets search
-    //use SearchTicketsMethodTrait;
-
-    //Sell from recommendation
-    //use SellFromRecommendationTrait;
-
-    //Get price details
-    //use PricePnrWithBookingClassTrait;
-
-    //use InformativePricingWithoutPnrTrait;
-
-    //Get fare rules
-    //use FareRulesTrait;
-
-    //Add passengers
-    //use PnrAddMultiElementsTrait;
-
-    //use PnrAddMultiElementsFinalTrait;
-
-    //Create ticket
-    //use TicketCreateTrait;
-
     /**
      * Is session open.
      *
