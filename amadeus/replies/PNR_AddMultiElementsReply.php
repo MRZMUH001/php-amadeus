@@ -6,13 +6,14 @@ namespace Amadeus\replies;
 use Amadeus\models\OrderFlow;
 use Amadeus\requests\PNR_AddMultiElementsRequest;
 
-class PNR_AddMultiElementsReply extends Reply
+class PNR_AddMultiElementsReply extends PNR_RetrieveReply
 {
 
     public function copyDataToOrderFlow(OrderFlow &$orderFlow)
     {
-        if ($pnr = $this->pnrNumber())
-            $orderFlow->setPnr($pnr);
+        if ($pnr = $this->getPnrNumber())
+            $orderFlow->setPnr($pnr); else
+            throw new \Exception("PNR not received");
     }
 
     /**
@@ -107,21 +108,6 @@ class PNR_AddMultiElementsReply extends Reply
         }
 
         return $stringErrors;
-    }
-
-    /**
-     * PNR Number
-     *
-     * @return null|string
-     */
-    public function pnrNumber()
-    {
-        $data = $this->xml();
-        if (isset($data->pnrHeader->reservationInfo->reservation->controlNumber)) {
-            return (string)$data->pnrHeader->reservationInfo->reservation->controlNumber;
-        }
-
-        return null;
     }
 
     /**

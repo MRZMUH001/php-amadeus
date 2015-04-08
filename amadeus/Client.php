@@ -7,13 +7,14 @@ use Amadeus\models\AgentCommissions;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\OrderFlow;
 use Amadeus\models\SimpleSearchRequest;
-use Amadeus\models\TicketDetails;
 use Amadeus\requests\Air_SellFromRecommendationRequest;
 use Amadeus\requests\Fare_CheckRulesRequest;
 use Amadeus\requests\Fare_InformativePricingWithoutPNRRequest;
 use Amadeus\requests\Fare_MasterPricerTravelBoardSearchRequest;
 use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;
 use Amadeus\requests\PNR_AddMultiElementsRequest;
+use Amadeus\requests\PNR_RetrieveRequest;
+use Amadeus\requests\Ticket_CreateTSTFromPricingRequest;
 use Monolog\Logger;
 
 abstract class Client
@@ -199,11 +200,9 @@ abstract class Client
         $sellFromRecommendationReply->copyDataToOrderFlow($orderFlow);
 
         //Add passenger details
-
         $pnrAddMultiElementsRequest = PNR_AddMultiElementsRequest::createFromOrderFlow($orderFlow);
         $pnrAddMultiElementsRequest->setSendPaymentData(false);
         $pnrAddMultiElementsReply = $pnrAddMultiElementsRequest->sendPassengers($this);
-
         if (count($pnrAddMultiElementsReply->getErrors()) > 0 || $pnrAddMultiElementsReply->isSuccessful())
             throw new \Exception("PNR Creation errors: " . join(',', $pnrAddMultiElementsReply->getErrors()));
 
@@ -245,6 +244,8 @@ abstract class Client
         $pnrAddMultiElementsRequest->setCommissionPerPassenger($passengerCommissions);
         $pnrAddMultiElementsReplyFinal = $pnrAddMultiElementsRequest->sendCommissions($this);
         $pnrAddMultiElementsReplyFinal->copyDataToOrderFlow($orderFlow);
+        if (count($pnrAddMultiElementsReply->getErrors()) > 0 || $pnrAddMultiElementsReply->isSuccessful())
+            throw new \Exception("Commission send errors: " . join(',', $pnrAddMultiElementsReply->getErrors()));
 
         //Price PNR
         $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
@@ -266,10 +267,33 @@ abstract class Client
         return $orderFlow;
     }
 
-    public function ticket(TicketDetails $ticketDetails, $currency)
+    /**
+     * Ticket PNR
+     *
+     * @param OrderFlow $orderFlow
+     * @throws \Exception
+     */
+    public function ticket(OrderFlow &$orderFlow)
     {
-        //$this->pricePnrWithBookingClass($ticketDetails, $currency);
-        //$this->ticketCreate($types);
+        if ($orderFlow->getPnr() == null)
+            throw new \Exception("PNR not created in orderflow");
+
+        //Retrieve PNR
+        $retrievePnrRequest = new PNR_RetrieveRequest();
+        $retrievePnrRequest->setPnrNumber($orderFlow->getPnr());
+        $retrievePnrReply = $retrievePnrRequest->send($this);
+
+        //Price PNR
+        $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
+        $pricePnrWithBookingClassRequest->setCurrency($orderFlow->getSearchRequest()->getCurrency());
+        $pricePnrWithBookingClassReply = $pricePnrWithBookingClassRequest->send($this);
+        $fares = $pricePnrWithBookingClassReply->getFares();
+
+        $request = new Ticket_CreateTSTFromPricingRequest();
+        $request->setFaresCount(count($fares));
+        $reply = $request->send($this);
+        if (!$reply->isSuccessful())
+            throw new \Exception("Ticketing problem: " . $reply->getError());
     }
 
     /**
