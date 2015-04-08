@@ -199,10 +199,13 @@ abstract class Client
         $sellFromRecommendationReply->copyDataToOrderFlow($orderFlow);
 
         //Add passenger details
-        $pnrAddMultiElementsReply = PNR_AddMultiElementsRequest::createFromOrderFlow($orderFlow)->sendPassengers($this);
 
-        if ($pnrAddMultiElementsReply->getErrors() != null)
-            throw new \Exception("PNR Creating error");
+        $pnrAddMultiElementsRequest = PNR_AddMultiElementsRequest::createFromOrderFlow($orderFlow);
+        $pnrAddMultiElementsRequest->setSendPaymentData(false);
+        $pnrAddMultiElementsReply = $pnrAddMultiElementsRequest->sendPassengers($this);
+
+        if (count($pnrAddMultiElementsReply->getErrors()) > 0 || $pnrAddMultiElementsReply->isSuccessful())
+            throw new \Exception("PNR Creation errors: " . join(',', $pnrAddMultiElementsReply->getErrors()));
 
         $pnrAddMultiElementsReply->copyDataToOrderFlow($orderFlow);
 
@@ -213,14 +216,15 @@ abstract class Client
         //Try to find passenger type
         foreach ($passengers as $number => $passenger) {
             $passengerType = null;
-            foreach ($orderFlow->getPassengers()->getPassengers() as $p)
+            foreach ($orderFlow->getPassengers()->getPassengers() as $p) {
                 if (
                     strtoupper($p->getFirstNameWithCode()) == $passenger['first'] &&
-                    strtoupper($p->getLastName() == $passenger['last'])
+                    strtoupper($p->getLastName()) == $passenger['last']
                 ) {
                     $passengerType = $p->getType();
                     break;
                 }
+            }
 
             $commission = null;
             if ($passengerType == 'A')
@@ -230,7 +234,7 @@ abstract class Client
             if ($passengerType == 'I')
                 $commission = $orderFlow->getCommissions()->getCommissionInfant();
 
-            if ($commission == null)
+            if ($commission === null)
                 throw new \Exception("Unable to find passenger type");
 
             $passengerCommissions[$number] = $commission;
@@ -246,10 +250,15 @@ abstract class Client
         $pricePnrWithBookingClassRequest = new Fare_PricePNRWithBookingClassRequest();
         $pricePnrWithBookingClassRequest->setCurrency($orderFlow->getSearchRequest()->getCurrency());
         $pricePnrWithBookingClassReply = $pricePnrWithBookingClassRequest->send($this);
+        $fares = $pricePnrWithBookingClassReply->getFares();
+
+        //Save last ticketing date to orderflow
+        $bookingClass = $orderFlow->getSegments()->getFirstSegment()->getBookingClass();
+        $orderFlow->setLastTktDate($fares[$bookingClass]->getLastTktDate());
 
         //Get PNR Number
         $pnrAddMultiElementsRequest = new PNR_AddMultiElementsRequest();
-        $pnrAddMultiElementsReplyFinal =$pnrAddMultiElementsRequest->sendClosePnr($this);
+        $pnrAddMultiElementsReplyFinal = $pnrAddMultiElementsRequest->sendClosePnr($this);
         $pnrAddMultiElementsReplyFinal->copyDataToOrderFlow($orderFlow);
 
         $this->closeSession();

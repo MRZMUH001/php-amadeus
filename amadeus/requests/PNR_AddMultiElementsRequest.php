@@ -36,6 +36,25 @@ class PNR_AddMultiElementsRequest extends Request
         'INTERNET BOOKING'
     ];
 
+    /** @var bool Send form of payment = cash? */
+    private $_sendPaymentData = true;
+
+    /**
+     * @return boolean
+     */
+    public function isSendPaymentData()
+    {
+        return $this->_sendPaymentData;
+    }
+
+    /**
+     * @param boolean $sendPaymentData
+     */
+    public function setSendPaymentData($sendPaymentData)
+    {
+        $this->_sendPaymentData = $sendPaymentData;
+    }
+
     /**
      * @return \string[]
      */
@@ -198,7 +217,10 @@ class PNR_AddMultiElementsRequest extends Request
             ];
         }
 
-        $params['pnrActions']['optionCode'] = 10;
+        //Additional details (required)
+        $params['dataElementsMaster']['marker1'] = null;
+
+        $params['pnrActions']['optionCode'] = 11;
 
         return $this->innerSend($client, 'PNR_AddMultiElements', $params, PNR_AddMultiElementsReply::class);
     }
@@ -234,9 +256,9 @@ class PNR_AddMultiElementsRequest extends Request
         # Option codes:
         # 0 - Save and close PNR
         # ET => 10 - Save and leave open
-        # ER => 11 - Different types of save with notification in segments status change
+        # ER => 11 - Save and retrieve + leave open
 
-        $params['pnrActions']['optionCode'] = 10;
+        $params['pnrActions']['optionCode'] = 11;
 
         foreach ($this->_passengers->getAdults() as $adult) {
             $adultData = [
@@ -318,7 +340,7 @@ class PNR_AddMultiElementsRequest extends Request
             $params['travellerInfo'][] = $childData;
         }
 
-        //Additional details
+        //Additional details (required)
         $params['dataElementsMaster']['marker1'] = null;
 
         //Unknown
@@ -404,16 +426,17 @@ class PNR_AddMultiElementsRequest extends Request
         }
 
         //Form of payment = cash
-        $params['dataElementsMaster']['dataElementsIndiv'][] = [
-            'elementManagementData' => [
-                'segmentName' => 'FP',
-            ],
-            'formOfPayment' => [
-                'fop' => [
-                    'identification' => 'CA',
+        if ($this->_sendPaymentData)
+            $params['dataElementsMaster']['dataElementsIndiv'][] = [
+                'elementManagementData' => [
+                    'segmentName' => 'FP'
                 ],
-            ],
-        ];
+                'formOfPayment' => [
+                    'fop' => [
+                        'identification' => 'CA'
+                    ]
+                ]
+            ];
 
         //Remarks
         foreach ($this->_remarks as $remark) {

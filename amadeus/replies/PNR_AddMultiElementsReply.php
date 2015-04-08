@@ -29,8 +29,8 @@ class PNR_AddMultiElementsReply extends Reply
             //PT-number
             $number = (string)$traveller->elementManagementPassenger->reference->number;
 
-            $firstNameWithCode = $traveller->passengerData->travellerInformation->passenger->firstName;
-            $lastName = $traveller->passengerData->travellerInformation->traveller->surname;
+            $firstNameWithCode = (string)$traveller->passengerData->travellerInformation->passenger->firstName;
+            $lastName = (string)$traveller->passengerData->travellerInformation->traveller->surname;
 
             $travellers[$number] = [
                 'first' => $firstNameWithCode,
@@ -42,14 +42,71 @@ class PNR_AddMultiElementsReply extends Reply
     }
 
     /**
+     * Check if request was succesfull
+     *
+     * @return bool
+     */
+    public function isSuccessful()
+    {
+        return
+            $this->xml()->xpath('//generalErrorInfo/messageErrorInformation/errorDetail[qualifier="EC"]') === null &&
+            $this->xml()->xpath('//nameError/nameErrorInformation/errorDetail[qualifier="EC"]') === null &&
+            $this->xml()->xpath('//dataElementsIndiv[elementManagementData/status="ERR"]') === null;
+    }
+
+    /**
+     * Name errors
+     *
+     * @return string[]
+     */
+    public function getNameErrors()
+    {
+        $errors = $this->xml()->xpath('//travellerInfo/nameError/nameErrorFreeText/text');
+
+        $errors = array_map(function ($xml) {
+            return (string)$xml;
+        }, $errors);
+        return $errors;
+    }
+
+    /**
+     * SRFoid errors
+     *
+     * @return string[]
+     */
+    public function getSRFoidErrors()
+    {
+        $errors = $this->xml()->xpath('//dataElementsIndiv[elementManagementData/status="ERR"][serviceRequest/ssr/type="FOID"]/elementErrorInformation/elementErrorText/text');
+
+        $errors = array_map(function ($xml) {
+            return (string)$xml;
+        }, $errors);
+        return $errors;
+    }
+
+    /**
      * Get errors if they exists
      *
      * @return string[]|null
      */
     public function getErrors()
     {
-        //TODO:
-        return null;
+        $errors = [
+            $this->xml()->xpath('//messageErrorText/text'),
+            $this->xml()->xpath('//elementErrorInformation/elementErrorText/text'),
+            $this->getNameErrors(),
+            $this->getSRFoidErrors()
+        ];
+
+        $stringErrors = [];
+        foreach ($errors as $errorList) {
+            if ($errorList != null && $errorList != 'null') {
+                foreach ($errorList as $err)
+                    $stringErrors[] = trim((string)$err);
+            }
+        }
+
+        return $stringErrors;
     }
 
     /**

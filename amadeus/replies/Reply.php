@@ -29,13 +29,14 @@ abstract class Reply
         $this->_request = $request;
 
         $answer = str_replace('soap:', '', $answer);
+        $answer = preg_replace('/ xmlns=\"[^\"]+\"/', '', $answer);
 
         //Get class name
         $classParts = explode('\\', get_called_class());
         $className = end($classParts);
 
         $xml = simplexml_load_string($answer);
-        $this->_xml = $xml->Body->$className;
+        $this->_xml = $xml->Body->children()[0];
     }
 
     /**

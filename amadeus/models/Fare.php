@@ -2,6 +2,7 @@
 
 namespace Amadeus\models;
 
+use DateTime;
 use SebastianBergmann\Money\Money;
 
 class Fare
@@ -22,6 +23,25 @@ class Fare
 
     /** @var  Money[] */
     private $_fares;
+
+    /** @var DateTime */
+    private $_lastTktDate;
+
+    /**
+     * @return DateTime
+     */
+    public function getLastTktDate()
+    {
+        return $this->_lastTktDate;
+    }
+
+    /**
+     * @param DateTime $lastTktDate
+     */
+    public function setLastTktDate($lastTktDate)
+    {
+        $this->_lastTktDate = $lastTktDate;
+    }
 
     /**
      * @return string

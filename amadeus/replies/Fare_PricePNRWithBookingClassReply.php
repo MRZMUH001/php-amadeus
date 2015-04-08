@@ -7,12 +7,16 @@ use Amadeus\models\Fare;
 use Amadeus\models\OrderFlow;
 use Amadeus\models\Price;
 use Amadeus\requests\Fare_PricePNRWithBookingClassRequest;
+use DateTime;
 use SebastianBergmann\Money\Currency;
 use SebastianBergmann\Money\Money;
 
 class Fare_PricePNRWithBookingClassReply extends Reply
 {
 
+    /**
+     * @return Fare[]
+     */
     public function getFares()
     {
         $data = $this->xml();
@@ -26,6 +30,16 @@ class Fare_PricePNRWithBookingClassReply extends Reply
             $newFare->setValidatingCarrier((string)$fare->validatingCarrier->carrierInformation->carrierCode);
             $newFare->setClass($class);
             $newFare->setPeopleCount($peopleCount);
+
+            //Set last ticketing date
+            $lastTktDate = $fare->xpath('//lastTktDate[businessSemantic="LT"]/dateTime')[0];
+            $newFare->setLastTktDate(
+                DateTime::createFromFormat('d-m-Y',join('-',[
+                    $lastTktDate->day,
+                    $lastTktDate->month,
+                    $lastTktDate->year
+                ]))
+            );
 
             //Iterate via fare parts
             foreach ($this->iterateStd($fare->fareDataInformation->fareDataSupInformation) as $f) {
@@ -79,7 +93,7 @@ class Fare_PricePNRWithBookingClassReply extends Reply
             implode('-', [
                 $data->fareList->lastTktDate->dateTime->day,
                 $data->fareList->lastTktDate->dateTime->month,
-                $data->fareList->lastTktDate->dateTime->year,
+                $data->fareList->lastTktDate->dateTime->year
             ])
         );
 
