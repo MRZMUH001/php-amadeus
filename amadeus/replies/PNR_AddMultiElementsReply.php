@@ -14,6 +14,9 @@ class PNR_AddMultiElementsReply extends PNR_RetrieveReply
         if ($pnr = $this->getPnrNumber())
             $orderFlow->setPnr($pnr); else
             throw new \Exception("PNR not received");
+
+        $addNumber = $this->getAdditionalPnrNumbers()[$orderFlow->getValidatingCarrier()];
+        $orderFlow->setAdditionalPnrNumber($addNumber);
     }
 
     /**

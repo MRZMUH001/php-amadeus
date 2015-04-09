@@ -57,6 +57,25 @@ class OrderFlow
     /** @var string[] */
     private $_cabins = [];
 
+    /** @var  string */
+    private $_additionalPnrNumber;
+
+    /**
+     * @return string
+     */
+    public function getAdditionalPnrNumber()
+    {
+        return $this->_additionalPnrNumber;
+    }
+
+    /**
+     * @param string $additionalPnrNumber
+     */
+    public function setAdditionalPnrNumber($additionalPnrNumber)
+    {
+        $this->_additionalPnrNumber = $additionalPnrNumber;
+    }
+
     /**
      * @return \string[]
      */

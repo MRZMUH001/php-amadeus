@@ -18,6 +18,58 @@ class PNR_RetrieveReply extends Reply
     }
 
     /**
+     * Additional PNR Numbers
+     *
+     * @return array marketingCarrier => PNR Number
+     */
+    public function getAdditionalPnrNumbers()
+    {
+        $results = [];
+        foreach ($this->xml()->xpath('//itineraryReservationInfo/reservation') as $ri) {
+            $marketingCarrier = (string)$ri->xpath('companyId');
+            $pnrNumber = (string)$ri->xpath('controlNumber');
+            $results[$marketingCarrier] = $pnrNumber;
+        }
+        return $results;
+    }
+
+    /**
+     * Get all booking classes
+     *
+     * @return array
+     */
+    public function booking_classes()
+    {
+        $results = [];
+        foreach (
+            $this->xml()->xpath("//itineraryInfo[elementManagementItinerary/segmentName='AIR']" .
+                "[travelProduct/companyDetail/identification]" .
+                "/travelProduct/productDetails/classOfService") as $c
+        )
+            $results[] = (string)$c;
+
+        return $results;
+    }
+
+    /**
+     * Get all cabins
+     *
+     * @return array
+     */
+    public function cabins()
+    {
+        $results = [];
+        foreach (
+            $this->xml()->xpath("//itineraryInfo[elementManagementItinerary/segmentName='AIR']" .
+                "[travelProduct/companyDetail/identification]" .
+                "/cabinDetails/cabinDetails/classDesignator") as $c
+        )
+            $results[] = (string)$c;
+
+        return $results;
+    }
+
+    /**
      * Client e-mail
      *
      * @return string
