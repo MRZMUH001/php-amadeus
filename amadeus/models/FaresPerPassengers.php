@@ -50,21 +50,29 @@ class FaresPerPassengers
      */
     public function calculateCommission(AgentCommissions $commissions)
     {
-        $commission = $this->_adultsFare->multiply($commissions->getCommissionAdult()/100);
+        $commission = $this->_adultsFare->multiply($commissions->getCommissionAdult() / 100);
 
         if ($this->_childrenFare != null) {
             $commission = $commission->add(
-                $this->_childrenFare->multiply($commissions->getCommissionChild()/100)
+                $this->_childrenFare->multiply($commissions->getCommissionChild() / 100)
             );
         }
 
         if ($this->_infantsFare != null) {
             $commission = $commission->add(
-                $this->_infantsFare->multiply($commissions->getCommissionInfant()/100)
+                $this->_infantsFare->multiply($commissions->getCommissionInfant() / 100)
             );
         }
 
-        return $commission->multiply(-1);
+        //Commission is our profit
+        $commission = $commission->multiply(-1);
+
+        //Additional charge applied
+        //For example ticketing fee
+        if ($commissions->getAdditionalCharge() != 0)
+            $commission->add(new Money($commissions->getAdditionalCharge(), $commission->getCurrency()));
+
+        return $commission;
     }
 
 }

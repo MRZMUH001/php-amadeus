@@ -2,8 +2,6 @@
 
 namespace Amadeus\models;
 
-use SebastianBergmann\Money\Money;
-
 class AgentCommissions
 {
     /** @var  float */
@@ -15,18 +13,23 @@ class AgentCommissions
     /** @var  float */
     private $_commissionInfant;
 
+    /** @var  float */
+    private $_additionalCharge = 0;
+
     /**
      * AgentCommissions constructor.
      *
      * @param float $commissionAdult
      * @param float $commissionChild
      * @param float $commissionInfant
+     * @param float|int $additionalCharge
      */
-    public function __construct($commissionAdult, $commissionChild, $commissionInfant)
+    public function __construct($commissionAdult = null, $commissionChild = null, $commissionInfant = null, $additionalCharge = 0)
     {
         $this->_commissionAdult = $commissionAdult;
         $this->_commissionChild = $commissionChild;
         $this->_commissionInfant = $commissionInfant;
+        $this->_additionalCharge = $additionalCharge;
     }
 
     /**
@@ -51,6 +54,14 @@ class AgentCommissions
     public function getCommissionInfant()
     {
         return $this->_commissionInfant;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAdditionalCharge()
+    {
+        return $this->_additionalCharge;
     }
 
 }

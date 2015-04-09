@@ -2,119 +2,95 @@
 
 namespace Amadeus\replies;
 
+use Amadeus\requests\PNR_RetrieveRequest;
 
-use Amadeus\models\OrderFlow;
-use Amadeus\requests\PNR_AddMultiElementsRequest;
-
-class PNR_AddMultiElementsReply extends PNR_RetrieveReply
+class PNR_RetrieveReply extends Reply
 {
 
-    public function copyDataToOrderFlow(OrderFlow &$orderFlow)
+    /**
+     * PNR Number
+     *
+     * @return string
+     */
+    public function getPnrNumber()
     {
-        if ($pnr = $this->getPnrNumber())
-            $orderFlow->setPnr($pnr); else
-            throw new \Exception("PNR not received");
-
-        $addNumber = $this->getAdditionalPnrNumbers()[$orderFlow->getValidatingCarrier()];
-        $orderFlow->setAdditionalPnrNumber($addNumber);
+        return (string)$this->xml()->xpath('//reservationInfo/reservation/controlNumber')[0];
     }
 
     /**
-     * Return passenger numbers
+     * Additional PNR Numbers
      *
-     * @return array number=>[first=>'',last=>'']
+     * @return array marketingCarrier => PNR Number
      */
-    public function getPassengerNumbers()
+    public function getAdditionalPnrNumbers()
     {
-        $data = $this->xml();
-
-        $travellers = [];
-        foreach ($this->iterateStd($data->travellerInfo) as $traveller) {
-            //PT-number
-            $number = (string)$traveller->elementManagementPassenger->reference->number;
-
-            $firstNameWithCode = (string)$traveller->passengerData->travellerInformation->passenger->firstName;
-            $lastName = (string)$traveller->passengerData->travellerInformation->traveller->surname;
-
-            $travellers[$number] = [
-                'first' => $firstNameWithCode,
-                'last' => $lastName
-            ];
+        $results = [];
+        foreach ($this->xml()->xpath('//itineraryReservationInfo/reservation') as $ri) {
+            $marketingCarrier = (string)$ri->xpath('companyId')[0];
+            $pnrNumber = (string)$ri->xpath('controlNumber')[0];
+            $results[$marketingCarrier] = $pnrNumber;
         }
-
-        return $travellers;
+        return $results;
     }
 
     /**
-     * Check if request was succesfull
+     * Get all booking classes
      *
-     * @return bool
+     * @return array
      */
-    public function isSuccessful()
+    public function booking_classes()
     {
-        return
-            $this->xml()->xpath('//generalErrorInfo/messageErrorInformation/errorDetail[qualifier="EC"]') === null &&
-            $this->xml()->xpath('//nameError/nameErrorInformation/errorDetail[qualifier="EC"]') === null &&
-            $this->xml()->xpath('//dataElementsIndiv[elementManagementData/status="ERR"]') === null;
+        $results = [];
+        foreach (
+            $this->xml()->xpath("//itineraryInfo[elementManagementItinerary/segmentName='AIR']" .
+                "[travelProduct/companyDetail/identification]" .
+                "/travelProduct/productDetails/classOfService") as $c
+        )
+            $results[] = (string)$c;
+
+        return $results;
     }
 
     /**
-     * Name errors
+     * Get all cabins
      *
-     * @return string[]
+     * @return array
      */
-    public function getNameErrors()
+    public function cabins()
     {
-        $errors = $this->xml()->xpath('//travellerInfo/nameError/nameErrorFreeText/text');
+        $results = [];
+        foreach (
+            $this->xml()->xpath("//itineraryInfo[elementManagementItinerary/segmentName='AIR']" .
+                "[travelProduct/companyDetail/identification]" .
+                "/cabinDetails/cabinDetails/classDesignator") as $c
+        )
+            $results[] = (string)$c;
 
-        $errors = array_map(function ($xml) {
-            return (string)$xml;
-        }, $errors);
-        return $errors;
+        return $results;
     }
 
     /**
-     * SRFoid errors
+     * Client e-mail
      *
-     * @return string[]
+     * @return string
      */
-    public function getSRFoidErrors()
+    public function getClientEmail()
     {
-        $errors = $this->xml()->xpath('//dataElementsIndiv[elementManagementData/status="ERR"][serviceRequest/ssr/type="FOID"]/elementErrorInformation/elementErrorText/text');
-
-        $errors = array_map(function ($xml) {
-            return (string)$xml;
-        }, $errors);
-        return $errors;
+        return (string)$this->xml()->xpath('//otherDataFreetext[freetextDetail/type="P02"]/longFreetext')[0];
     }
 
     /**
-     * Get errors if they exists
+     * Client phone
      *
-     * @return string[]|null
+     * @return string
      */
-    public function getErrors()
+    public function getClientPhone()
     {
-        $errors = [
-            $this->xml()->xpath('//messageErrorText/text'),
-            $this->xml()->xpath('//elementErrorInformation/elementErrorText/text'),
-            $this->getNameErrors(),
-            $this->getSRFoidErrors()
-        ];
-
-        $stringErrors = [];
-        foreach ($errors as $errorList) {
-            if ($errorList != null && $errorList != 'null') {
-                foreach ($errorList as $err)
-                    $stringErrors[] = trim((string)$err);
-            }
-        }
-
-        return $stringErrors;
+        return (string)$this->xml()->xpath('//otherDataFreetext[freetextDetail/type=3]/longFreetext')[0];
     }
 
     /**
-     * @return PNR_AddMultiElementsRequest
+     * @return PNR_RetrieveRequest
      */
     public function getRequest()
     {
