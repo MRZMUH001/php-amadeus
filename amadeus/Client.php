@@ -267,6 +267,7 @@ abstract class Client
         $pricePnrWithBookingClassReply = $pricePnrWithBookingClassRequest->send($this);
         $fares = $pricePnrWithBookingClassReply->getFares();
 
+        //Issue tickets
         $request = new Ticket_CreateTSTFromPricingRequest();
         $request->setFaresCount(count($fares));
         $reply = $request->send($this);
