@@ -38,9 +38,9 @@ class Ticket_CreateTSTFromPricingRequest extends Request
             throw new \Exception("Fare count not set");
 
         $params = [];
-        for ($i = 1; $i <= $this->_faresCount; $i++) {
+        for ($i = 0; $i <= $this->_faresCount; $i++) {
             $params['psaList'][$i]['itemReference']['referenceType'] = 'TST';
-            $params['psaList'][$i]['itemReference']['uniqueReference'] = $i;
+            $params['psaList'][$i]['itemReference']['uniqueReference'] = $i+1;
         }
 
         return $this->innerSend($client, 'Ticket_CreateTSTFromPricing', $params, Ticket_CreateTSTFromPricingReply::class);
