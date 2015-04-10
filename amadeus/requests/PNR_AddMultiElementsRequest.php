@@ -2,7 +2,6 @@
 
 namespace Amadeus\requests;
 
-
 use Amadeus\Client;
 use Amadeus\models\FlightSegmentCollection;
 use Amadeus\models\OrderFlow;

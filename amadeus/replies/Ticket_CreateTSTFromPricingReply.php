@@ -20,7 +20,7 @@ class Ticket_CreateTSTFromPricingReply extends Reply
      */
     public function getError()
     {
-        return (string)$this->xml()->xpath('//errorText/errorFreeText');
+        return (string)$this->xml()->xpath('//errorText/errorFreeText')[0];
     }
 
     /**

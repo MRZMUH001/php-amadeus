@@ -2,9 +2,9 @@
 
 namespace Amadeus\replies;
 
-use Amadeus\requests\PNR_RetrieveRequest;
+use Amadeus\requests\PNR_AddMultiElementsRequest;
 
-class PNR_RetrieveReply extends Reply
+class PNR_AddMultiElementsReply extends PNR_RetrieveReply
 {
 
     /**
@@ -90,7 +90,7 @@ class PNR_RetrieveReply extends Reply
     }
 
     /**
-     * @return PNR_RetrieveRequest
+     * @return PNR_AddMultiElementsRequest
      */
     public function getRequest()
     {
