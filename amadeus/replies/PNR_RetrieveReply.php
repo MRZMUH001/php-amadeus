@@ -26,8 +26,8 @@ class PNR_RetrieveReply extends Reply
     {
         $results = [];
         foreach ($this->xml()->xpath('//itineraryReservationInfo/reservation') as $ri) {
-            $marketingCarrier = (string)$ri->xpath('companyId');
-            $pnrNumber = (string)$ri->xpath('controlNumber');
+            $marketingCarrier = (string)$ri->xpath('companyId')[0];
+            $pnrNumber = (string)$ri->xpath('controlNumber')[0];
             $results[$marketingCarrier] = $pnrNumber;
         }
         return $results;
