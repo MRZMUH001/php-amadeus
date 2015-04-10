@@ -13,6 +13,7 @@
         xmlns:air_sellfromrecommendationreply_5_2="http://xml.amadeus.com/ITARES_05_2_IA"
         xmlns:pnr_addmultielements_13_2="http://xml.amadeus.com/PNRADD_13_2_1A"
         xmlns:pnr_reply_13_2="http://xml.amadeus.com/PNRACC_13_2_1A"
+        xmlns:pnr_reply_11_3="http://xml.amadeus.com/PNRACC_11_3_1A"
         xmlns:queue_moveitem_3_1="http://xml.amadeus.com/QUQMUQ_03_1_1A"
         xmlns:queue_moveitemreply_3_1="http://xml.amadeus.com/QUQMUR_03_1_1A"
         xmlns:security_authenticate_6_1="http://xml.amadeus.com/VLSSLQ_06_1_1A"
@@ -21,7 +22,7 @@
         xmlns:security_signoutreply_4_1="http://xml.amadeus.com/VLSSOR_04_1_1A"
         xmlns:queue_list_3_1="http://xml.amadeus.com/QDQLRQ_03_1_1A"
         xmlns:queue_listreply_3_1="http://xml.amadeus.com/QDQLRR_03_1_1A"
-        xmlns:pnr_retrieve_9_1="http://xml.amadeus.com/PNRRET_09_1_1A"
+        xmlns:pnr_retrieve_11_3="http://xml.amadeus.com/PNRRET_11_3_1A"
         xmlns:queue_placepnr_3_1="http://xml.amadeus.com/QUQPCQ_03_1_1A"
         xmlns:queue_placepnrreply_3_1="http://xml.amadeus.com/QUQPCR_03_1_1A"
         xmlns:fare_checkrules_7_1="http://xml.amadeus.com/FARQNQ_07_1_1A"
@@ -60,8 +61,9 @@
             <xsd:import namespace="http://xml.amadeus.com/VLSSOR_04_1_1A" schemaLocation="Security_SignOutReply_04_1_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/QDQLRQ_03_1_1A" schemaLocation="Queue_List_03_1_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/QDQLRR_03_1_1A" schemaLocation="Queue_ListReply_03_1_1A.xsd"/>
-            <xsd:import namespace="http://xml.amadeus.com/PNRRET_09_1_1A" schemaLocation="PNR_Retrieve_09_1_1A.xsd"/>
+            <xsd:import namespace="http://xml.amadeus.com/PNRRET_11_3_1A" schemaLocation="PNR_Retrieve_11_3_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/PNRACC_09_1_1A" schemaLocation="PNR_Reply_09_1_1A.xsd"/>
+            <xsd:import namespace="http://xml.amadeus.com/PNRACC_11_3_1A" schemaLocation="PNR_Reply_11_3_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/QUQPCQ_03_1_1A" schemaLocation="Queue_PlacePNR_03_1_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/QUQPCR_03_1_1A" schemaLocation="Queue_PlacePNRReply_03_1_1A.xsd"/>
             <xsd:import namespace="http://xml.amadeus.com/FARQNQ_07_1_1A" schemaLocation="Fare_CheckRules_07_1_1A.xsd"/>
@@ -112,6 +114,9 @@
     <wsdl:message name="PNR_Reply_9_1">
         <wsdl:part name="PNR_Reply_9_1" element="pnr_reply_9_1:PNR_Reply"/>
     </wsdl:message>
+    <wsdl:message name="PNR_Reply_11_3">
+        <wsdl:part name="PNR_Reply_11_3" element="pnr_reply_11_3:PNR_Reply"/>
+    </wsdl:message>
     <wsdl:message name="Queue_MoveItem_3_1">
         <wsdl:part name="Queue_MoveItem_3_1" element="queue_moveitem_3_1:Queue_MoveItem"/>
     </wsdl:message>
@@ -136,8 +141,8 @@
     <wsdl:message name="Queue_ListReply_3_1">
         <wsdl:part name="Queue_ListReply_3_1" element="queue_listreply_3_1:Queue_ListReply"/>
     </wsdl:message>
-    <wsdl:message name="PNR_Retrieve_9_1">
-        <wsdl:part name="PNR_Retrieve_9_1" element="pnr_retrieve_9_1:PNR_Retrieve"/>
+    <wsdl:message name="PNR_Retrieve_11_3">
+        <wsdl:part name="PNR_Retrieve_11_3" element="pnr_retrieve_11_3:PNR_Retrieve"/>
     </wsdl:message>
     <wsdl:message name="Queue_PlacePNR_3_1">
         <wsdl:part name="Queue_PlacePNR_3_1" element="queue_placepnr_3_1:Queue_PlacePNR"/>
@@ -227,8 +232,8 @@
             <wsdl:output message="aws:Queue_ListReply_3_1"/>
         </wsdl:operation>
         <wsdl:operation name="PNR_Retrieve">
-            <wsdl:input message="aws:PNR_Retrieve_9_1"/>
-            <wsdl:output message="aws:PNR_Reply_9_1"/>
+            <wsdl:input message="aws:PNR_Retrieve_11_3"/>
+            <wsdl:output message="aws:PNR_Reply_11_3"/>
         </wsdl:operation>
         <wsdl:operation name="Queue_PlacePNR">
             <wsdl:input message="aws:Queue_PlacePNR_3_1"/>
@@ -358,7 +363,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="PNR_Retrieve">
-            <soap:operation soapAction="http://webservices.amadeus.com/1ASIWASLXNX/PNRRET_09_1_1A"/>
+            <soap:operation soapAction="http://webservices.amadeus.com/1ASIWASLXNX/PNRRET_11_3_1A"/>
             <wsdl:input>
                 <soap:header message="aws:Session" part="Session" use="literal"/>
                 <soap:body use="literal"/>
